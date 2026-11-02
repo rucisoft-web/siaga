@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssetFinancial extends Model
 {
@@ -22,7 +23,7 @@ class AssetFinancial extends Model
         ];
     }
 
-    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }

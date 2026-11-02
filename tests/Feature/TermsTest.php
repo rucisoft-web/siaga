@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Asset;
 use App\Models\Location;
 use App\Support\Branding;
 use App\Support\CurrentProperty;
@@ -37,5 +38,8 @@ class TermsTest extends TestCase
         $this->assertSame($room->name, $room->labelText(), 'label outlet memakai nama outlet, bukan "Kamar"');
         $this->assertSame('Outlet', Location::typeLabels()['room']);
         $this->assertSame('Tutup outlet', istilah('Blokir kamar'));
+        $this->assertSame('Milik perusahaan', Asset::ownerships()['milik']);
+        $this->useType('hospital');
+        $this->assertSame('Milik rumah sakit', Asset::ownerships()['milik']);
     }
 }

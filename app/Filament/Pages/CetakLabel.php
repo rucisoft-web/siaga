@@ -8,6 +8,7 @@ use App\Models\AssetCategory;
 use App\Models\GenerationBatch;
 use App\Models\Location;
 use App\Services\LabelService;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 
@@ -122,7 +123,7 @@ class CetakLabel extends Page
                 $reprint ? 'reprint' : 'new', $reprint ? trim($this->reason) : null, max(1, min(5, $this->copies)));
         });
         if ($batch) {
-            \Filament\Notifications\Notification::make()->title('Batch cetak '.$batch->number.' siap')
+            Notification::make()->title('Batch cetak '.$batch->number.' siap')
                 ->body($batch->label_count.' label · '.$batch->sheet_count.' lembar. Cetak pada skala 100% (bukan "fit to page").')->success()->send();
             $this->redirect(LabelPrintBatchResource::getUrl('view', ['record' => $batch]));
         }

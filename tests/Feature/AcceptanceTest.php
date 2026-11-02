@@ -4,13 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\Asset;
 use App\Models\AssetLabel;
+use App\Models\AssetTransfer;
 use App\Models\GenerationBatch;
 use App\Models\Location;
 use App\Models\RoomAssetSlot;
 use App\Models\RoomAssetTemplate;
-use App\Models\ServiceRequest;
+use App\Models\SlotAssignment;
 use App\Models\User;
-use App\Models\WorkOrder;
 use App\Services\InstallationService;
 use App\Services\LabelService;
 use App\Services\QrResolver;
@@ -19,8 +19,9 @@ use App\Services\ServiceRequestService;
 use App\Services\TransferService;
 use App\Services\WorkflowException;
 use App\Services\WorkOrderService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Database\Seeders\DemoSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /** Uji penerimaan utama (spesifikasi bagian 27) di atas data contoh hotel. */
@@ -129,7 +130,7 @@ class AcceptanceTest extends TestCase
         $asset = Asset::where('legacy_code', 'LEG-CHL-01')->firstOrFail();
 
         $this->actingAs($fo);
-        $uuid = (string) \Illuminate\Support\Str::uuid();
+        $uuid = (string) Str::uuid();
         $sr = app(ServiceRequestService::class)->create(['asset_id' => $asset->id, 'category' => 'kitchen', 'symptom' => 'Chiller tidak dingin', 'impact' => 'acara_terganggu'], $fo, $uuid);
         $dup = app(ServiceRequestService::class)->create(['asset_id' => $asset->id, 'category' => 'kitchen', 'symptom' => 'Chiller tidak dingin', 'impact' => 'acara_terganggu'], $fo, $uuid);
         $this->assertSame($sr->id, $dup->id, 'kirim ulang tidak membuat tiket ganda');
@@ -244,7 +245,7 @@ class AcceptanceTest extends TestCase
         app(LabelService::class)->createBatch($labels, 'a4-50x30', 1, $ac);
         $to = Location::where('code', 'like', 'GU-L3-31%')->orWhere('location_type', 'area')->first();
 
-        $t = \App\Models\AssetTransfer::create(['to_location_id' => $to->id, 'reason' => 'Pindah ke ruang lain', 'status' => 'draft', 'requested_by' => $ac->id]);
+        $t = AssetTransfer::create(['to_location_id' => $to->id, 'reason' => 'Pindah ke ruang lain', 'status' => 'draft', 'requested_by' => $ac->id]);
         $t->items()->create(['asset_id' => $asset->id, 'from_location_id' => $asset->location_id, 'condition_out' => 'B']);
         $svc = app(TransferService::class);
         $svc->submit($t, $ac);
@@ -265,7 +266,7 @@ class AcceptanceTest extends TestCase
         $this->assertSame($to->id, $asset->location_id);
         $this->assertFalse((bool) $asset->in_transit);
         $this->assertSame('needs_relabel', $asset->installation_status);
-        $this->assertFalse(\App\Models\SlotAssignment::where('active_asset_key', $asset->id)->exists());
+        $this->assertFalse(SlotAssignment::where('active_asset_key', $asset->id)->exists());
     }
 
     public function test_access_is_denied_by_default_and_reporter_cannot_see_register(): void

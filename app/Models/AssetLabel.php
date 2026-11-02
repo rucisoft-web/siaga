@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToProperty;
+use App\Support\Sequence;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -116,11 +117,11 @@ class AssetLabel extends Model
     public static function issueBlank(int $propertyId): self
     {
         $token = self::newToken();
-        $code = \App\Models\Property::whereKey($propertyId)->value('code') ?? 'X';
+        $code = Property::whereKey($propertyId)->value('code') ?? 'X';
 
         return static::create([
             'property_id' => $propertyId,
-            'stock_code' => sprintf('%s-QR-%06d', $code, \App\Support\Sequence::increment($propertyId, 'QRS')),
+            'stock_code' => sprintf('%s-QR-%06d', $code, Sequence::increment($propertyId, 'QRS')),
             'token_hash' => self::hashToken($token),
             'token_ciphertext' => Crypt::encryptString($token),
             'status' => 'unassigned',

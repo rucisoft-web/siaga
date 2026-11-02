@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\Assets\AssetResource;
+use App\Filament\Resources\WorkOrders\WorkOrderResource;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Location;
@@ -177,8 +179,8 @@ class JadwalPm extends Page
             'pics' => User::where('is_active', true)->orderBy('name')->get()->filter(fn ($u) => $u->hasPermission('wo.execute'))->pluck('name', 'id'),
             'vendors' => Vendor::where('is_active', true)->orderBy('name')->pluck('name', 'id'),
             'canManage' => auth()->user()->hasPermission('pm.manage'),
-            'woUrl' => fn ($w) => \App\Filament\Resources\WorkOrders\WorkOrderResource::getUrl('view', ['record' => $w]),
-            'assetUrl' => fn ($id) => \App\Filament\Resources\Assets\AssetResource::getUrl('view', ['record' => $id]),
+            'woUrl' => fn ($w) => WorkOrderResource::getUrl('view', ['record' => $w]),
+            'assetUrl' => fn ($id) => AssetResource::getUrl('view', ['record' => $id]),
         ];
     }
 }

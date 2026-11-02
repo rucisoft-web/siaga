@@ -6,6 +6,7 @@ use App\Filament\Concerns\HasPermissions;
 use App\Filament\Support\F;
 use App\Models\AssetCategory;
 use App\Models\AssetQuantityGroup;
+use App\Services\WorkflowException;
 use App\Support\Fmt;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -81,7 +82,7 @@ class AssetQuantityGroupResource extends Resource
             ])
             ->action(fn (AssetQuantityGroup $record, array $data) => F::attempt(function () use ($record, $data) {
                 if ($record->expected_qty !== null && (float) $data['qty'] !== (float) $record->expected_qty && blank($data['reason'] ?? null)) {
-                    throw \App\Services\WorkflowException::invalid('Jumlah berbeda dari standar; isi catatan selisih.');
+                    throw WorkflowException::invalid('Jumlah berbeda dari standar; isi catatan selisih.');
                 }
                 $record->recordCount((float) $data['qty'], $data['reason'] ?? null);
             }, 'Hitung tercatat'));

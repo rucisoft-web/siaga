@@ -8,6 +8,7 @@ use App\Filament\Support\F;
 use App\Models\Asset;
 use App\Models\AssetTransfer;
 use App\Models\Department;
+use App\Support\Fmt;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -98,7 +99,7 @@ class AssetTransferResource extends Resource
                 TextEntry::make('approver.name')->label('Disetujui')->placeholder('—'),
                 TextEntry::make('dispatched_at')->label('Dikirim')->dateTime('d M Y H:i')->placeholder('—'),
                 TextEntry::make('received_at')->label('Diterima')->dateTime('d M Y H:i')->placeholder('—')
-                    ->formatStateUsing(fn ($state, $record) => \App\Support\Fmt::dt($state).($record->receiver ? ' · '.$record->receiver->name : '')),
+                    ->formatStateUsing(fn ($state, $record) => Fmt::dt($state).($record->receiver ? ' · '.$record->receiver->name : '')),
                 TextEntry::make('status_reason')->label('Alasan status')->placeholder('—')->columnSpan(2),
             ]),
         ]);

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\InstallationEvent;
 use App\Models\Location;
 use App\Models\User;
+use App\Support\Fmt;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -33,11 +34,11 @@ class InstallationService
             return ['ok' => false, 'level' => 'warning', 'message' => 'Label milik '.($target->asset_code ?? $target->group_code).' tercatat di '.($loc?->full_path ?? 'lokasi lain').', bukan '.$room->name.'. Konfirmasi ditolak — periksa apakah label tertukar.'];
         }
 
-        return DB::transaction(function () use ($label, $target, $room, $user, $status, $note, $photo, $r) {
+        return DB::transaction(function () use ($label, $target, $user, $status, $note, $photo, $r) {
             $label = $label->newQuery()->whereKey($label->id)->lockForUpdate()->first();
             $last = $label->installationEvents()->first();
             if ($status === 'installed' && $last?->status === 'installed' && (int) $last->location_id === (int) $target->location_id) {
-                return ['ok' => true, 'level' => 'info', 'message' => ($target->asset_code ?? $target->group_code).' sudah tercatat terpasang ('.$last->occurred_at->timezone(\App\Support\Fmt::tz())->format('d/m H:i').'). Tidak dicatat ganda.'];
+                return ['ok' => true, 'level' => 'info', 'message' => ($target->asset_code ?? $target->group_code).' sudah tercatat terpasang ('.$last->occurred_at->timezone(Fmt::tz())->format('d/m H:i').'). Tidak dicatat ganda.'];
             }
             $printItem = $label->printItems()->latest('id')->first();
             $ev = InstallationEvent::create([

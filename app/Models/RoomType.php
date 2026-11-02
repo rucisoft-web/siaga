@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToProperty;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RoomType extends Model
 {
@@ -19,12 +20,12 @@ class RoomType extends Model
         ];
     }
 
-    public function rooms(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function rooms(): HasMany
     {
         return $this->hasMany(Location::class);
     }
 
-    public function templates(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function templates(): HasMany
     {
         return $this->hasMany(RoomAssetTemplate::class);
     }

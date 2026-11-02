@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SlotAssignment extends Model
 {
@@ -16,22 +17,22 @@ class SlotAssignment extends Model
         ];
     }
 
-    public function slot(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function slot(): BelongsTo
     {
         return $this->belongsTo(RoomAssetSlot::class, 'slot_id');
     }
 
-    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }
 
-    public function quantityGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function quantityGroup(): BelongsTo
     {
         return $this->belongsTo(AssetQuantityGroup::class, 'quantity_group_id');
     }
 
-    public function actor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
     }

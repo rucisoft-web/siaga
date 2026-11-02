@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Models\Asset;
-use App\Models\Location;
+use App\Models\InstallationEvent;
 use App\Models\ServiceRequest;
 use App\Models\User;
+use App\Models\WoCostLine;
 use App\Models\WorkOrder;
 use App\Support\Fmt;
 use Carbon\CarbonImmutable;
@@ -30,7 +31,7 @@ class ReportService
     /** @return array{headers:array, rows:array} */
     public function build(string $report, User $u, string $from, string $to): array
     {
-        $tz = \App\Support\Fmt::tz();
+        $tz = Fmt::tz();
         $f = CarbonImmutable::parse($from, $tz)->startOfDay()->utc();
         $t = CarbonImmutable::parse($to, $tz)->endOfDay()->utc();
         $fin = $u->canSeeFinancials();
@@ -67,7 +68,7 @@ class ReportService
                     ->sortBy(fn ($a) => ($a->location?->sort_key ?? 'zzz').'|'.$a->asset_code)
                     ->map(fn ($a) => array_merge([$a->asset_code, $a->name, $a->category?->name, $a->brand, $a->model, $a->serial_number, $a->location?->full_path, $a->department?->name,
                         Asset::LIFECYCLE[$a->lifecycle_status] ?? '', Asset::OPERATIONAL[$a->operational_status] ?? '', $a->condition_grade, Asset::VERIFICATION[$a->verification_status] ?? '',
-                        \App\Models\InstallationEvent::STATUSES[$a->installation_status] ?? '', $a->warranty_until?->format('d/m/Y')], $fin ? [$a->financial?->acquisition_cost] : []))->values()->all(),
+                        InstallationEvent::STATUSES[$a->installation_status] ?? '', $a->warranty_until?->format('d/m/Y')], $fin ? [$a->financial?->acquisition_cost] : []))->values()->all(),
             ],
             'label' => [
                 'headers' => ['Lokasi', 'Aset aktif/draft', 'Terpasang', 'Belum', 'Rusak/hilang', 'Perlu label ulang'],
@@ -78,8 +79,8 @@ class ReportService
             ],
             'biaya' => $fin ? [
                 'headers' => ['WO', 'Periode', 'Jenis biaya', 'Uraian', 'Jumlah', 'Harga satuan', 'Total', 'Kas keluar', 'Status', 'Ref.'],
-                'rows' => \App\Models\WoCostLine::whereBetween('created_at', [$f, $t])->with('workOrder')->orderBy('created_at')->get()
-                    ->map(fn ($c) => [$c->workOrder?->number, $c->period, \App\Models\WoCostLine::TYPES[$c->type] ?? $c->type, $c->description, (float) $c->quantity, (float) $c->unit_cost, (float) $c->amount,
+                'rows' => WoCostLine::whereBetween('created_at', [$f, $t])->with('workOrder')->orderBy('created_at')->get()
+                    ->map(fn ($c) => [$c->workOrder?->number, $c->period, WoCostLine::TYPES[$c->type] ?? $c->type, $c->description, (float) $c->quantity, (float) $c->unit_cost, (float) $c->amount,
                         $c->is_cash_out ? 'Ya' : 'Tidak (alokasi)', $c->cost_status === 'final' ? 'final' : 'sementara', $c->invoice_ref])->all(),
             ] : throw WorkflowException::forbidden(),
             default => throw WorkflowException::invalid('Laporan tidak dikenal.'),

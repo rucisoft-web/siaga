@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Beranda;
+use App\Filament\Support\InitialsAvatarProvider;
 use App\Http\Middleware\EnsurePasswordChanged;
 use App\Support\Branding;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -55,7 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
-            ->defaultAvatarProvider(\App\Filament\Support\InitialsAvatarProvider::class)
+            ->defaultAvatarProvider(InitialsAvatarProvider::class)
             ->databaseNotifications()
             ->databaseNotificationsPolling('60s')
             ->globalSearch(false)

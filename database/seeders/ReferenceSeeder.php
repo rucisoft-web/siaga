@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\AssetCategory;
 use App\Models\Department;
-use App\Models\Permission;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\SlaPolicy;
@@ -13,6 +12,7 @@ use App\Services\SlaService;
 use App\Support\CurrentProperty;
 use App\Support\PermissionCatalog;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 /** Seed referensi (aman diulang): properti hotel, izin & peran, departemen, kategori, SLA, Super Admin. */
 class ReferenceSeeder extends Seeder
@@ -92,7 +92,7 @@ class ReferenceSeeder extends Seeder
         }
         // Lokal: sandi tetap untuk uji coba. Produksi: ASSETCARE_ADMIN_PASSWORD atau sandi acak yang ditampilkan sekali.
         $prod = app()->isProduction();
-        $pass = $prod ? (env('ASSETCARE_ADMIN_PASSWORD') ?: 'AC-'.\Illuminate\Support\Str::password(14, symbols: false)) : self::ADMIN_PASSWORD;
+        $pass = $prod ? (env('ASSETCARE_ADMIN_PASSWORD') ?: 'AC-'.Str::password(14, symbols: false)) : self::ADMIN_PASSWORD;
         $admin = User::firstOrCreate(['email' => self::ADMIN_EMAIL], [
             'name' => 'Super Admin', 'job_title' => 'Super Admin (pengelola aplikasi)', 'password' => $pass,
             'property_id' => $property->id, 'is_active' => true, 'must_change_password' => $prod,

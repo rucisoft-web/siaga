@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Filament\Resources\AssetQuantityGroups\AssetQuantityGroupResource;
 use App\Filament\Resources\Assets\AssetResource;
+use App\Filament\Resources\ServiceRequests\ServiceRequestResource;
 use App\Models\ScanLog;
 use App\Models\User;
 
@@ -32,7 +33,7 @@ class ScanService
             $result === 'forbidden' => ['url' => null, 'message' => 'Anda tidak memiliki akses ke aset ini.', 'level' => 'danger'],
             $r['type'] === 'asset' && $user?->hasPermission('asset.view') => ['url' => AssetResource::getUrl('view', ['record' => $r['asset']]), 'message' => null, 'level' => 'success'],
             // pelapor tanpa akses register langsung ke formulir lapor kerusakan
-            $r['type'] === 'asset' => ['url' => \App\Filament\Resources\ServiceRequests\ServiceRequestResource::getUrl('create', ['asset' => $r['asset']->id]), 'message' => null, 'level' => 'success'],
+            $r['type'] === 'asset' => ['url' => ServiceRequestResource::getUrl('create', ['asset' => $r['asset']->id]), 'message' => null, 'level' => 'success'],
             $r['type'] === 'group' => ['url' => AssetQuantityGroupResource::getUrl('view', ['record' => $r['group']]), 'message' => null, 'level' => 'success'],
             // label dicabut: pesan umum, tanpa membocorkan aset baru
             $r['type'] === 'blank' => ['url' => null, 'message' => $r['message'], 'level' => 'warning'],

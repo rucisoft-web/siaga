@@ -7,11 +7,15 @@ use App\Models\Asset;
 use App\Models\Location;
 use App\Models\Property;
 use App\Models\WorkOrder;
+use App\Services\LeadershipService;
+use App\Support\Branding;
+use App\Support\CurrentProperty;
 use App\Support\DemoSets;
 use App\Support\GuestAccess;
 use App\Support\Help;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -44,12 +48,12 @@ class LandingController extends Controller
             return null;
         }
 
-        return \Illuminate\Support\Facades\Cache::remember('landing:showcase:'.$p->id, 600, function () use ($p, $datasets) {
-            $cp = app(\App\Support\CurrentProperty::class);
+        return Cache::remember('landing:showcase:'.$p->id, 600, function () use ($p, $datasets) {
+            $cp = app(CurrentProperty::class);
             $prev = $cp->get();
             $cp->set($p);
             try {
-                $d = (new \App\Services\LeadershipService)->data();
+                $d = (new LeadershipService)->data();
             } finally {
                 $cp->set($prev);
             }
@@ -110,8 +114,8 @@ class LandingController extends Controller
             return redirect()->route('landing', ['#demo'])->with('landing_error', 'Pilih salah satu data demo terlebih dahulu.');
         }
         Auth::guard('web')->login($user);
-        app(\App\Support\CurrentProperty::class)->set($p);
-        \App\Support\Branding::flush();
+        app(CurrentProperty::class)->set($p);
+        Branding::flush();
         $request->session()->regenerate();
         $request->session()->put('guest_dataset', $p->code);
 

@@ -9,6 +9,7 @@ use App\Filament\RelationManagers\StatusHistoryRelationManager;
 use App\Filament\Support\F;
 use App\Models\Asset;
 use App\Models\ServiceRequest;
+use App\Models\WorkOrder;
 use App\Services\ServiceRequestService;
 use App\Support\Fmt;
 use Filament\Actions\ViewAction;
@@ -107,7 +108,7 @@ class ServiceRequestResource extends Resource
                         if (! $a) {
                             return null;
                         }
-                        $open = $a->workOrders()->whereIn('status', \App\Models\WorkOrder::OPEN)->first();
+                        $open = $a->workOrders()->whereIn('status', WorkOrder::OPEN)->first();
 
                         return new HtmlString('<div class="ac-scan-msg">'.e($a->asset_code.' · '.$a->name).' — '.e($a->location?->full_path ?? '-')
                             .($open ? '<br><b>Sudah ada work order terbuka '.e($open->number).'</b> — laporan Anda tetap dicatat dan dapat ditautkan.' : '').'</div>');

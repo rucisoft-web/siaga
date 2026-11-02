@@ -34,6 +34,12 @@ class Asset extends Model
 
     public const OWNERSHIP = ['milik' => 'Milik hotel', 'sewa' => 'Sewa', 'vendor' => 'Milik vendor', 'konsinyasi' => 'Konsinyasi'];
 
+    /** Pilihan kepemilikan dengan istilah sesuai jenis usaha (mis. "Milik rumah sakit"). */
+    public static function ownerships(): array
+    {
+        return array_map(fn ($v) => istilah($v), self::OWNERSHIP);
+    }
+
     /** Dimensi status yang riwayatnya dicatat terpisah. */
     public const TRACKED = ['condition_grade', 'operational_status', 'lifecycle_status', 'location_id', 'department_id', 'verification_status', 'criticality', 'custodian_id'];
 

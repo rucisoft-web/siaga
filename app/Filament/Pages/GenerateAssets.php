@@ -8,7 +8,9 @@ use App\Models\GenerationBatch;
 use App\Models\Location;
 use App\Models\RoomAssetTemplate;
 use App\Services\RoomTemplateService;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 /**
@@ -22,7 +24,7 @@ class GenerateAssets extends Page
         return istilah(parent::getNavigationLabel());
     }
 
-    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    public function getTitle(): string|Htmlable
     {
         return istilah((string) parent::getTitle());
     }
@@ -113,7 +115,7 @@ class GenerateAssets extends Page
     public function runPreview(): void
     {
         if (! $this->template || ! $this->roomIds) {
-            \Filament\Notifications\Notification::make()->title(istilah('Pilih template dan minimal satu kamar'))->warning()->send();
+            Notification::make()->title(istilah('Pilih template dan minimal satu kamar'))->warning()->send();
 
             return;
         }
@@ -162,7 +164,7 @@ class GenerateAssets extends Page
         });
         if ($batch) {
             $this->batchId = $batch->id;
-            $n = \Filament\Notifications\Notification::make()->title('Batch '.$batch->number.': '.GenerationBatch::STATUSES[$batch->status])
+            $n = Notification::make()->title('Batch '.$batch->number.': '.GenerationBatch::STATUSES[$batch->status])
                 ->body($batch->created_assets.' kandidat dibuat, '.$batch->matched_assets.' aset lama dicocokkan.');
             $batch->status === 'completed' ? $n->success()->send() : $n->warning()->persistent()->send();
         }

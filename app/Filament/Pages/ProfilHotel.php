@@ -6,6 +6,7 @@ use App\Models\Asset;
 use App\Models\Property;
 use App\Support\Branding;
 use App\Support\CurrentProperty;
+use App\Support\Terms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 /**
@@ -82,7 +84,7 @@ class ProfilHotel extends Page
             Section::make(istilah('Identitas hotel'))->columns(2)->schema([
                 TextInput::make('name')->label(istilah('Nama hotel'))->required()->maxLength(120),
                 TextInput::make('legal_name')->label('Nama badan usaha (PT/CV)')->maxLength(150),
-                Select::make('business_type')->label('Jenis usaha')->options(\App\Support\Terms::TYPES)->required()->native(false)->live()
+                Select::make('business_type')->label('Jenis usaha')->options(Terms::TYPES)->required()->native(false)->live()
                     ->helperText('Menentukan istilah di layar, laporan & label: kamar (hotel/RS), outlet (ritel), ruang (umum).'),
                 TextInput::make('code')->label('Kode properti')->required()->maxLength(8)
                     ->regex('/^[A-Z0-9]{2,8}$/')->validationMessages(['regex' => 'Huruf kapital/angka, 2–8 karakter.'])
@@ -93,7 +95,7 @@ class ProfilHotel extends Page
                 Select::make('star_rating')->label('Kelas')->options([
                     '1' => 'Bintang 1', '2' => 'Bintang 2', '3' => 'Bintang 3', '4' => 'Bintang 4', '5' => 'Bintang 5',
                     'melati' => 'Melati', 'resort' => 'Resort / villa', 'lain' => 'Lainnya',
-                ])->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => ($get('business_type') ?? 'hotel') === 'hotel'),
+                ])->visible(fn (Get $get) => ($get('business_type') ?? 'hotel') === 'hotel'),
                 TextInput::make('address')->label('Alamat')->columnSpanFull()->maxLength(255),
                 TextInput::make('city')->label('Kota')->maxLength(80),
                 TextInput::make('room_count')->label(istilah('Jumlah kamar'))->numeric()->minValue(0)->maxValue(10000),

@@ -8,6 +8,7 @@ use App\Models\Location;
 use App\Services\InstallationService;
 use App\Services\LabelService;
 use App\Services\WorkflowException;
+use App\Support\Fmt;
 use Filament\Pages\Page;
 
 /** Konfirmasi pemasangan label per kamar (bagian 26). Scan biasa tidak menyatakan terpasang. */
@@ -94,7 +95,7 @@ class KonfirmasiPemasangan extends Page
 
     protected function push(string $level, string $message): void
     {
-        array_unshift($this->feed, ['level' => $level, 'message' => $message, 'at' => now()->timezone(\App\Support\Fmt::tz())->format('H:i:s')]);
+        array_unshift($this->feed, ['level' => $level, 'message' => $message, 'at' => now()->timezone(Fmt::tz())->format('H:i:s')]);
         $this->feed = array_slice($this->feed, 0, 15);
     }
 }

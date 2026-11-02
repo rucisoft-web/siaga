@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Auditable;
+use App\Support\Fmt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +32,7 @@ class WoCostLine extends Model
             }
             $c->amount = round((float) $c->quantity * (float) $c->unit_cost, 2);
             $c->is_cash_out = $c->type !== 'labor';
-            $c->period ??= now()->timezone(\App\Support\Fmt::tz())->format('Y-m');
+            $c->period ??= now()->timezone(Fmt::tz())->format('Y-m');
         });
         static::deleting(function (self $c) {
             if ($c->cost_status === 'final') {

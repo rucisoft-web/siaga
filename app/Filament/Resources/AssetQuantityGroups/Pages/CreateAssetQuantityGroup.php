@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AssetQuantityGroups\Pages;
 
 use App\Filament\Resources\AssetQuantityGroups\AssetQuantityGroupResource;
+use App\Models\AssetLabel;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAssetQuantityGroup extends CreateRecord
@@ -11,6 +12,6 @@ class CreateAssetQuantityGroup extends CreateRecord
 
     protected function afterCreate(): void
     {
-        \App\Models\AssetLabel::issueFor(null, $this->record);
+        AssetLabel::issueFor(null, $this->record);
     }
 }

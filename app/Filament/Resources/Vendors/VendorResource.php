@@ -4,7 +4,10 @@ namespace App\Filament\Resources\Vendors;
 
 use App\Filament\Concerns\HasPermissions;
 use App\Models\Vendor;
+use App\Support\CurrentProperty;
+use Carbon\Carbon;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -39,7 +42,7 @@ class VendorResource extends Resource
     {
         return $schema->columns(2)->components([
             TextInput::make('code')->label('Kode')->required()->maxLength(30)
-                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(\App\Support\CurrentProperty::class)->id())),
+                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(CurrentProperty::class)->id())),
             TextInput::make('name')->label('Nama')->required(),
             TextInput::make('specialization')->label('Spesialisasi'),
             TextInput::make('contact_person')->label('Kontak'),
@@ -48,7 +51,7 @@ class VendorResource extends Resource
             TextInput::make('service_hours')->label('Jam layanan'),
             TextInput::make('sla_note')->label('SLA kontrak'),
             TextInput::make('contract_ref')->label('No. kontrak'),
-            \Filament\Forms\Components\DatePicker::make('contract_until')->label('Kontrak berlaku s.d.')->native(false)->displayFormat('d M Y')
+            DatePicker::make('contract_until')->label('Kontrak berlaku s.d.')->native(false)->displayFormat('d M Y')
                 ->helperText('Pengingat dikirim H-30 dan H-7 ke pengelola jadwal PM.'),
             Textarea::make('notes')->label('Catatan')->columnSpanFull(),
             Toggle::make('is_active')->label('Aktif')->default(true),
@@ -63,7 +66,7 @@ class VendorResource extends Resource
             TextColumn::make('specialization')->label('Spesialisasi')->wrap(),
             TextColumn::make('contact_person')->label('Kontak')->description(fn ($record) => $record->phone),
             TextColumn::make('contract_until')->label('Kontrak s.d.')->date('d M Y')->sortable()
-                ->color(fn ($state) => $state && \Carbon\Carbon::parse($state)->lte(now()->addDays(30)) ? 'danger' : null),
+                ->color(fn ($state) => $state && Carbon::parse($state)->lte(now()->addDays(30)) ? 'danger' : null),
             IconColumn::make('is_active')->label('Aktif')->boolean(),
         ])->defaultSort('name')->recordActions([EditAction::make()]);
     }

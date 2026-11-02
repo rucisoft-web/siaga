@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Departments;
 
 use App\Filament\Concerns\HasPermissions;
 use App\Models\Department;
+use App\Support\CurrentProperty;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -38,7 +39,7 @@ class DepartmentResource extends Resource
     {
         return $schema->columns(2)->components([
             TextInput::make('code')->label('Kode')->required()->maxLength(20)
-                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(\App\Support\CurrentProperty::class)->id())),
+                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(CurrentProperty::class)->id())),
             TextInput::make('name')->label('Nama')->required(),
             TextInput::make('cost_center')->label('Cost center'),
             Toggle::make('is_active')->label('Aktif')->default(true),

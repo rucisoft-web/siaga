@@ -5,16 +5,18 @@ namespace App\Filament\Pages;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\AssetLabel;
+use App\Models\AssetQuantityGroup;
 use App\Models\Location;
 use App\Models\RoomSurvey;
 use App\Services\SurveyService;
 use App\Services\WorkflowException;
+use App\Support\Fmt;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Session;
 use Livewire\WithFileUploads;
-use App\Models\AssetQuantityGroup;
 
 /**
  * Pendataan aset awal untuk petugas keliling (tampilan HP).
@@ -137,7 +139,7 @@ class PendataanAset extends Page
                 throw WorkflowException::invalid('Isi jumlah fisik '.$g->name.'.');
             }
             $g = $this->svc()->countGroup($g, (float) $v, auth()->user());
-            $this->push('success', \Illuminate\Support\Str::before($g->name, ' · ').': '.rtrim(rtrim(number_format((float) $g->on_hand, 2, ',', ''), '0'), ',').' '.$g->unit.' dicatat'.($g->expected_qty !== null && (float) $g->expected_qty !== (float) $g->on_hand ? ' (standar '.(float) $g->expected_qty.').' : '.'));
+            $this->push('success', Str::before($g->name, ' · ').': '.rtrim(rtrim(number_format((float) $g->on_hand, 2, ',', ''), '0'), ',').' '.$g->unit.' dicatat'.($g->expected_qty !== null && (float) $g->expected_qty !== (float) $g->on_hand ? ' (standar '.(float) $g->expected_qty.').' : '.'));
         });
     }
 
@@ -389,7 +391,7 @@ class PendataanAset extends Page
 
     protected function push(string $level, string $message): void
     {
-        array_unshift($this->feed, ['level' => $level, 'message' => $message, 'at' => now()->timezone(\App\Support\Fmt::tz())->format('H:i:s')]);
+        array_unshift($this->feed, ['level' => $level, 'message' => $message, 'at' => now()->timezone(Fmt::tz())->format('H:i:s')]);
         $this->feed = array_slice($this->feed, 0, 6);
     }
 }

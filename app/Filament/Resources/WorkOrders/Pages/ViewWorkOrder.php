@@ -7,7 +7,7 @@ use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Resources\WorkOrders\WorkOrderResource;
 use App\Filament\Support\F;
 use App\Models\Asset;
-use App\Models\ServiceRequest;
+use App\Models\User;
 use App\Models\Vendor;
 use App\Models\WorkOrder;
 use App\Services\WorkOrderService;
@@ -65,7 +65,7 @@ class ViewWorkOrder extends ViewRecord
                 TextEntry::make('type')->label('Jenis')->formatStateUsing(fn ($state) => WorkOrder::TYPES[$state] ?? $state),
                 TextEntry::make('pic.name')->label('PIC')->placeholder('belum ditugaskan'),
                 TextEntry::make('team_ids')->label('Tim')->placeholder('—')
-                    ->state(fn ($record) => \App\Models\User::whereIn('id', $record->team_ids ?? [])->pluck('name')->join(', ') ?: null),
+                    ->state(fn ($record) => User::whereIn('id', $record->team_ids ?? [])->pluck('name')->join(', ') ?: null),
                 TextEntry::make('scheduled_at')->label('Jadwal')->dateTime('d M Y H:i')->placeholder('—'),
                 TextEntry::make('permits')->label('Izin kerja')->placeholder('tidak ada')
                     ->state(fn ($record) => collect($record->permits ?? [])->map(fn ($p) => WorkOrder::PERMITS[$p] ?? $p)->join(', ') ?: null),
@@ -111,7 +111,7 @@ class ViewWorkOrder extends ViewRecord
             'assign' => [
                 F::user('pic_id', 'PIC (teknisi)', 'wo.execute')->required()->default($wo->pic_id),
                 Select::make('team_ids')->label('Anggota tim')->multiple()->native(false)->default($wo->team_ids ?? [])
-                    ->options(fn () => \App\Models\User::withPermission('wo.execute')->sortBy('name')->pluck('name', 'id')->all()),
+                    ->options(fn () => User::withPermission('wo.execute')->sortBy('name')->pluck('name', 'id')->all()),
                 DateTimePicker::make('scheduled_at')->label('Jadwal')->default(now())->seconds(false),
                 TextInput::make('estimated_hours')->label('Estimasi jam')->numeric()->minValue(0)->default($wo->estimated_hours),
                 CheckboxList::make('permits')->label('Izin kerja / persyaratan')->options(WorkOrder::PERMITS)->columns(2)->default($wo->permits ?? [])

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToProperty;
+use App\Support\CurrentProperty;
+use App\Support\Sequence;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,7 +29,7 @@ class PmSchedule extends Model
     protected static function booted(): void
     {
         static::creating(function (self $s) {
-            $s->code ??= \App\Support\Sequence::next('PM', $s->property_id ?? app(\App\Support\CurrentProperty::class)->id());
+            $s->code ??= Sequence::next('PM', $s->property_id ?? app(CurrentProperty::class)->id());
             $s->created_by ??= auth()->id();
         });
     }

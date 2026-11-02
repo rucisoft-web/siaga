@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssetTransfers\RelationManagers;
 
+use App\Models\InstallationEvent;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -20,7 +21,7 @@ class ItemsRelationManager extends RelationManager
             TextColumn::make('fromLocation.full_path')->label('Lokasi asal')->wrap(),
             TextColumn::make('condition_out')->label('Kondisi kirim')->placeholder('—'),
             TextColumn::make('condition_in')->label('Kondisi terima')->placeholder('—'),
-            TextColumn::make('asset.installation_status')->label('Label')->formatStateUsing(fn ($state) => \App\Models\InstallationEvent::STATUSES[$state] ?? $state),
+            TextColumn::make('asset.installation_status')->label('Label')->formatStateUsing(fn ($state) => InstallationEvent::STATUSES[$state] ?? $state),
         ]);
     }
 }

@@ -5,11 +5,14 @@ namespace App\Filament\Resources\AssetCategories;
 use App\Filament\Concerns\HasPermissions;
 use App\Models\Asset;
 use App\Models\AssetCategory;
+use App\Services\DepreciationService;
+use App\Support\CurrentProperty;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -43,17 +46,17 @@ class AssetCategoryResource extends Resource
     {
         return $schema->columns(2)->components([
             TextInput::make('code')->label('Kode')->required()->maxLength(30)
-                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(\App\Support\CurrentProperty::class)->id())),
+                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(CurrentProperty::class)->id())),
             TextInput::make('name')->label('Nama')->required(),
             Select::make('group')->label('Kelompok')->options(self::GROUPS)->native(false),
             Select::make('default_criticality')->label('Kritikalitas default')->options(Asset::CRITICALITY)->default('medium')->native(false),
             Select::make('tracking_mode')->label('Pelacakan')->options(['individual' => 'Per unit (kode & QR per unit)', 'quantity' => 'Kelompok kuantitas per lokasi'])->default('individual')->native(false),
             TextInput::make('default_pm_interval_days')->label('Interval PM usulan (hari)')->numeric()->minValue(1),
             Toggle::make('is_active')->label('Aktif')->default(true),
-            \Filament\Schemas\Components\Section::make('Penyusutan (PSAK 16) & akun buku besar')->columns(3)->columnSpanFull()
+            Section::make('Penyusutan (PSAK 16) & akun buku besar')->columns(3)->columnSpanFull()
                 ->visible(fn () => auth()->user()?->hasPermission('asset.view_financial'))
                 ->schema([
-                    Select::make('depreciation_method')->label('Metode')->options(\App\Services\DepreciationService::METHODS)->default('straight_line')->native(false)->required(),
+                    Select::make('depreciation_method')->label('Metode')->options(DepreciationService::METHODS)->default('straight_line')->native(false)->required(),
                     TextInput::make('useful_life_months')->label('Masa manfaat (bulan)')->numeric()->minValue(1)->maxValue(600)->helperText('Mis. 48 = 4 tahun (IT), 96 = 8 tahun, 240 = 20 tahun (bangunan)'),
                     TextInput::make('residual_pct')->label('Nilai residu (% perolehan)')->numeric()->minValue(0)->maxValue(100)->default(0),
                     TextInput::make('gl_asset_account')->label('Akun aset tetap')->maxLength(30),

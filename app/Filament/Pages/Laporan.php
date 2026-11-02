@@ -4,6 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Services\DashboardService;
 use App\Services\ReportService;
+use App\Support\Fmt;
+use Carbon\CarbonImmutable;
 use Filament\Pages\Page;
 
 /** M08 Laporan & KPI: ringkasan periode + tabel yang dapat diunduh CSV. */
@@ -34,7 +36,7 @@ class Laporan extends Page
 
     public function mount(): void
     {
-        $tz = \App\Support\Fmt::tz();
+        $tz = Fmt::tz();
         $this->from = now($tz)->subDays(29)->toDateString();
         $this->to = now($tz)->toDateString();
     }
@@ -50,12 +52,12 @@ class Laporan extends Page
     {
         $u = auth()->user();
         $svc = app(ReportService::class);
-        $tz = \App\Support\Fmt::tz();
+        $tz = Fmt::tz();
 
         return [
             'reports' => $svc->available($u),
             'data' => $svc->build($this->report, $u, $this->from, $this->to),
-            'kpi' => app(DashboardService::class)->kpis(\Carbon\CarbonImmutable::parse($this->from, $tz)->startOfDay()->utc(), \Carbon\CarbonImmutable::parse($this->to, $tz)->endOfDay()->utc(), $u->canSeeFinancials()),
+            'kpi' => app(DashboardService::class)->kpis(CarbonImmutable::parse($this->from, $tz)->startOfDay()->utc(), CarbonImmutable::parse($this->to, $tz)->endOfDay()->utc(), $u->canSeeFinancials()),
             'canExport' => $u->hasPermission('report.export'),
         ];
     }

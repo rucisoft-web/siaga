@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\Location;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\User;
@@ -52,7 +53,7 @@ class GuestAccess
         $n = 0;
         foreach (DemoSets::SETS as $class) {
             $p = Property::where('code', $class::CODE)->first();
-            if ($p && \App\Models\Location::withoutGlobalScopes()->where('property_id', $p->id)->exists()) {
+            if ($p && Location::withoutGlobalScopes()->where('property_id', $p->id)->exists()) {
                 static::ensure($p);
                 $n++;
             }

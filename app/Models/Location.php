@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToProperty;
+use App\Support\Terms;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -142,7 +143,7 @@ class Location extends Model
         }
 
         // hotel & rumah sakit: "Kamar 305"; ritel/umum: nama outlet/ruang apa adanya (bukan "Kamar BK101")
-        return in_array(\App\Support\Terms::type(), ['hotel', 'hospital'], true) ? 'Kamar '.($this->room_ref ?: $this->name) : $this->name;
+        return in_array(Terms::type(), ['hotel', 'hospital'], true) ? 'Kamar '.($this->room_ref ?: $this->name) : $this->name;
     }
 
     /** @return array<int,string> */

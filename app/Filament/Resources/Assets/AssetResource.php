@@ -3,13 +3,19 @@
 namespace App\Filament\Resources\Assets;
 
 use App\Filament\Concerns\HasPermissions;
+use App\Filament\Pages\CetakLabel;
+use App\Filament\RelationManagers\AttachmentsRelationManager;
 use App\Filament\Support\F;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Department;
+use App\Models\GenerationBatch;
+use App\Models\InstallationEvent;
+use App\Models\Location;
 use App\Models\Vendor;
 use App\Services\AssetService;
-use Filament\Actions\Action;
+use App\Services\DepreciationService;
+use App\Support\Branding;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
@@ -20,6 +26,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs;
@@ -29,6 +36,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 /** M02 Register aset: satu aset individual = satu unit fisik. Kode permanen dibuat server. */
@@ -63,7 +71,7 @@ class AssetResource extends Resource
         return $schema->columns(1)->components([
             Tabs::make('aset')->persistTabInQueryString()->tabs([
                 Tab::make('Identitas')->columns(3)->schema([
-                    Placeholder::make('asset_code_view')->label('Kode aset')->content(fn ($record) => $record?->asset_code ?? 'Dibuat otomatis saat disimpan ('.\App\Support\Branding::code().'-AST-xxxxxx)'),
+                    Placeholder::make('asset_code_view')->label('Kode aset')->content(fn ($record) => $record?->asset_code ?? 'Dibuat otomatis saat disimpan ('.Branding::code().'-AST-xxxxxx)'),
                     TextInput::make('name')->label('Nama aset')->required()->columnSpan(2),
                     Select::make('category_id')->label('Kategori')->required()->native(false)->searchable()
                         ->options(fn () => AssetCategory::where('is_active', true)->where('tracking_mode', 'individual')->orderBy('name')->pluck('name', 'id')),
@@ -93,7 +101,7 @@ class AssetResource extends Resource
                     Placeholder::make('note_dim')->label('')->content('Kondisi, status operasional & siklus hidup berdiri sendiri; satu tidak mengganti yang lain.')->columnSpanFull(),
                 ]),
                 Tab::make('Perolehan & perawatan')->columns(3)->schema([
-                    Select::make('ownership')->label('Kepemilikan')->options(Asset::OWNERSHIP)->native(false),
+                    Select::make('ownership')->label('Kepemilikan')->options(Asset::ownerships())->native(false),
                     DatePicker::make('purchase_date')->label('Tanggal beli'),
                     DatePicker::make('in_service_date')->label('Mulai pakai'),
                     Select::make('vendor_id')->label('Vendor')->native(false)->searchable()->options(fn () => Vendor::where('is_active', true)->orderBy('name')->pluck('name', 'id')),
@@ -114,7 +122,7 @@ class AssetResource extends Resource
                             TextInput::make('cost_center')->label('Cost center'),
                             TextInput::make('accounting_ref')->label('Referensi aset akuntansi'),
                             DatePicker::make('depreciation_start')->label('Mulai disusutkan')->helperText('Kosong = tanggal perolehan'),
-                            Select::make('depreciation_method')->label('Metode penyusutan')->options(\App\Services\DepreciationService::METHODS)->placeholder('Ikuti kategori')->native(false),
+                            Select::make('depreciation_method')->label('Metode penyusutan')->options(DepreciationService::METHODS)->placeholder('Ikuti kategori')->native(false),
                             TextInput::make('useful_life_months')->label('Masa manfaat (bulan)')->numeric()->minValue(1)->maxValue(600)->placeholder('Ikuti kategori'),
                             F::money('residual_value', 'Nilai residu'),
                             Select::make('verification_status')->label('Status nilai')->options(['unverified' => 'Belum terverifikasi', 'verified' => 'Terverifikasi Finance'])->default('unverified')->native(false),
@@ -141,28 +149,34 @@ class AssetResource extends Resource
                 TextColumn::make('category.name')->label('Kategori')->toggleable(),
                 TextColumn::make('location.full_path')->label('Lokasi')->wrap()->toggleable(),
                 TextColumn::make('condition_grade')->label('Kondisi')->badge()->placeholder('?')
-                    ->color(fn ($state) => match ($state) { 'A', 'B' => 'success', 'C' => 'warning', 'D', 'E' => 'danger', default => 'gray' }),
+                    ->color(fn ($state) => match ($state) {
+                        'A', 'B' => 'success', 'C' => 'warning', 'D', 'E' => 'danger', default => 'gray'
+                    }),
                 TextColumn::make('operational_status')->label('Operasional')->badge()->formatStateUsing(fn ($state) => Asset::OPERATIONAL[$state] ?? $state)
-                    ->color(fn ($state) => match ($state) { 'serviceable' => 'success', 'degraded' => 'warning', default => 'danger' }),
+                    ->color(fn ($state) => match ($state) {
+                        'serviceable' => 'success', 'degraded' => 'warning', default => 'danger'
+                    }),
                 TextColumn::make('lifecycle_status')->label('Siklus')->badge()->formatStateUsing(fn ($state) => Asset::LIFECYCLE[$state] ?? $state)
                     ->color(fn ($state) => $state === 'active' ? 'primary' : 'gray'),
                 TextColumn::make('verification_status')->label('Verifikasi')->badge()->formatStateUsing(fn ($state) => Asset::VERIFICATION[$state] ?? $state)
-                    ->color(fn ($state) => match ($state) { 'verified' => 'success', 'discrepancy' => 'danger', default => 'warning' })->toggleable(),
-                TextColumn::make('installation_status')->label('Label')->badge()->formatStateUsing(fn ($state) => \App\Models\InstallationEvent::STATUSES[$state] ?? $state)
+                    ->color(fn ($state) => match ($state) {
+                        'verified' => 'success', 'discrepancy' => 'danger', default => 'warning'
+                    })->toggleable(),
+                TextColumn::make('installation_status')->label('Label')->badge()->formatStateUsing(fn ($state) => InstallationEvent::STATUSES[$state] ?? $state)
                     ->color(fn ($state) => $state === 'installed' ? 'success' : ($state === 'pending' ? 'gray' : 'warning'))->toggleable(),
                 TextColumn::make('criticality')->label('Kritikalitas')->formatStateUsing(fn ($state) => Asset::CRITICALITY[$state] ?? $state)->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('location_id')->label('Lokasi')->options(fn () => \App\Models\Location::options())->searchable()
-                    ->query(fn ($query, array $data) => $data['value'] ? $query->whereHas('location', fn ($l) => $l->where('id', $data['value'])->orWhere('sort_key', 'like', (\App\Models\Location::find($data['value'])?->sort_key ?? '-').'/%')) : $query),
+                SelectFilter::make('location_id')->label('Lokasi')->options(fn () => Location::options())->searchable()
+                    ->query(fn ($query, array $data) => $data['value'] ? $query->whereHas('location', fn ($l) => $l->where('id', $data['value'])->orWhere('sort_key', 'like', (Location::find($data['value'])?->sort_key ?? '-').'/%')) : $query),
                 SelectFilter::make('category_id')->label('Kategori')->relationship('category', 'name')->searchable()->preload(),
                 SelectFilter::make('department_id')->label('Departemen')->relationship('department', 'name'),
                 SelectFilter::make('condition_grade')->label('Kondisi')->options(Asset::CONDITIONS),
                 SelectFilter::make('criticality')->label('Kritikalitas')->options(Asset::CRITICALITY),
                 SelectFilter::make('operational_status')->label('Status operasional')->options(Asset::OPERATIONAL),
                 SelectFilter::make('verification_status')->label('Verifikasi')->options(Asset::VERIFICATION),
-                SelectFilter::make('installation_status')->label('Pemasangan label')->options(\App\Models\InstallationEvent::STATUSES),
-                SelectFilter::make('generation_batch_id')->label('Batch pembuatan')->options(fn () => \App\Models\GenerationBatch::latest()->pluck('number', 'id')),
+                SelectFilter::make('installation_status')->label('Pemasangan label')->options(InstallationEvent::STATUSES),
+                SelectFilter::make('generation_batch_id')->label('Batch pembuatan')->options(fn () => GenerationBatch::latest()->pluck('number', 'id')),
             ])
             ->filtersFormColumns(3)
             ->defaultSort('asset_code', 'desc')
@@ -184,7 +198,7 @@ class AssetResource extends Resource
                                     $n++;
                                 });
                             }
-                            \Filament\Notifications\Notification::make()->title($n.' aset diverifikasi')->success()->send();
+                            Notification::make()->title($n.' aset diverifikasi')->success()->send();
                         })->deselectRecordsAfterCompletion(),
                     BulkAction::make('aktifkan')->label('Aktifkan')->icon('heroicon-o-bolt')->color('success')
                         ->visible(fn () => auth()->user()?->hasPermission('asset.activate'))->requiresConfirmation()
@@ -205,12 +219,12 @@ class AssetResource extends Resource
                                 app(AssetService::class)->activate($a, auth()->user());
                                 $ok++;
                             }
-                            \Filament\Notifications\Notification::make()->title($ok.' aset diaktifkan')->body($fail ? 'Belum lengkap: '.implode('; ', array_slice($fail, 0, 8)).(count($fail) > 8 ? ' …' : '') : null)
+                            Notification::make()->title($ok.' aset diaktifkan')->body($fail ? 'Belum lengkap: '.implode('; ', array_slice($fail, 0, 8)).(count($fail) > 8 ? ' …' : '') : null)
                                 ->{$fail ? 'warning' : 'success'}()->persistent()->send();
                         })->deselectRecordsAfterCompletion(),
                     BulkAction::make('cetak')->label('Cetak label')->icon('heroicon-o-printer')
                         ->visible(fn () => auth()->user()?->hasPermission('label.print'))
-                        ->action(fn (Collection $records) => redirect(\App\Filament\Pages\CetakLabel::getUrl(['assets' => $records->pluck('id')->join(',')]))),
+                        ->action(fn (Collection $records) => redirect(CetakLabel::getUrl(['assets' => $records->pluck('id')->join(',')]))),
                 ]),
             ]);
     }
@@ -222,7 +236,7 @@ class AssetResource extends Resource
             RelationManagers\WorkOrdersRelationManager::class,
             RelationManagers\ComponentsRelationManager::class,
             RelationManagers\LabelsRelationManager::class,
-            \App\Filament\RelationManagers\AttachmentsRelationManager::class,
+            AttachmentsRelationManager::class,
         ];
     }
 
@@ -236,7 +250,7 @@ class AssetResource extends Resource
         ];
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return static::allows('asset.edit') && ! in_array($record->lifecycle_status, ['disposed'], true);
     }

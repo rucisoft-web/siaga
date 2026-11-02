@@ -4,6 +4,7 @@ namespace App\Filament\Resources\RoomTypes;
 
 use App\Filament\Concerns\HasPermissions;
 use App\Models\RoomType;
+use App\Support\CurrentProperty;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -53,7 +54,7 @@ class RoomTypeResource extends Resource
     {
         return $schema->columns(2)->components([
             TextInput::make('code')->label('Kode')->required()->maxLength(20)
-                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(\App\Support\CurrentProperty::class)->id())),
+                ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(CurrentProperty::class)->id())),
             TextInput::make('name')->label('Nama')->required(),
             TextInput::make('bed_config')->label('Konfigurasi bed')->placeholder('King / Twin'),
             Toggle::make('is_active')->label('Aktif')->default(true),

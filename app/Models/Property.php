@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
+use App\Support\Branding;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Property extends Model
 {
-    use \App\Models\Concerns\Auditable;
+    use Auditable;
 
     protected $guarded = ['id'];
 
     protected static function booted(): void
     {
-        static::saved(fn () => \App\Support\Branding::flush());
+        static::saved(fn () => Branding::flush());
     }
 
     protected function casts(): array
@@ -23,12 +26,12 @@ class Property extends Model
         ];
     }
 
-    public function departments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function departments(): HasMany
     {
         return $this->hasMany(Department::class);
     }
 
-    public function locations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function locations(): HasMany
     {
         return $this->hasMany(Location::class);
     }

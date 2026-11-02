@@ -6,6 +6,7 @@ use App\Filament\Pages\PenghapusanAset;
 use App\Filament\Pages\StockOpname;
 use App\Models\Asset;
 use App\Models\Disposal;
+use App\Models\Location;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\DisposalService;
@@ -43,7 +44,7 @@ class StockTakeDisposalTest extends TestCase
         $this->assertGreaterThanOrEqual(3, $take->items()->count());
 
         // aset 0 ditemukan di tempat via kode, aset 1 ditemukan di lokasi lain, aset 2 tidak ditemukan
-        $other = \App\Models\Location::where('id', '!=', $assets[1]->location_id)->value('id');
+        $other = Location::where('id', '!=', $assets[1]->location_id)->value('id');
         $this->assertTrue($svc->scan($take, $assets[0]->asset_code, $assets[0]->location_id, 'B', $ac)['ok']);
         $svc->scan($take, $assets[1]->asset_code, $other, null, $ac);
         $svc->mark($take, $take->items()->where('asset_id', $assets[2]->id)->first(), null, null, null, $ac, true);

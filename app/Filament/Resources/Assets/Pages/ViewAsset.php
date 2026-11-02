@@ -2,15 +2,19 @@
 
 namespace App\Filament\Resources\Assets\Pages;
 
+use App\Filament\Concerns\RunsWorkflow;
 use App\Filament\Pages\CetakLabel;
-use App\Filament\Resources\AssetTransfers\AssetTransferResource;
 use App\Filament\Resources\Assets\AssetResource;
+use App\Filament\Resources\AssetTransfers\AssetTransferResource;
 use App\Filament\Resources\ServiceRequests\ServiceRequestResource;
 use App\Filament\Support\F;
 use App\Models\Asset;
+use App\Models\WoCostLine;
 use App\Services\AssetService;
+use App\Services\DepreciationService;
 use App\Services\LabelService;
 use App\Support\Fmt;
+use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -27,7 +31,7 @@ use Filament\Schemas\Schema;
 /** Kartu aset: kode, nama, lokasi, status & tindakan yang relevan (hasil scan QR membuka halaman ini). */
 class ViewAsset extends ViewRecord
 {
-    use \App\Filament\Concerns\RunsWorkflow;
+    use RunsWorkflow;
 
     protected static string $resource = AssetResource::class;
 
@@ -43,7 +47,7 @@ class ViewAsset extends ViewRecord
         return $schema->columns(1)->components([
             View::make('filament.asset-card')->viewData(['asset' => $this->record, 'qr' => $this->record->activeLabel ? app(LabelService::class)->qrSvg($this->record->activeLabel->url(), 180) : null]),
             Section::make('Perolehan & perawatan')->columns(4)->collapsible()->collapsed()->schema([
-                TextEntry::make('ownership')->label('Kepemilikan')->formatStateUsing(fn ($state) => Asset::OWNERSHIP[$state] ?? $state)->placeholder('belum diisi'),
+                TextEntry::make('ownership')->label('Kepemilikan')->formatStateUsing(fn ($state) => Asset::ownerships()[$state] ?? $state)->placeholder('belum diisi'),
                 TextEntry::make('purchase_date')->label('Tanggal beli')->date('d M Y')->placeholder('-'),
                 TextEntry::make('in_service_date')->label('Mulai pakai')->date('d M Y')->placeholder('-'),
                 TextEntry::make('vendor.name')->label('Vendor')->placeholder('-'),
@@ -60,12 +64,12 @@ class ViewAsset extends ViewRecord
                 TextEntry::make('financial.accounting_ref')->label('Ref. akuntansi')->placeholder('-'),
                 TextEntry::make('book_value')->label('Nilai buku (akhir bulan lalu)')
                     ->state(function ($record) {
-                        $d = (new \App\Services\DepreciationService)->forAsset($record, \Carbon\CarbonImmutable::now()->subMonthNoOverflow()->endOfMonth());
+                        $d = (new DepreciationService)->forAsset($record, CarbonImmutable::now()->subMonthNoOverflow()->endOfMonth());
 
                         return $d ? Fmt::rp($d['book']).' · akumulasi '.Fmt::rp($d['accum']).' · '.$d['months'].'/'.$d['life'].' bln'.($d['fully'] ? ' (habis disusutkan)' : '') : null;
                     })->placeholder('belum ada harga perolehan')->columnSpan(2),
                 TextEntry::make('maint_cost')->label('Biaya perawatan 12 bulan')
-                    ->state(fn ($record) => Fmt::rp(\App\Models\WoCostLine::whereHas('workOrder', fn ($q) => $q->where('asset_id', $record->id))->where('created_at', '>=', now()->subYear())->sum('amount'))),
+                    ->state(fn ($record) => Fmt::rp(WoCostLine::whereHas('workOrder', fn ($q) => $q->where('asset_id', $record->id))->where('created_at', '>=', now()->subYear())->sum('amount'))),
             ]),
             Section::make('Kualitas data')->columns(4)->collapsible()->collapsed()->schema([
                 TextEntry::make('legacy_code')->label('Kode lama')->placeholder('-'),
@@ -95,7 +99,7 @@ class ViewAsset extends ViewRecord
                     TextInput::make('model')->label('Model'),
                     TextInput::make('serial_number')->label('Nomor seri'),
                     Select::make('condition_grade')->label('Kondisi')->options(Asset::CONDITIONS)->native(false),
-                    Select::make('ownership')->label('Kepemilikan')->options(Asset::OWNERSHIP)->native(false),
+                    Select::make('ownership')->label('Kepemilikan')->options(Asset::ownerships())->native(false),
                     F::user('custodian_id', 'Penanggung jawab'),
                     TextInput::make('custodian_unit')->label('atau unit penanggung jawab'),
                     Textarea::make('note')->label('Catatan (wajib bila tidak ditemukan)'),

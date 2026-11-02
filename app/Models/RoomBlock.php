@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RoomBlock extends Model
 {
@@ -26,22 +27,22 @@ class RoomBlock extends Model
         ];
     }
 
-    public function room(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'room_id');
     }
 
-    public function workOrder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
     }
 
-    public function proposer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function proposer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'proposed_by');
     }
 
-    public function confirmer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function confirmer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'fo_confirmed_by');
     }

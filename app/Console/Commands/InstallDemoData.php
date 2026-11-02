@@ -5,8 +5,13 @@ namespace App\Console\Commands;
 use App\Models\Location;
 use App\Models\Property;
 use App\Models\Role;
+use App\Models\User;
+use App\Support\Branding;
 use App\Support\DemoSets;
+use App\Support\GuestAccess;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 use function Laravel\Prompts\confirm;
 
@@ -50,11 +55,12 @@ class InstallDemoData extends Command
                 $seeder = (new $class)->setContainer(app())->setCommand($this);
                 $seeder->controls($p);
                 $seeder->pmDemo($p);
+                $seeder->assetDetails($p);
                 if (method_exists($seeder, 'legalEntities')) {
                     $seeder->legalEntities();
                 }
-                \Illuminate\Support\Facades\Auth::logout();
-                \Illuminate\Support\Carbon::setTestNow();
+                Auth::logout();
+                Carbon::setTestNow();
 
                 continue;
             }
@@ -72,15 +78,15 @@ class InstallDemoData extends Command
                 $this->components->warn('--admin hanya berlaku untuk satu data demo, mis. siaga:demo-data gpch --admin');
             } else {
                 $p = Property::where('code', DemoSets::SETS[$keys[0]]::CODE)->first();
-                $n = \App\Models\User::withoutGlobalScopes()->whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->update(['property_id' => $p->id]);
-                \App\Support\Branding::flush();
+                $n = User::withoutGlobalScopes()->whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->update(['property_id' => $p->id]);
+                Branding::flush();
                 $this->components->twoColumnDetail('Super Admin dipindah ke', $p->name.' ('.$n.' akun)');
                 $this->setEnv('ASSETCARE_PROPERTY_CODE', $p->code);
             }
         }
 
         if (! $this->option('no-guest')) {
-            \App\Support\GuestAccess::repair();
+            GuestAccess::repair();
             $this->setEnv('SIAGA_GUEST_MODE', 'true');
             $this->components->info('Mode tamu aktif: halaman depan (/) dan halaman login menampilkan tombol "Masuk sebagai tamu" dengan pilihan perusahaan demo.');
         }

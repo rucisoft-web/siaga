@@ -2,6 +2,7 @@
 
 namespace App\Filament\Concerns;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
  */
 trait HasPermissions
 {
-    protected static function user(): ?\App\Models\User
+    protected static function user(): ?User
     {
         return Auth::user();
     }

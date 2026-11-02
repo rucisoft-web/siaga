@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\SlaPolicy;
 use App\Support\CurrentProperty;
+use App\Support\Fmt;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 
@@ -50,7 +51,7 @@ class SlaService
         if ($calendar !== 'business') {
             return $start->copy()->addMinutes($minutes);
         }
-        $tz = \App\Support\Fmt::tz();
+        $tz = Fmt::tz();
         $cfg = config('assetcare.business_calendar');
         $t = CarbonImmutable::instance($start)->timezone($tz);
         $left = $minutes;
@@ -84,7 +85,7 @@ class SlaService
         if ($calendar !== 'business') {
             return (int) $from->diffInMinutes($to);
         }
-        $tz = \App\Support\Fmt::tz();
+        $tz = Fmt::tz();
         $cfg = config('assetcare.business_calendar');
         $t = CarbonImmutable::instance($from)->timezone($tz);
         $end = CarbonImmutable::instance($to)->timezone($tz);

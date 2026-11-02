@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Filament\Resources\WorkOrders\WorkOrderResource;
 use App\Models\ApprovalLimit;
 use App\Models\Asset;
 use App\Models\RoomBlock;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Models\WoCostLine;
 use App\Models\WorkOrder;
 use App\Models\WoTimeLog;
+use App\Support\Fmt;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -378,7 +380,7 @@ class WorkOrderService
 
     public function hasApprovalAuthority(User $u, float $amount, int $propertyId): bool
     {
-        $today = now()->timezone(\App\Support\Fmt::tz())->toDateString();
+        $today = now()->timezone(Fmt::tz())->toDateString();
         $q = fn ($query) => $query->withoutGlobalScopes()->where('property_id', $propertyId)->where('object_type', 'work_order')
             ->whereDate('valid_from', '<=', $today)->where(fn ($w) => $w->whereNull('valid_to')->orWhereDate('valid_to', '>=', $today))
             ->where(fn ($w) => $w->whereNull('max_amount')->orWhere('max_amount', '>=', $amount));
@@ -403,7 +405,7 @@ class WorkOrderService
 
     protected function afterAction(WorkOrder $wo, string $action, User $actor): void
     {
-        $url = \App\Filament\Resources\WorkOrders\WorkOrderResource::getUrl('view', ['record' => $wo]);
+        $url = WorkOrderResource::getUrl('view', ['record' => $wo]);
         $title = $wo->number.' · '.WorkOrder::STATUSES[$wo->status];
         match ($action) {
             'submit' => $this->notify->send($this->notify->usersWith('wo.approve')->reject(fn ($u) => $u->id === $actor->id), 'Persetujuan diperlukan: '.$wo->number, $wo->title, $url, null, 'warning'),

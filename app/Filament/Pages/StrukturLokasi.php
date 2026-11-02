@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\Assets\AssetResource;
 use App\Models\Asset;
+use App\Models\AssetCategory;
 use App\Models\Location;
 use App\Models\WorkOrder;
 use App\Support\CurrentProperty;
@@ -157,7 +158,7 @@ class StrukturLokasi extends Page
         return [
             'matrix' => $matrix,
             'nodes' => $nodes, 'roots' => $roots, 'sel' => $sel, 'selAssets' => $selAssets, 'crumbs' => $crumbs, 'selTypes' => $selTypes,
-            'filtered' => $filtered, 'categories' => \App\Models\AssetCategory::query()->orderBy('name')->pluck('name', 'id'),
+            'filtered' => $filtered, 'categories' => AssetCategory::query()->orderBy('name')->pluck('name', 'id'),
             'typeOptions' => Asset::query()->whereNotIn('lifecycle_status', ['disposed', 'lost'])->when($this->kategori, fn ($q) => $q->where('category_id', $this->kategori))
                 ->distinct()->pluck('name')->map(fn ($n) => static::typeName($n))->unique()->sort(SORT_NATURAL | SORT_FLAG_CASE)->values(),
             'whereList' => $filtered ? collect($nodes)->filter(fn ($n) => $n['own'] > 0)->sortByDesc('own')->take(12)->values() : collect(),
@@ -212,7 +213,7 @@ class StrukturLokasi extends Page
         }
         arsort($colTotal);
         $cols = array_slice(array_keys($colTotal), 0, 40);
-        $names = $byType ? array_combine($cols, $cols) : \App\Models\AssetCategory::query()->whereIn('id', $cols)->pluck('name', 'id')->all();
+        $names = $byType ? array_combine($cols, $cols) : AssetCategory::query()->whereIn('id', $cols)->pluck('name', 'id')->all();
         $rows = array_values(array_filter($rows, fn ($r) => ! empty($cells[$r])));
         $max = 1;
         foreach ($rows as $r) {

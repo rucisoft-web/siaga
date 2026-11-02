@@ -5,10 +5,11 @@ namespace App\Filament\Resources\GenerationBatches\RelationManagers;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ResultsRelationManager extends RelationManager
 {
-    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return istilah(parent::getTitle($ownerRecord, $pageClass));
     }

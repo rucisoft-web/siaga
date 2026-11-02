@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AuditLogs;
 
 use App\Filament\Concerns\HasPermissions;
 use App\Models\AuditLog;
+use App\Support\Fmt;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Placeholder;
 use Filament\Resources\Resource;
@@ -43,7 +44,7 @@ class AuditLogResource extends Resource
 
         return $schema->columns(1)->components([
             Section::make()->columns(3)->schema([
-                Placeholder::make('when')->label('Waktu')->content(fn ($record) => \App\Support\Fmt::dt($record?->created_at, 'd/m/Y H:i:s')),
+                Placeholder::make('when')->label('Waktu')->content(fn ($record) => Fmt::dt($record?->created_at, 'd/m/Y H:i:s')),
                 Placeholder::make('who')->label('Pengguna')->content(fn ($record) => $record?->user?->name ?? 'sistem'),
                 Placeholder::make('what')->label('Kejadian')->content(fn ($record) => $record?->event.' — '.class_basename((string) $record?->auditable_type).' #'.$record?->auditable_id.' '.$record?->auditable_label),
                 Placeholder::make('reason')->label('Alasan')->content(fn ($record) => $record?->reason ?: '—'),
@@ -62,7 +63,9 @@ class AuditLogResource extends Resource
             ->columns([
                 TextColumn::make('created_at')->label('Waktu')->dateTime('d/m/Y H:i')->sortable(),
                 TextColumn::make('user.name')->label('Pengguna')->placeholder('sistem')->searchable(),
-                TextColumn::make('event')->label('Kejadian')->badge()->color(fn ($state) => match ($state) { 'dibuat' => 'success', 'dihapus' => 'danger', default => 'warning' }),
+                TextColumn::make('event')->label('Kejadian')->badge()->color(fn ($state) => match ($state) {
+                    'dibuat' => 'success', 'dihapus' => 'danger', default => 'warning'
+                }),
                 TextColumn::make('auditable_type')->label('Data')->formatStateUsing(fn ($state) => class_basename($state)),
                 TextColumn::make('auditable_label')->label('Label')->limit(40)->searchable(),
                 TextColumn::make('reason')->label('Alasan')->limit(40)->placeholder('—'),

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Asset;
 use App\Models\AssetLabel;
 use App\Models\AssetQuantityGroup;
+use App\Support\Branding;
 
 /** Validasi host & format payload QR. QR asing tidak dibuka otomatis. */
 class QrResolver
@@ -18,7 +19,7 @@ class QrResolver
 
     /**
      * @return array{type:string, label?:AssetLabel, asset?:Asset, group?:AssetQuantityGroup, message?:string}
-     *   type: label | asset | group | foreign | invalid | revoked | unknown
+     *                                                                                                         type: label | asset | group | foreign | invalid | revoked | unknown
      */
     public function resolve(string $input): array
     {
@@ -30,7 +31,7 @@ class QrResolver
             $host = parse_url($input, PHP_URL_HOST);
             $path = (string) parse_url($input, PHP_URL_PATH);
             if (! in_array($host, $this->allowedHosts(), true)) {
-                return ['type' => 'foreign', 'message' => 'QR bukan label '.\App\Support\Branding::appName().' ('.$host.'). Tidak dibuka.'];
+                return ['type' => 'foreign', 'message' => 'QR bukan label '.Branding::appName().' ('.$host.'). Tidak dibuka.'];
             }
             if (! preg_match('#/q/([A-Za-z0-9_-]{20,64})$#', $path, $m)) {
                 return ['type' => 'invalid', 'message' => 'Format QR tidak dikenal.'];
@@ -58,7 +59,7 @@ class QrResolver
             return $this->fromToken($input);
         }
 
-        return ['type' => 'invalid', 'message' => 'Masukkan URL label, atau kode aset seperti '.\App\Support\Branding::code().'-AST-000001.'];
+        return ['type' => 'invalid', 'message' => 'Masukkan URL label, atau kode aset seperti '.Branding::code().'-AST-000001.'];
     }
 
     public function fromToken(string $token): array

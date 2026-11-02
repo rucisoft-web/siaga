@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Filament\Pages\Panduan;
+use App\Filament\Pages\PanduanImplementasi;
 use App\Filament\Pages\PendataanAset;
 use App\Models\User;
 use App\Support\Help;
@@ -46,7 +47,7 @@ class HelpTest extends TestCase
     {
         $u = User::where('email', DemoSeeder::email('teknisi1'))->first();
         $u->forceFill(['must_change_password' => false])->save();
-        $r = $this->actingAs($u)->get(\App\Filament\Pages\PanduanImplementasi::getUrl())->assertOk();
+        $r = $this->actingAs($u)->get(PanduanImplementasi::getUrl())->assertOk();
         foreach (['Lingkup kerja', 'Jadwal', 'Sumber daya yang perlu disiapkan', 'Cek kualitas pendataan aset', 'Struktur organisasi pengelola aset', 'Komunikasi', 'Daftar risiko dan penanggulangan', 'Pengadaan yang diperlukan'] as $s) {
             $r->assertSee($s);
         }

@@ -5,11 +5,12 @@ namespace App\Services;
 use App\Models\Asset;
 use App\Models\AssetLabel;
 use App\Models\AssetQuantityGroup;
-use App\Models\LabelPrintBatch;
 use App\Models\Attachment;
+use App\Models\LabelPrintBatch;
 use App\Models\Location;
 use App\Models\RoomSurvey;
 use App\Models\User;
+use App\Support\Fmt;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +86,7 @@ class SurveyService
 
     /**
      * Pindai label di kamar.
+     *
      * @return array{level:string, message:string, asset_id?:int, blank_label_id?:int}
      */
     public function scan(Location $room, string $input, User $user, ?int $forAssetId = null): array
@@ -308,7 +310,7 @@ class SurveyService
             ->groupBy('surveyor_id')->map(fn ($g) => [
                 'name' => $g->first()->surveyor?->name ?? '-',
                 'rooms' => $g->count(),
-                'today' => $g->filter(fn ($s) => $s->finished_at?->copy()->timezone(\App\Support\Fmt::tz())->isToday())->count(),
+                'today' => $g->filter(fn ($s) => $s->finished_at?->copy()->timezone(Fmt::tz())->isToday())->count(),
                 'missing' => (int) $g->sum('missing_count'),
                 'extra' => (int) $g->sum('extra_count'),
                 'last' => $g->max('finished_at'),

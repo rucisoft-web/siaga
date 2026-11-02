@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ScanLog extends Model
 {
@@ -17,17 +18,17 @@ class ScanLog extends Model
         ];
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function label(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function label(): BelongsTo
     {
         return $this->belongsTo(AssetLabel::class, 'asset_label_id');
     }
 
-    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }

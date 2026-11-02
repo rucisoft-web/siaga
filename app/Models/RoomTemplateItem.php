@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RoomTemplateItem extends Model
 {
@@ -11,17 +12,17 @@ class RoomTemplateItem extends Model
 
     protected $guarded = ['id'];
 
-    public function template(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function template(): BelongsTo
     {
         return $this->belongsTo(RoomAssetTemplate::class, 'template_id');
     }
 
-    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(AssetCategory::class, 'category_id');
     }
 
-    public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'default_department_id');
     }

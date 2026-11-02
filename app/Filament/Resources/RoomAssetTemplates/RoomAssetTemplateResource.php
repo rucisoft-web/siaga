@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\RoomAssetTemplate;
 use App\Models\RoomType;
 use App\Services\RoomTemplateService;
+use App\Services\WorkflowException;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
@@ -23,6 +24,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -139,12 +141,12 @@ class RoomAssetTemplateResource extends Resource
                 ->modalDescription('Setelah terbit, template terkunci. Pemeriksa harus berbeda dari penyusun. Versi published sebelumnya dengan kode sama akan diarsipkan.')
                 ->action(fn (RoomAssetTemplate $record) => F::attempt(function () use ($record, $u) {
                     if ((int) $record->prepared_by === (int) $u()->id) {
-                        throw \App\Services\WorkflowException::forbidden('Pemeriksa template harus berbeda dari penyusun.');
+                        throw WorkflowException::forbidden('Pemeriksa template harus berbeda dari penyusun.');
                     }
                     if ($record->items()->doesntExist()) {
-                        throw \App\Services\WorkflowException::invalid('Template belum memiliki item.');
+                        throw WorkflowException::invalid('Template belum memiliki item.');
                     }
-                    \Illuminate\Support\Facades\DB::transaction(function () use ($record, $u) {
+                    DB::transaction(function () use ($record, $u) {
                         RoomAssetTemplate::where('code', $record->code)->where('status', 'published')->whereKeyNot($record->id)->update(['status' => 'archived']);
                         $record->update(['status' => 'published', 'reviewed_by' => $u()->id, 'published_at' => now()]);
                     });

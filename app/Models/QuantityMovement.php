@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuantityMovement extends Model
 {
@@ -19,12 +20,12 @@ class QuantityMovement extends Model
         ];
     }
 
-    public function group(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function group(): BelongsTo
     {
         return $this->belongsTo(AssetQuantityGroup::class, 'quantity_group_id');
     }
 
-    public function actor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
     }

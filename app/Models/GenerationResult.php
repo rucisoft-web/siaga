@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GenerationResult extends Model
 {
@@ -15,12 +16,12 @@ class GenerationResult extends Model
         ];
     }
 
-    public function batch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function batch(): BelongsTo
     {
         return $this->belongsTo(GenerationBatch::class, 'batch_id');
     }
 
-    public function room(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Location::class, 'room_id');
     }

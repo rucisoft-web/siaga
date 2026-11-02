@@ -8,6 +8,7 @@ use App\Models\Property;
 use App\Models\User;
 use App\Support\Branding;
 use App\Support\Sequence;
+use Database\Seeders\DemoSeeder;
 use Database\Seeders\ReferenceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -50,7 +51,7 @@ class HotelProfileTest extends TestCase
         $this->artisan('siaga:demo', ['--force' => true])->assertSuccessful();
         $this->assertSame(10, Asset::withoutGlobalScopes()->count());
         $this->assertStringStartsWith('HKM-AST-', Asset::withoutGlobalScopes()->value('asset_code'));
-        $this->assertTrue(User::where('email', \Database\Seeders\DemoSeeder::email('gm'))->exists());
+        $this->assertTrue(User::where('email', DemoSeeder::email('gm'))->exists());
     }
 
     public function test_demo_requires_installation_first(): void
@@ -99,7 +100,7 @@ class HotelProfileTest extends TestCase
         $this->actingAs($this->admin());
         Livewire::test(ProfilHotel::class)->set('data.primary_color', 'red;}body{')->call('save')->assertHasErrors(['data.primary_color']);
 
-        $tech = User::where('email', \Database\Seeders\DemoSeeder::email('teknisi1'))->first();
+        $tech = User::where('email', DemoSeeder::email('teknisi1'))->first();
         $tech->forceFill(['must_change_password' => false])->save();
         $this->actingAs($tech);
         $this->get(ProfilHotel::getUrl())->assertForbidden();

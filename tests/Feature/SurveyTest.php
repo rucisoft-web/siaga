@@ -7,7 +7,10 @@ use App\Filament\Pages\StokLabel;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\AssetLabel;
+use App\Models\AssetQuantityGroup;
 use App\Models\Location;
+use App\Models\Property;
+use App\Models\Role;
 use App\Models\RoomAssetTemplate;
 use App\Models\RoomSurvey;
 use App\Models\User;
@@ -32,8 +35,8 @@ class SurveyTest extends TestCase
 
     protected function surveyor(): User
     {
-        $u = User::factory()->create(['email' => 'petugas@hotel.test', 'must_change_password' => false, 'is_active' => true, 'property_id' => \App\Models\Property::first()->id]);
-        $u->roles()->attach(\App\Models\Role::where('slug', 'surveyor')->value('id'), ['property_id' => $u->property_id]);
+        $u = User::factory()->create(['email' => 'petugas@hotel.test', 'must_change_password' => false, 'is_active' => true, 'property_id' => Property::first()->id]);
+        $u->roles()->attach(Role::where('slug', 'surveyor')->value('id'), ['property_id' => $u->property_id]);
 
         return $u->fresh();
     }
@@ -197,14 +200,14 @@ class SurveyTest extends TestCase
 
         // batch pendataan petugas lain tidak bisa dibuka
         $other = User::factory()->create(['email' => 'p2@hotel.test', 'must_change_password' => false, 'is_active' => true, 'property_id' => $room->property_id]);
-        $other->roles()->attach(\App\Models\Role::where('slug', 'surveyor')->value('id'), ['property_id' => $room->property_id]);
+        $other->roles()->attach(Role::where('slug', 'surveyor')->value('id'), ['property_id' => $room->property_id]);
         $this->flushSession();
         $this->actingAs($other->fresh())->get(route('labels.print', $b))->assertForbidden();
 
         // item hitungan wajib dihitung sebelum selesai
         $this->flushSession();
         $this->actingAs($u);
-        $g = \App\Models\AssetQuantityGroup::create(['location_id' => $room->id, 'category_id' => $first->category_id, 'name' => 'Bantal · 301', 'unit' => 'unit', 'expected_qty' => 4, 'status' => 'draft']);
+        $g = AssetQuantityGroup::create(['location_id' => $room->id, 'category_id' => $first->category_id, 'name' => 'Bantal · 301', 'unit' => 'unit', 'expected_qty' => 4, 'status' => 'draft']);
         foreach ($svc->items($room) as $a) {
             $svc->record($a, true, 'A', [], $u);
         }

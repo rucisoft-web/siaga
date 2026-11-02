@@ -5,7 +5,7 @@ namespace App\Filament\Resources\LabelPrintBatches;
 use App\Filament\Concerns\HasPermissions;
 use App\Filament\Support\F;
 use App\Models\LabelPrintBatch;
-use App\Services\LabelService;
+use App\Support\Fmt;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
@@ -53,7 +53,7 @@ class LabelPrintBatchResource extends Resource
                 TextEntry::make('generated_at')->label('Dibuat')->dateTime('d M Y H:i'),
                 TextEntry::make('downloaded_at')->label('Diunduh')->dateTime('d M Y H:i')->placeholder('belum'),
                 TextEntry::make('printed_confirmed_at')->label('Cetak dikonfirmasi')->dateTime('d M Y H:i')->placeholder('belum')
-                    ->formatStateUsing(fn ($state, $record) => \App\Support\Fmt::dt($state).($record->printConfirmer ? ' · '.$record->printConfirmer->name : '')),
+                    ->formatStateUsing(fn ($state, $record) => Fmt::dt($state).($record->printConfirmer ? ' · '.$record->printConfirmer->name : '')),
             ]),
         ]);
     }

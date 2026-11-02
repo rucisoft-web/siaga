@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\RoomType;
 use App\Models\Location;
+use App\Models\RoomType;
 
 /**
  * DATA DEMO "Hermina Group" — SATU perusahaan dengan DUA lokasi rumah sakit: RS Hermina Kemayoran & RS Hermina Bekasi.

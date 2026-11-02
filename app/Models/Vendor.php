@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToProperty;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Vendor extends Model
 {
@@ -19,7 +20,7 @@ class Vendor extends Model
         ];
     }
 
-    public function assets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function assets(): HasMany
     {
         return $this->hasMany(Asset::class);
     }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RoomAssetTemplates\Pages;
 
 use App\Filament\Resources\RoomAssetTemplates\RoomAssetTemplateResource;
+use App\Models\RoomAssetTemplate;
 use Filament\Resources\Pages\EditRecord;
 
 class EditRoomAssetTemplate extends EditRecord
@@ -11,7 +12,7 @@ class EditRoomAssetTemplate extends EditRecord
 
     public function getTitle(): string
     {
-        return $this->record->code.' v'.$this->record->version.' ('.\App\Models\RoomAssetTemplate::STATUSES[$this->record->status].')';
+        return $this->record->code.' v'.$this->record->version.' ('.RoomAssetTemplate::STATUSES[$this->record->status].')';
     }
 
     protected function getHeaderActions(): array

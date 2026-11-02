@@ -6,6 +6,8 @@ use App\Models\Permission;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\Fmt;
+use App\Support\GuestAccess;
 use App\Support\PermissionCatalog;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +31,7 @@ class Doctor extends Command
         }
         $add('APP_KEY terisi', filled(config('app.key')), 'php artisan key:generate');
         $add('APP_DEBUG mati di produksi', ! (app()->isProduction() && config('app.debug')), 'APP_ENV='.app()->environment().', APP_DEBUG='.(config('app.debug') ? 'true' : 'false'));
-        $add('Waktu tersimpan UTC', config('app.timezone') === 'UTC', config('app.timezone').' (tampilan: '.\App\Support\Fmt::tz().')');
+        $add('Waktu tersimpan UTC', config('app.timezone') === 'UTC', config('app.timezone').' (tampilan: '.Fmt::tz().')');
         $add('URL QR', filled(config('assetcare.qr_base_url')), config('assetcare.qr_base_url').' — URL ini tercetak permanen di label');
         try {
             DB::connection()->getPdo();
@@ -52,10 +54,10 @@ class Doctor extends Command
         $add('Super Admin tersedia', User::whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->exists(), 'php artisan siaga:create-admin');
         $noRole = User::where('is_active', true)->whereDoesntHave('roles')->pluck('email');
         $add('Pengguna aktif punya peran', $noRole->isEmpty(), $noRole->join(', '));
-        $guest = \App\Support\GuestAccess::enabled();
+        $guest = GuestAccess::enabled();
         $add('Mode tamu (SIAGA_GUEST_MODE)', true, ($guest ? 'aktif' : 'mati').(app()->configurationIsCached() ? ' · konfigurasi di-cache: setelah ubah .env jalankan php artisan config:cache' : ''));
         if ($guest) {
-            $ds = \App\Support\GuestAccess::datasets();
+            $ds = GuestAccess::datasets();
             $add('Data demo untuk tamu', $ds->isNotEmpty(), $ds->isNotEmpty() ? $ds->map(fn ($x) => $x['property']->code)->join(', ') : 'belum ada → php artisan siaga:demo-data gpch --admin');
         }
         $add('Jadwal (cron) untuk SLA', true, '* * * * * php artisan schedule:run  (Laragon: jalankan "php artisan schedule:work")');

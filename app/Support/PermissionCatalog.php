@@ -2,6 +2,9 @@
 
 namespace App\Support;
 
+use App\Models\Permission;
+use App\Models\Role;
+
 /**
  * Katalog izin & peran Asset Care (spesifikasi bagian 3). Deny by default:
  * setiap layar & aksi memeriksa izin; harga/nilai buku hanya untuk asset.view_financial.
@@ -81,11 +84,11 @@ class PermissionCatalog
     public static function sync(): void
     {
         foreach (static::PERMISSIONS as $slug => [$name, $group]) {
-            \App\Models\Permission::updateOrCreate(['slug' => $slug], ['name' => $name, 'group' => $group]);
+            Permission::updateOrCreate(['slug' => $slug], ['name' => $name, 'group' => $group]);
         }
-        $all = \App\Models\Permission::pluck('id', 'slug');
+        $all = Permission::pluck('id', 'slug');
         foreach (static::ROLES as $slug => [$name, $desc, $perms]) {
-            $role = \App\Models\Role::updateOrCreate(['slug' => $slug], ['name' => $name, 'description' => $desc]);
+            $role = Role::updateOrCreate(['slug' => $slug], ['name' => $name, 'description' => $desc]);
             $role->permissions()->sync($perms === ['*'] ? $all->values() : $all->only($perms)->values());
         }
     }

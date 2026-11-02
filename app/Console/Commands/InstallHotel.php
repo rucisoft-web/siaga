@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Asset;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\User;
@@ -72,7 +73,7 @@ class InstallHotel extends Command
         $existing = Property::orderBy('id')->first();
         config(['assetcare.skip_default_admin' => true, 'assetcare.property_code' => $code, 'assetcare.hotel_name' => $hotel, 'assetcare.display_timezone' => $tz]);
         if ($existing && $existing->code !== $code) {
-            if (\App\Models\Asset::withoutGlobalScopes()->where('property_id', $existing->id)->exists()) {
+            if (Asset::withoutGlobalScopes()->where('property_id', $existing->id)->exists()) {
                 $this->error("Sudah ada aset dengan prefiks {$existing->code}. Kode properti tidak bisa diganti; jalankan dengan --code={$existing->code} atau --fresh.");
 
                 return self::FAILURE;
@@ -97,7 +98,6 @@ class InstallHotel extends Command
 
             return true;
         });
-
 
         $this->newLine();
         $this->components->twoColumnDetail('Hotel', $hotel);

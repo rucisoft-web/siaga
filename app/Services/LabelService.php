@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Asset;
 use App\Models\AssetLabel;
 use App\Models\InstallationEvent;
 use App\Models\LabelPrintBatch;
 use App\Models\LabelPrintItem;
 use App\Models\Location;
 use App\Models\User;
+use App\Support\Branding;
 use App\Support\Sequence;
 use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Renderer\GDLibRenderer;
@@ -246,7 +248,7 @@ class LabelService
         if ($count < 1 || $count > 2000) {
             throw WorkflowException::invalid('Jumlah label stok 1–2000 per batch.');
         }
-        $pid = $user->property_id ?? \App\Support\Branding::property()?->id;
+        $pid = $user->property_id ?? Branding::property()?->id;
 
         return DB::transaction(function () use ($count, $profileKey, $startCell, $user, $pid) {
             $labels = collect(range(1, $count))->map(fn () => AssetLabel::issueBlank($pid));
@@ -259,7 +261,7 @@ class LabelService
      * Hubungkan label stok ke aset. Label lama aset yang belum pernah dicetak/dipasang otomatis dinonaktifkan;
      * label lama yang sudah tercetak/terpasang tidak ditimpa (pakai rotasi bila memang diganti).
      */
-    public function bindBlank(AssetLabel $blank, \App\Models\Asset $asset, User $user): AssetLabel
+    public function bindBlank(AssetLabel $blank, Asset $asset, User $user): AssetLabel
     {
         if (! $user->hasPermission('survey.run') && ! $user->hasPermission('label.install')) {
             throw WorkflowException::forbidden();
@@ -297,7 +299,7 @@ class LabelService
     }
 
     /** Mutasi: tulisan lokasi pada label terakhir tidak sesuai → peringatan needs_relabel. */
-    public function flagRelabelIfLocationChanged(\App\Models\Asset $asset, User $user): bool
+    public function flagRelabelIfLocationChanged(Asset $asset, User $user): bool
     {
         $label = $asset->activeLabel;
         $last = $label?->printItems()->latest('id')->first();

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Support;
 
+use App\Models\Asset;
 use App\Models\Location;
+use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Services\WorkflowException;
 use App\Support\Fmt;
@@ -33,13 +35,13 @@ class F
     public static function asset(string $name = 'asset_id', string $label = 'Aset', ?\Closure $scope = null): Select
     {
         return Select::make($name)->label($label)->native(false)->searchable()
-            ->getSearchResultsUsing(fn (string $search) => \App\Models\Asset::query()
+            ->getSearchResultsUsing(fn (string $search) => Asset::query()
                 ->when($scope, $scope)
                 ->where(fn ($q) => $q->where('asset_code', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%")
                     ->orWhere('serial_number', 'like', "%{$search}%")->orWhereHas('location', fn ($l) => $l->where('full_path', 'like', "%{$search}%")))
                 ->with('location')->limit(40)->get()
                 ->mapWithKeys(fn ($a) => [$a->id => $a->asset_code.' · '.$a->name.($a->location ? ' · '.$a->location->labelText() : '')])->all())
-            ->getOptionLabelUsing(fn ($value) => ($a = \App\Models\Asset::with('location')->find($value)) ? $a->asset_code.' · '.$a->name.($a->location ? ' · '.$a->location->labelText() : '') : null);
+            ->getOptionLabelUsing(fn ($value) => ($a = Asset::with('location')->find($value)) ? $a->asset_code.' · '.$a->name.($a->location ? ' · '.$a->location->labelText() : '') : null);
     }
 
     public static function money(string $name, string $label): TextInput
@@ -69,7 +71,7 @@ class F
     public static function priorityColumn(string $name = 'priority'): TextColumn
     {
         return TextColumn::make($name)->label('Prioritas')->badge()->sortable()
-            ->color(fn ($state) => \App\Models\ServiceRequest::PRIORITY_COLORS[$state] ?? 'gray')
+            ->color(fn ($state) => ServiceRequest::PRIORITY_COLORS[$state] ?? 'gray')
             ->icon(fn ($state) => $state === 'P1' ? 'heroicon-m-exclamation-triangle' : null);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Filament\Pages\JadwalPm;
+use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Resources\WorkOrders\WorkOrderResource;
 use App\Models\Asset;
 use App\Models\PmSchedule;
@@ -145,7 +146,7 @@ class PmService
                 }
                 $stage = $r['days'] <= 7 ? 7 : 30;
                 $url = $r['kind'] === 'Garansi aset'
-                    ? \App\Filament\Resources\Assets\AssetResource::getUrl('view', ['record' => $r['id']], panel: 'admin')
+                    ? AssetResource::getUrl('view', ['record' => $r['id']], panel: 'admin')
                     : JadwalPm::getUrl(panel: 'admin');
                 $sent += (int) $this->notify->send($to, $r['kind'].' berakhir '.($r['days'] === 0 ? 'hari ini' : 'dalam '.$r['days'].' hari'),
                     $r['ref'].' '.$r['name'].' · s.d. '.$r['until']->translatedFormat('d M Y').'. Ajukan klaim / perpanjangan sebelum berakhir.',

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ServiceRequests\Pages;
 
+use App\Filament\Concerns\RunsWorkflow;
 use App\Filament\Resources\Assets\AssetResource;
 use App\Filament\Resources\ServiceRequests\ServiceRequestResource;
 use App\Filament\Resources\WorkOrders\WorkOrderResource;
@@ -21,10 +22,11 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class ViewServiceRequest extends ViewRecord
 {
-    use \App\Filament\Concerns\RunsWorkflow;
+    use RunsWorkflow;
 
     protected static string $resource = ServiceRequestResource::class;
 
@@ -79,7 +81,7 @@ class ViewServiceRequest extends ViewRecord
                 ->action(fn () => $this->run(fn () => $svc->acknowledge($sr, $u), 'Laporan diakui; waktu respons tercatat')),
             Action::make('buat_wo')->label('Buat work order')->icon('heroicon-o-wrench-screwdriver')->color('primary')
                 ->visible($canTriage)
-                ->fillForm(fn () => ['title' => \Illuminate\Support\Str::limit($sr->symptom, 120), 'priority' => $sr->priority, 'asset_id' => $sr->asset_id, 'location_id' => $sr->location_id])
+                ->fillForm(fn () => ['title' => Str::limit($sr->symptom, 120), 'priority' => $sr->priority, 'asset_id' => $sr->asset_id, 'location_id' => $sr->location_id])
                 ->schema([
                     TextInput::make('title')->label('Judul pekerjaan')->required()->maxLength(160),
                     Select::make('priority')->label('Prioritas')->options(ServiceRequest::PRIORITIES)->required()->native(false),
@@ -89,7 +91,7 @@ class ViewServiceRequest extends ViewRecord
                     Select::make('also')->label('Gabungkan laporan sejenis (opsional)')->multiple()->native(false)
                         ->options(fn () => ServiceRequest::whereIn('status', ['submitted', 'triaged'])->whereKeyNot($sr->id)
                             ->where(fn ($q) => $q->where('location_id', $sr->location_id)->orWhere('asset_id', $sr->asset_id))
-                            ->get()->mapWithKeys(fn ($r) => [$r->id => $r->number.' · '.\Illuminate\Support\Str::limit($r->symptom, 50)])),
+                            ->get()->mapWithKeys(fn ($r) => [$r->id => $r->number.' · '.Str::limit($r->symptom, 50)])),
                     F::money('estimated_cost', 'Estimasi biaya'),
                     Toggle::make('needs_vendor')->label('Perlu vendor'),
                 ])
@@ -121,14 +123,14 @@ class ViewServiceRequest extends ViewRecord
                         Select::make('work_order_id')->label('Work order terbuka')->required()->searchable()->native(false)
                             ->options(fn () => WorkOrder::whereIn('status', WorkOrder::OPEN)
                                 ->orderByRaw('CASE WHEN asset_id = ? OR location_id = ? THEN 0 ELSE 1 END', [(int) $sr->asset_id, (int) $sr->location_id])
-                                ->latest()->limit(100)->get()->mapWithKeys(fn ($w) => [$w->id => $w->number.' · '.\Illuminate\Support\Str::limit($w->title, 60)])),
+                                ->latest()->limit(100)->get()->mapWithKeys(fn ($w) => [$w->id => $w->number.' · '.Str::limit($w->title, 60)])),
                     ])
                     ->action(fn (array $data) => $this->run(fn () => $svc->link($sr, WorkOrder::findOrFail($data['work_order_id']), $u), 'Laporan ditautkan; pelapor ikut menerima pembaruan')),
                 Action::make('duplikat')->label('Tandai duplikat')->icon('heroicon-o-document-duplicate')
                     ->visible($canTriage)
                     ->schema([
                         Select::make('duplicate_of')->label('Duplikat dari laporan')->required()->searchable()->native(false)
-                            ->options(fn () => ServiceRequest::whereKeyNot($sr->id)->latest('received_at')->limit(100)->get()->mapWithKeys(fn ($r) => [$r->id => $r->number.' · '.\Illuminate\Support\Str::limit($r->symptom, 50)])),
+                            ->options(fn () => ServiceRequest::whereKeyNot($sr->id)->latest('received_at')->limit(100)->get()->mapWithKeys(fn ($r) => [$r->id => $r->number.' · '.Str::limit($r->symptom, 50)])),
                         Textarea::make('reason')->label('Alasan')->required()->default('Laporan sama dengan tiket yang sudah ada'),
                     ])
                     ->action(fn (array $data) => $this->run(fn () => $svc->reject($sr, $data['reason'], $u, (int) $data['duplicate_of']), 'Ditandai duplikat')),

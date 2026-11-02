@@ -10,6 +10,7 @@ use App\Models\ServiceRequest;
 use App\Models\User;
 use App\Models\WoCostLine;
 use App\Models\WorkOrder;
+use App\Support\Fmt;
 use Carbon\CarbonInterface;
 
 /**
@@ -22,7 +23,7 @@ class DashboardService
 
     public function period(int $days = 30): array
     {
-        $tz = \App\Support\Fmt::tz();
+        $tz = Fmt::tz();
         $to = now();
         $from = now()->timezone($tz)->subDays($days - 1)->startOfDay()->utc();
 

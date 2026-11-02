@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Filament\Resources\ServiceRequests\ServiceRequestResource;
 use App\Models\Asset;
 use App\Models\ServiceRequest;
 use App\Models\StatusEvent;
 use App\Models\User;
 use App\Models\WorkOrder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /** Alur laporan: submitted → triaged → linked_to_work_order → resolved → closed; rejected/duplicate dengan alasan. */
 class ServiceRequestService
@@ -59,8 +61,8 @@ class ServiceRequestService
             DB::afterCommit(fn () => $this->notify->send(
                 $this->notify->usersWith('request.triage'),
                 $sr->number.' · '.$priority.' · '.ServiceRequest::CATEGORIES[$sr->category],
-                \Illuminate\Support\Str::limit($sr->symptom, 120).' — '.($sr->location?->full_path ?? '-'),
-                \App\Filament\Resources\ServiceRequests\ServiceRequestResource::getUrl('view', ['record' => $sr]),
+                Str::limit($sr->symptom, 120).' — '.($sr->location?->full_path ?? '-'),
+                ServiceRequestResource::getUrl('view', ['record' => $sr]),
                 'sr-new-'.$sr->id,
                 $priority === 'P1' ? 'danger' : ($priority === 'P2' ? 'warning' : 'info'),
             ));
@@ -142,7 +144,7 @@ class ServiceRequestService
             $targets = $this->sla->targets($priority, $first->received_at);
             $wo = WorkOrder::create([
                 'type' => $priority === 'P1' ? 'emergency' : ($data['type'] ?? 'corrective'),
-                'title' => $data['title'] ?? \Illuminate\Support\Str::limit($first->symptom, 120),
+                'title' => $data['title'] ?? Str::limit($first->symptom, 120),
                 'description' => $data['description'] ?? $requests->map(fn ($r) => $r->number.': '.$r->symptom)->join("\n"),
                 'asset_id' => $data['asset_id'] ?? $first->asset_id,
                 'location_id' => $data['location_id'] ?? $first->location_id,

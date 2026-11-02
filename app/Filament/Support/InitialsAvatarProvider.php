@@ -2,6 +2,7 @@
 
 namespace App\Filament\Support;
 
+use App\Support\Branding;
 use Filament\AvatarProviders\Contracts\AvatarProvider;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,7 @@ class InitialsAvatarProvider implements AvatarProvider
     {
         $name = (string) ($record->name ?? '?');
         $initials = collect(preg_split('/\s+/', trim(preg_replace('/^(Bapak|Ibu)\s+/i', '', $name))))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->join('');
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="'.\App\Support\Branding::primary().'"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="600" fill="#FFFFFF">'.e($initials ?: '?').'</text></svg>';
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="'.Branding::primary().'"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="600" fill="#FFFFFF">'.e($initials ?: '?').'</text></svg>';
 
         return 'data:image/svg+xml;base64,'.base64_encode($svg);
     }

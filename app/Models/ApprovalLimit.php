@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\Auditable;
 use App\Models\Concerns\BelongsToProperty;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ApprovalLimit extends Model
 {
@@ -21,12 +22,12 @@ class ApprovalLimit extends Model
         ];
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function delegate(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function delegate(): BelongsTo
     {
         return $this->belongsTo(User::class, 'delegate_user_id');
     }

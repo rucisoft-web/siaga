@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\SlaPolicies;
 
 use App\Filament\Concerns\HasPermissions;
+use App\Models\ServiceRequest;
 use App\Models\SlaPolicy;
+use App\Support\Branding;
 use App\Support\Fmt;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -55,14 +57,14 @@ class SlaPolicyResource extends Resource
         $days = implode(', ', array_map(fn ($d) => ['', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'][$d], config('assetcare.business_calendar.days')));
 
         return $table->columns([
-            TextColumn::make('priority')->label('Level')->badge()->color(fn ($state) => \App\Models\ServiceRequest::PRIORITY_COLORS[$state] ?? 'gray'),
+            TextColumn::make('priority')->label('Level')->badge()->color(fn ($state) => ServiceRequest::PRIORITY_COLORS[$state] ?? 'gray'),
             TextColumn::make('name')->label('Nama'),
             TextColumn::make('example')->label('Contoh dampak')->wrap(),
             TextColumn::make('response_minutes')->label('Respons')->formatStateUsing(fn ($state) => Fmt::minutes($state)),
             TextColumn::make('recovery_minutes')->label('Pemulihan')->formatStateUsing(fn ($state) => $state ? Fmt::minutes($state) : 'per kasus')->placeholder('per kasus'),
             TextColumn::make('calendar')->label('Kalender')->formatStateUsing(fn ($state) => $state === 'business' ? 'Kalender kerja' : '24 jam'),
         ])->defaultSort('priority')->paginated(false)->recordActions([EditAction::make()])
-            ->description('Usulan konfigurasi awal — sahkan bersama GM & Engineering. Kalender kerja: '.$days.' '.config('assetcare.business_calendar.start').'–'.config('assetcare.business_calendar.end').' '.\App\Support\Branding::timezoneLabel().'.');
+            ->description('Usulan konfigurasi awal — sahkan bersama GM & Engineering. Kalender kerja: '.$days.' '.config('assetcare.business_calendar.start').'–'.config('assetcare.business_calendar.end').' '.Branding::timezoneLabel().'.');
     }
 
     public static function getPages(): array

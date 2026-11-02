@@ -133,6 +133,7 @@ class MasterImportService
 
     /**
      * Tambah kamar dari daftar (Nomor kamar, Jenis kamar, Gedung, Lantai) tanpa workbook — dipakai data demo.
+     *
      * @param array<int, array{nomor kamar:string, jenis kamar:string, gedung:string, lantai:string}> $rows
      */
     public function addRooms(array $rows): int

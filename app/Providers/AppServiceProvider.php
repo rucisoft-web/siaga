@@ -4,11 +4,16 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Support\CurrentProperty;
+use App\Support\Fmt;
 use App\Support\PermissionCatalog;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentTimezone;
+use Filament\Tables\Table;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Event;
@@ -28,10 +33,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Timestamp tersimpan UTC; tampilan & input memakai zona waktu hotel (Pengaturan › Profil hotel)
-        \Filament\Facades\Filament::serving(fn () => FilamentTimezone::set(\App\Support\Fmt::tz()));
-        \Filament\Forms\Components\DatePicker::configureUsing(fn ($c) => $c->native(false)->displayFormat('d/m/Y'));
-        \Filament\Forms\Components\DateTimePicker::configureUsing(fn ($c) => $c->native(false)->displayFormat('d/m/Y H:i')->seconds(false));
-        \Filament\Tables\Table::configureUsing(fn ($t) => $t->defaultPaginationPageOption(25)->striped());
+        Filament::serving(fn () => FilamentTimezone::set(Fmt::tz()));
+        DatePicker::configureUsing(fn ($c) => $c->native(false)->displayFormat('d/m/Y'));
+        DateTimePicker::configureUsing(fn ($c) => $c->native(false)->displayFormat('d/m/Y H:i')->seconds(false));
+        Table::configureUsing(fn ($t) => $t->defaultPaginationPageOption(25)->striped());
 
         FilamentAsset::register([
             Css::make('siaga', asset('css/assetcare.css').'?v='.@filemtime(public_path('css/assetcare.css'))),

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\PermissionCatalog;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -47,7 +48,7 @@ return new class extends Migration
             $t->date('contract_until')->nullable()->after('contract_ref');
         });
 
-        \App\Support\PermissionCatalog::sync();
+        PermissionCatalog::sync();
     }
 
     public function down(): void

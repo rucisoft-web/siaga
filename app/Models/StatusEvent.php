@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class StatusEvent extends Model
 {
@@ -18,12 +20,12 @@ class StatusEvent extends Model
         ];
     }
 
-    public function subject(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function subject(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function actor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
     }

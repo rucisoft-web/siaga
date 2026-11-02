@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WoTimeLog extends Model
 {
@@ -20,12 +21,12 @@ class WoTimeLog extends Model
         ];
     }
 
-    public function workOrder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
     }
 
-    public function technician(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function technician(): BelongsTo
     {
         return $this->belongsTo(User::class, 'technician_id');
     }

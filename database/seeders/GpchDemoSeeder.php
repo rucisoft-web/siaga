@@ -7,10 +7,10 @@ use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\AssetFinancial;
 use App\Models\AssetLabel;
-use App\Models\AssetQuantityGroup;
 use App\Models\AssetTransfer;
 use App\Models\Department;
 use App\Models\Location;
+use App\Models\PmSchedule;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\RoomAssetTemplate;
@@ -18,23 +18,32 @@ use App\Models\RoomBlock;
 use App\Models\RoomSurvey;
 use App\Models\ServiceRequest;
 use App\Models\SlaPolicy;
+use App\Models\StockTake;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\WoCostLine;
 use App\Models\WorkOrder;
 use App\Services\AssetService;
+use App\Services\DepreciationService;
+use App\Services\DisposalService;
 use App\Services\LabelService;
 use App\Services\MasterImportService;
+use App\Services\PmService;
 use App\Services\RoomTemplateService;
 use App\Services\ServiceRequestService;
+use App\Services\StockTakeService;
 use App\Services\SurveyService;
 use App\Services\TransferService;
 use App\Services\WorkOrderService;
 use App\Support\Branding;
 use App\Support\CurrentProperty;
 use App\Support\GuestAccess;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -88,6 +97,7 @@ class GpchDemoSeeder extends Seeder
         $this->transfers();
         $this->controls();
         $this->pmDemo();
+        $this->assetDetails();
         Carbon::setTestNow();
         GuestAccess::ensure($this->p);
         Auth::logout();
@@ -395,7 +405,7 @@ class GpchDemoSeeder extends Seeder
         }
     }
 
-    protected function roomsOn(string $building, int $floor): \Illuminate\Support\Collection
+    protected function roomsOn(string $building, int $floor): Collection
     {
         $b = Location::where('name', $building)->first();
         $f = Location::where('parent_id', $b?->id)->where('location_type', 'floor')->where('floor_label', (string) $floor)->first();
@@ -524,6 +534,7 @@ class GpchDemoSeeder extends Seeder
                         $this->try('aset area', fn () => $svc->addExtra($area, ['name' => $g->name.($exp > 1 ? ' '.$n : ''), 'category_id' => $g->category_id, 'condition_grade' => $this->condition(), 'brand' => null], $u, $label));
                     }
                     $g->forceFill(['status' => 'retired', 'on_hand' => $exp])->save(); // estimasi diganti aset per unit
+
                     continue;
                 }
                 $qty = mt_rand(1, 5) === 1 ? max(0, $exp + mt_rand(-3, 2)) : $exp;
@@ -582,11 +593,11 @@ class GpchDemoSeeder extends Seeder
                 $this->u[$k] = User::where('email', $this->mail($k))->first() ?? User::where('email', $this->mail('ce'))->firstOrFail();
             }
         }
-        if (\App\Models\PmSchedule::exists()) {
+        if (PmSchedule::exists()) {
             return;
         }
         $day = fn (int $n) => $this->today->copy()->addDays($n)->timezone(config('assetcare.display_timezone', 'Asia/Jakarta'))->toDateString();
-        $svc = app(\App\Services\PmService::class);
+        $svc = app(PmService::class);
         $wos = app(WorkOrderService::class);
         $tek = $this->u['tek2'] ?? $this->u['ce'];
         $first = true;
@@ -601,7 +612,7 @@ class GpchDemoSeeder extends Seeder
             $floor = $group ? ($a->location?->floor() ?? $a->location) : null;
             $this->as('ce');
             $this->at(-40, 8);
-            $s = \App\Models\PmSchedule::create([
+            $s = PmSchedule::create([
                 'title' => $title, 'type' => $type, 'asset_id' => $group ? null : $a->id,
                 'category_id' => $group ? $a->category_id : null, 'location_id' => $floor?->id,
                 'interval_days' => $interval, 'next_due' => $day($due), 'lead_days' => $type === 'calibration' ? 14 : 3,
@@ -643,9 +654,97 @@ class GpchDemoSeeder extends Seeder
             Asset::whereIn('lifecycle_status', ['active'])->whereNull('warranty_until')->whereHas('category', fn ($q) => $q->whereIn('code', ['ELEKTRONIK', 'MEKANIKAL', 'ENGINEERING-LISTRIK', 'KITCHEN-HOT']))
                 ->orderBy('asset_code')->skip($i * 3)->limit(2)->get()->each(fn ($a) => $a->update(['warranty_until' => $day($d)]));
         }
-        foreach (\App\Models\Vendor::orderBy('code')->limit(3)->get() as $i => $v) {
+        foreach (Vendor::orderBy('code')->limit(3)->get() as $i => $v) {
             $v->update(['contract_ref' => 'KTR/'.$this->today->year.'/'.sprintf('%03d', $i + 11).' (contoh)', 'contract_until' => $day([25, 6, 75][$i])]);
         }
+    }
+
+    /**
+     * Lengkapi detail aset demo yang masih kosong: tanggal beli & mulai pakai, vendor servis, ref. invoice,
+     * interval PM, garansi, spesifikasi singkat. Semua nilai contoh (bukan data resmi). Hanya mengisi kolom
+     * yang masih kosong, jadi aman dijalankan ulang.
+     */
+    public function assetDetails(?Property $p = null): void
+    {
+        $p ??= $this->p;
+        $tz = config('assetcare.display_timezone', 'Asia/Jakarta');
+        $today = Carbon::now($tz)->startOfDay();
+        // pola kode kategori => [kode vendor (urut prioritas), interval PM (hari), garansi (bulan)]
+        $rules = [
+            '/PENDINGIN|COLD-CHAIN/' => [['V-COLD', 'V-HVAC'], 30, 24],
+            '/ALAT-MEDIS|ALAT-KLINIK|LABORATORIUM/' => [['V-EM', 'V-ALKES'], 180, 24],
+            '/NURSE-CALL|GAS-MEDIS/' => [['V-GAS', 'V-EM'], 90, 12],
+            '/HVAC-LISTRIK|GENSET|^PANEL|ELEKTRIKAL|ENGINEERING-LISTRIK|PANEL-MICE/' => [['V-GEN'], 180, 12],
+            '/HVAC|AC-SPLIT|CHILL|FREEZ|MINIBAR/' => [['V-HVAC'], 90, 12],
+            '/LIFT|TRANSPORTASI/' => [['V-ELV'], 30, 12],
+            '/KITCHEN|STOVE|OVEN|MIXER|EXHAUST|DAPUR/' => [['V-KIT'], 90, 12],
+            '/IT-|KASIR|SERVER|^PC$|PRINTER|SWITCH|^AP$|PABX|CCTV|ELEKTRONIK|^TV$|PROJ|SOUND/' => [['V-POS'], 180, 12],
+            '/KESELAMATAN|APAR|FIRE|ALARM|DETECT|HYDRANT|EMLIGHT/' => [[], 180, null],
+        ];
+        $specs = [
+            '/AC split/i' => '1 PK, refrigeran R32, 220 V (contoh)',
+            '/Bed pasien elektrik/i' => '3 motor, beban aman 200 kg, rel samping (contoh)',
+            '/Televisi|TV LED/i' => 'LED 43 inci, smart TV (contoh)',
+            '/Tensimeter/i' => 'Digital, manset dewasa, 0–300 mmHg (contoh)',
+            '/Suction/i' => 'Regulator vakum 0–200 mmHg (contoh)',
+            '/Flowmeter O2/i' => '0–15 L/menit + botol humidifier (contoh)',
+            '/Water heater/i' => 'Listrik 30 L, 350 W (contoh)',
+            '/Smoke detector/i' => 'Fotoelektrik, 24 VDC (contoh)',
+            '/Data logger suhu|Termohigrometer/i' => 'Rentang -20–60 °C, akurasi ±0,5 °C (contoh)',
+            '/Komputer kasir|POS/i' => 'All-in-one 15 inci, Core i3, 8 GB RAM (contoh)',
+            '/Printer struk/i' => 'Termal 80 mm, USB/LAN (contoh)',
+            '/Barcode scanner/i' => '1D/2D, USB (contoh)',
+            '/Lemari pendingin|Lemari es|Kulkas|vaksin/i' => 'Suhu 2–8 °C, termometer digital (contoh)',
+            '/Router|modem/i' => 'Fiber optik 50 Mbps (contoh)',
+            '/Genset/i' => 'Diesel 500 kVA, ATS (contoh)',
+            '/Timbangan/i' => 'Digital, kapasitas 180 kg (contoh)',
+        ];
+        $cats = AssetCategory::withoutGlobalScopes()->where('property_id', $p->id)->pluck('code', 'id');
+        $vendors = Vendor::withoutGlobalScopes()->where('property_id', $p->id)->pluck('id', 'code');
+        $catRule = $cats->map(function ($code) use ($rules, $vendors) {
+            foreach ($rules as $re => [$vcodes, $pm, $war]) {
+                if (preg_match($re, $code)) {
+                    $vid = collect($vcodes)->map(fn ($c) => $vendors[$c] ?? null)->filter()->first();
+
+                    return [$vid, $pm, $war];
+                }
+            }
+
+            return [null, null, null];
+        });
+        DB::table('assets')->where('property_id', $p->id)->whereNull('purchase_date')
+            ->where('lifecycle_status', '!=', 'draft')->orderBy('id')
+            ->chunkById(500, function ($rows) use ($catRule, $specs, $today) {
+                foreach ($rows as $a) {
+                    $h = crc32((string) $a->asset_code);
+                    $hl = crc32('loc'.$a->location_id);
+                    // aset satu ruang dibeli pada periode yang sama (1–7 tahun lalu), beda beberapa hari
+                    $buy = $today->copy()->subDays(365 + $hl % (6 * 365) + $h % 20);
+                    [$vid, $pm, $war] = $catRule[$a->category_id] ?? [null, null, null];
+                    $spec = null;
+                    foreach ($specs as $re => $txt) {
+                        if (preg_match($re, $a->name)) {
+                            $spec = $txt;
+                            break;
+                        }
+                    }
+                    $upd = [
+                        'purchase_date' => $buy->toDateString(),
+                        'in_service_date' => $buy->copy()->addDays(7 + $h % 21)->toDateString(),
+                        'invoice_ref' => $a->invoice_ref ?? 'INV/'.$buy->format('Y/m').'/'.sprintf('%04d', $hl % 10000).' (contoh)',
+                        'vendor_id' => $a->vendor_id ?? $vid,
+                        'pm_interval_days' => $a->pm_interval_days ?? $pm,
+                        'specification' => $a->specification ?? $spec,
+                    ];
+                    if (! $a->warranty_until && $war) {
+                        $upd['warranty_until'] = $buy->copy()->addMonths($war)->toDateString();
+                    }
+                    if (($a->ownership ?? 'milik') === 'milik' && preg_match('/Router|modem/i', $a->name)) {
+                        $upd['ownership'] = 'sewa';
+                    }
+                    DB::table('assets')->where('id', $a->id)->update($upd);
+                }
+            });
     }
 
     public function controls(?Property $p = null): void
@@ -658,11 +757,11 @@ class GpchDemoSeeder extends Seeder
                 $this->u[$k] = User::where('email', $this->mail($k))->firstOrFail();
             }
         }
-        if (\App\Models\StockTake::exists()) {
+        if (StockTake::exists()) {
             return;
         }
         mt_srand(77);
-        $so = app(\App\Services\StockTakeService::class);
+        $so = app(StockTakeService::class);
         $floors = Location::where('location_type', 'floor')->orderBy('sort_key')->get()
             ->map(fn ($f) => [$f, Asset::whereIn('location_id', $so->scopeIds($f->id))->whereNotIn('lifecycle_status', ['disposed', 'lost'])->count()])
             ->filter(fn ($x) => $x[1] >= 30)->values();
@@ -693,7 +792,7 @@ class GpchDemoSeeder extends Seeder
         $this->at(-17, 16);
         $so->close($take, true, $ac);
         // tindak lanjut: aset tidak ditemukan diusulkan hapus (hilang)
-        $ds = app(\App\Services\DisposalService::class);
+        $ds = app(DisposalService::class);
         $lost = $take->items()->where('result', 'not_found')->with('asset')->get();
         foreach ($lost->take(2) as $k => $it) {
             $this->as('ac');
@@ -722,7 +821,7 @@ class GpchDemoSeeder extends Seeder
         // 3) penghapusan aset rusak berat / dijual
         $cands = Asset::with('financial')->whereIn('condition_grade', ['D', 'E'])->whereHas('financial', fn ($q) => $q->where('acquisition_cost', '>', 0))
             ->whereNotIn('lifecycle_status', ['disposed', 'lost'])->with('category')->get()
-            ->sortByDesc(fn ($a) => (new \App\Services\DepreciationService)->forAsset($a, \Carbon\CarbonImmutable::now())['book'] ?? 0)->take(4)->values();
+            ->sortByDesc(fn ($a) => (new DepreciationService)->forAsset($a, CarbonImmutable::now())['book'] ?? 0)->take(4)->values();
         $plan = [
             ['scrap', 'Rusak berat, biaya perbaikan > 60% harga baru', 'submitted'],
             ['sale', 'Diganti unit baru, unit lama dijual ke pengepul', 'approved'],
@@ -850,12 +949,12 @@ class GpchDemoSeeder extends Seeder
             }
             if ($cost > 0) {
                 $type = $cost > 2500000 ? 'vendor' : 'material';
-                \App\Models\WoCostLine::create(['work_order_id' => $wo->id, 'type' => $type, 'description' => $type === 'vendor' ? 'Jasa servis vendor (riwayat)' : 'Suku cadang (riwayat)',
+                WoCostLine::create(['work_order_id' => $wo->id, 'type' => $type, 'description' => $type === 'vendor' ? 'Jasa servis vendor (riwayat)' : 'Suku cadang (riwayat)',
                     'quantity' => 1, 'unit_cost' => $cost, 'amount' => $cost, 'cost_status' => 'final', 'is_cash_out' => true, 'created_by' => $ce->id, 'finalized_by' => $this->u['fin']->id,
                     'finalized_at' => $restored->copy()->addDay(), 'period' => $restored->format('Y-m'), 'created_at' => $restored, 'updated_at' => $restored]);
                 if (mt_rand(0, 1)) {
                     $lab = mt_rand(1, 4);
-                    \App\Models\WoCostLine::create(['work_order_id' => $wo->id, 'type' => 'labor', 'description' => 'Jam kerja teknisi', 'quantity' => $lab, 'unit_cost' => 40000, 'amount' => $lab * 40000,
+                    WoCostLine::create(['work_order_id' => $wo->id, 'type' => 'labor', 'description' => 'Jam kerja teknisi', 'quantity' => $lab, 'unit_cost' => 40000, 'amount' => $lab * 40000,
                         'cost_status' => 'final', 'is_cash_out' => false, 'created_by' => $ce->id, 'finalized_by' => $this->u['fin']->id, 'finalized_at' => $restored->copy()->addDay(),
                         'period' => $restored->format('Y-m'), 'created_at' => $restored, 'updated_at' => $restored]);
                 }

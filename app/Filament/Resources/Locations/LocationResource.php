@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Locations;
 use App\Filament\Concerns\HasPermissions;
 use App\Models\Location;
 use App\Models\RoomType;
+use App\Support\CurrentProperty;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -62,7 +63,7 @@ class LocationResource extends Resource
         return $schema->columns(1)->components([
             Section::make('Lokasi')->columns(3)->schema([
                 TextInput::make('code')->label('Kode lokasi')->required()->maxLength(40)->helperText('Unik dalam properti, mis. GU-L3-301')
-                    ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(\App\Support\CurrentProperty::class)->id())),
+                    ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $r) => $r->where('property_id', app(CurrentProperty::class)->id())),
                 TextInput::make('name')->label('Nama')->required(),
                 Select::make('location_type')->label('Jenis')->options(Location::typeLabels())->required()->native(false)->live(),
                 Select::make('parent_id')->label('Induk')->native(false)->searchable()

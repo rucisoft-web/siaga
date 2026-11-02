@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssetStatusEvent extends Model
 {
@@ -17,12 +18,12 @@ class AssetStatusEvent extends Model
         ];
     }
 
-    public function asset(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
     }
 
-    public function actor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
     }
