@@ -13,7 +13,7 @@ class Help
 {
     /** urutan & pengelompokan di halaman daftar panduan */
     public const GROUPS = [
-        'Mulai' => ['beranda', 'scan-qr', 'profil'],
+        'Mulai' => ['implementasi', 'beranda', 'scan-qr', 'profil'],
         'Pendataan aset awal' => ['impor-master', 'pendataan', 'stok-label'],
         'Aset & label' => ['assets', 'asset-quantity-groups', 'room-asset-templates', 'generate-assets', 'generation-batches', 'cetak-label', 'label-print-batches', 'konfirmasi-pemasangan', 'asset-transfers'],
         'Gangguan & pekerjaan' => ['service-requests', 'work-orders', 'room-blocks', 'laporan'],
@@ -40,7 +40,7 @@ class Help
     {
         $key = static::keyForRoute(request()->route()?->getName());
 
-        return $key && static::has($key) ? $key : null;
+        return $key && $key !== 'implementasi' && static::has($key) ? $key : null;
     }
 
     public static function path(string $key): string
@@ -69,6 +69,8 @@ class Help
             $body = preg_replace_callback('/!\[([^\]]*)\]\(img\/([a-z0-9._-]+)\)/i', fn ($m) => '!['.$m[1].']('.asset('help/img/'.$m[2]).'?v='.$ver.')', $body);
             $html = Str::markdown($body, ['html_input' => 'strip', 'allow_unsafe_links' => false]);
             $html = str_replace('<img ', '<img loading="lazy" ', $html);
+            // jangkar untuk daftar isi
+            $html = preg_replace_callback('/<h2>(.*?)<\/h2>/', fn ($m) => '<h2 id="'.Str::slug(html_entity_decode(strip_tags($m[1]))).'">'.$m[1].'</h2>', $html);
 
             return ['title' => $title, 'html' => $html, 'summary' => strip_tags(Str::markdown($summary))];
         });

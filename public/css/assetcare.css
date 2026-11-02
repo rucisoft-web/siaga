@@ -394,3 +394,18 @@ a { text-underline-offset: 3px; }
   .fi-main { padding: 0 !important; } .ac-help-full { border: 0; max-width: none; }
   .ac-help-body img { break-inside: avoid; max-height: 120mm; width: auto; }
 }
+
+/* Panduan implementasi */
+.ac-help-page { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (min-width: 1100px) { .ac-help-page:has(.ac-impl) { grid-template-columns: 240px 1fr; align-items: start; } .ac-impl { position: sticky; top: 5rem; } }
+.ac-impl-toc ol { list-style: decimal; margin: .3rem 0 0 1.1rem; font-size: .88rem; }
+.ac-impl-toc li { margin: .3rem 0; }
+.ac-impl-toc a { color: var(--p, #1F3A5F); }
+.ac-impl-title { font-size: 1.3rem; font-weight: 800; margin-bottom: .4rem; }
+.ac-impl-body { max-width: none; }
+.ac-impl-body pre { background: #fafaf9; border: 1px solid #e7e5e4; padding: .7rem; overflow-x: auto; font-size: .8rem; line-height: 1.45; }
+.ac-impl-body h2 { scroll-margin-top: 5rem; }
+.ac-impl-body .ac-help-body table, .ac-impl-body table { display: block; overflow-x: auto; }
+.ac-impl-body input[type=checkbox] { margin-right: .35rem; }
+.ac-impl-body ul:has(input[type=checkbox]) { list-style: none; margin-left: 0; }
+@media print { .ac-help-page { display: block; } .ac-impl-body table { display: table; } .fi-sidebar-close-overlay, [class*="overlay"], .fi-header { display: none !important; } body, .fi-body, .fi-main-ctn { background: #fff !important; } .ac-impl-body h2 { break-after: avoid; } .ac-impl-body tr { break-inside: avoid; } }

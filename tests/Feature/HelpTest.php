@@ -41,4 +41,15 @@ class HelpTest extends TestCase
         $this->get(Panduan::getUrl(['baca' => 'pendataan']))->assertOk()->assertSee('Cetak / simpan PDF')->assertSee('help/img/pendataan-cetak.png', false);
         $this->get(Panduan::getUrl(['baca' => '../.env']))->assertOk()->assertDontSee('APP_KEY');
     }
+
+    public function test_implementation_guide_page(): void
+    {
+        $u = User::where('email', DemoSeeder::email('teknisi1'))->first();
+        $u->forceFill(['must_change_password' => false])->save();
+        $r = $this->actingAs($u)->get(\App\Filament\Pages\PanduanImplementasi::getUrl())->assertOk();
+        foreach (['Lingkup kerja', 'Jadwal', 'Sumber daya yang perlu disiapkan', 'Cek kualitas pendataan aset', 'Struktur organisasi pengelola aset', 'Komunikasi', 'Daftar risiko dan penanggulangan', 'Pengadaan yang diperlukan'] as $s) {
+            $r->assertSee($s);
+        }
+        $r->assertSee('id="8-pengadaan-yang-diperlukan"', false)->assertDontSee('ac-help-btn', false);
+    }
 }

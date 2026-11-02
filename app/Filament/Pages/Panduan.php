@@ -10,9 +10,11 @@ class Panduan extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-question-mark-circle';
 
-    protected static ?int $navigationSort = 99;
+    protected static string|\UnitEnum|null $navigationGroup = 'Lainnya';
 
-    protected static ?string $navigationLabel = 'Panduan';
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Panduan per layar';
 
     protected static ?string $title = 'Panduan penggunaan';
 
