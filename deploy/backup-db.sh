@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Cadangan database Hotel Asset Care (gzip) ke ~/backups/hotel-asset-care, simpan 30 hari.
-# Cron: 0 2 * * * /bin/bash /home/cpuser/hotel-asset-care/deploy/backup-db.sh >> /home/cpuser/backups/asset-care-backup.log 2>&1
+# Cadangan database SIAGA (gzip) ke ~/backups/siaga, simpan 30 hari.
+# Cron: 0 2 * * * /bin/bash /home/cpuser/siaga/deploy/backup-db.sh >> /home/cpuser/backups/siaga-backup.log 2>&1
 set -euo pipefail
 cd "$(dirname "$0")/.."
 env_get() { grep -E "^$1=" .env | tail -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'; }
 DB=$(env_get DB_DATABASE); USER=$(env_get DB_USERNAME); PASS=$(env_get DB_PASSWORD); HOST=$(env_get DB_HOST)
-DEST="$HOME/backups/hotel-asset-care"
+DEST="$HOME/backups/siaga"
 mkdir -p "$DEST"
 FILE="$DEST/${DB}_$(date +%Y-%m-%d_%H%M).sql.gz"
 MYSQL_PWD="$PASS" mysqldump -h "${HOST:-localhost}" -u "$USER" --single-transaction --quick --routines --no-tablespaces "$DB" | gzip > "$FILE"

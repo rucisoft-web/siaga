@@ -1,5 +1,5 @@
--- Hotel Asset Care: struktur tabel + data referensi (izin, 15 peran, departemen, kategori, SLA, Super Admin).
--- Impor ke database kosong (phpMyAdmin › Import). Super Admin: admin@assetcare.local / AssetCare@2026 (wajib diganti saat login).
+-- SIAGA (Sistem Informasi Aset & Gangguan): struktur tabel + data referensi (izin, 15 peran, departemen, kategori, SLA, Super Admin).
+-- Impor ke database kosong (phpMyAdmin › Import). Super Admin: admin@siaga.local / Siaga@2026 (wajib diganti saat login).
 -- Profil awal: "Hotel Contoh" kode HTL — ganti di Pengaturan › Profil hotel SEBELUM mendaftarkan aset pertama.
 -- Tanpa data contoh. Setelah impor jalankan: bash deploy/deploy-cpanel.sh update
 
@@ -68,55 +68,55 @@ CREATE TABLE `asset_categories` (
 LOCK TABLES `asset_categories` WRITE;
 /*!40000 ALTER TABLE `asset_categories` DISABLE KEYS */;
 INSERT INTO `asset_categories` VALUES
-(1,1,'AC-SPLIT','AC split kamar','kamar','medium','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(2,1,'TV','Televisi','kamar','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(3,1,'MINIBAR','Minibar / kulkas kamar','kamar','low','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(4,1,'TEL','Telepon kamar','kamar','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(5,1,'BED','Tempat tidur','kamar','low','individual',365,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(6,1,'LAMP','Lampu meja / baca','kamar','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(7,1,'SAFE','Safe deposit box kamar','kamar','medium','individual',365,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(8,1,'DOORLOCK','Door lock elektronik','kamar','high','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(9,1,'FURN','Furniture kamar','kamar','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(10,1,'SANIT','Sanitary & perlengkapan mandi','kamar','medium','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(11,1,'LINEN','Linen & handuk','kamar','low','quantity',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(12,1,'PROJ','Projector','mice','medium','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(13,1,'SCREEN','Screen','mice','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(14,1,'SOUND','Sound system','mice','medium','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(15,1,'MIC','Microphone','mice','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(16,1,'CHAIR-B','Kursi banquet','mice','low','quantity',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(17,1,'TABLE-B','Meja banquet','mice','low','quantity',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(18,1,'PART','Partisi ruang','mice','medium','individual',365,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(19,1,'PANEL-MICE','Panel listrik venue','mice','high','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(20,1,'CHILL','Chiller kitchen','kitchen','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(21,1,'FREEZ','Freezer','kitchen','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(22,1,'STOVE','Kompor / burner','kitchen','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(23,1,'OVEN','Oven','kitchen','medium','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(24,1,'MIXER','Mixer pastry','kitchen','medium','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(25,1,'EXHAUST','Exhaust hood','kitchen','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(26,1,'GREASE','Grease trap','kitchen','medium','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(27,1,'GAS','Instalasi gas','kitchen','critical','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(28,1,'BOILER','Boiler','mep','critical','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(29,1,'PUMP','Pompa','mep','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(30,1,'TANK','Tangki air','mep','medium','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(31,1,'GENSET','Genset','mep','critical','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(32,1,'PANEL','Panel listrik','mep','critical','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(33,1,'LIFT','Lift','mep','critical','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(34,1,'HVAC','HVAC sentral / AHU','mep','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(35,1,'POOL-EQ','Peralatan kolam renang','publik','medium','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(36,1,'GYM-EQ','Peralatan gym','publik','low','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(37,1,'APAR','APAR','keselamatan','critical','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(38,1,'ALARM','Panel fire alarm','keselamatan','critical','individual',30,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(39,1,'DETECT','Detektor asap / panas','keselamatan','critical','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(40,1,'HYDRANT','Hydrant','keselamatan','critical','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(41,1,'EMLIGHT','Emergency light','keselamatan','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(42,1,'SERVER','Server','it','critical','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(43,1,'AP','Access point','it','medium','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(44,1,'CCTV','CCTV','it','high','individual',90,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(45,1,'SWITCH','Network switch','it','high','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(46,1,'PABX','PABX','it','high','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(47,1,'PC','PC / laptop','it','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(48,1,'PRINTER','Printer','it','low','individual',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(49,1,'ACCESS','Access control','it','high','individual',180,1,'2026-11-02 02:19:42','2026-11-02 02:19:42');
+(1,1,'AC-SPLIT','AC split kamar','kamar','medium','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(2,1,'TV','Televisi','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(3,1,'MINIBAR','Minibar / kulkas kamar','kamar','low','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(4,1,'TEL','Telepon kamar','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(5,1,'BED','Tempat tidur','kamar','low','individual',365,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(6,1,'LAMP','Lampu meja / baca','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(7,1,'SAFE','Safe deposit box kamar','kamar','medium','individual',365,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(8,1,'DOORLOCK','Door lock elektronik','kamar','high','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(9,1,'FURN','Furniture kamar','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(10,1,'SANIT','Sanitary & perlengkapan mandi','kamar','medium','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(11,1,'LINEN','Linen & handuk','kamar','low','quantity',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(12,1,'PROJ','Projector','mice','medium','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(13,1,'SCREEN','Screen','mice','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(14,1,'SOUND','Sound system','mice','medium','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(15,1,'MIC','Microphone','mice','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(16,1,'CHAIR-B','Kursi banquet','mice','low','quantity',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(17,1,'TABLE-B','Meja banquet','mice','low','quantity',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(18,1,'PART','Partisi ruang','mice','medium','individual',365,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(19,1,'PANEL-MICE','Panel listrik venue','mice','high','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(20,1,'CHILL','Chiller kitchen','kitchen','high','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(21,1,'FREEZ','Freezer','kitchen','high','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(22,1,'STOVE','Kompor / burner','kitchen','high','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(23,1,'OVEN','Oven','kitchen','medium','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(24,1,'MIXER','Mixer pastry','kitchen','medium','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(25,1,'EXHAUST','Exhaust hood','kitchen','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(26,1,'GREASE','Grease trap','kitchen','medium','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(27,1,'GAS','Instalasi gas','kitchen','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(28,1,'BOILER','Boiler','mep','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(29,1,'PUMP','Pompa','mep','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(30,1,'TANK','Tangki air','mep','medium','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(31,1,'GENSET','Genset','mep','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(32,1,'PANEL','Panel listrik','mep','critical','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(33,1,'LIFT','Lift','mep','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(34,1,'HVAC','HVAC sentral / AHU','mep','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(35,1,'POOL-EQ','Peralatan kolam renang','publik','medium','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(36,1,'GYM-EQ','Peralatan gym','publik','low','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(37,1,'APAR','APAR','keselamatan','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(38,1,'ALARM','Panel fire alarm','keselamatan','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(39,1,'DETECT','Detektor asap / panas','keselamatan','critical','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(40,1,'HYDRANT','Hydrant','keselamatan','critical','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(41,1,'EMLIGHT','Emergency light','keselamatan','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(42,1,'SERVER','Server','it','critical','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(43,1,'AP','Access point','it','medium','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(44,1,'CCTV','CCTV','it','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(45,1,'SWITCH','Network switch','it','high','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(46,1,'PABX','PABX','it','high','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(47,1,'PC','PC / laptop','it','low','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(48,1,'PRINTER','Printer','it','low','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(49,1,'ACCESS','Access control','it','high','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55');
 /*!40000 ALTER TABLE `asset_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `asset_components`;
@@ -588,18 +588,18 @@ CREATE TABLE `departments` (
 LOCK TABLES `departments` WRITE;
 /*!40000 ALTER TABLE `departments` DISABLE KEYS */;
 INSERT INTO `departments` VALUES
-(1,1,'EXE','Executive Office',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(2,1,'FO','Front Office',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(3,1,'HK','Housekeeping',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(4,1,'FB','Food & Beverage Service',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(5,1,'KIT','Kitchen & Pastry',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(6,1,'ENG','Engineering',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(7,1,'SM','Sales & Marketing',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(8,1,'ACC','Accounting & Finance',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(9,1,'HR','Human Resources',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(10,1,'PUR','Purchasing',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(11,1,'EDP','EDP / IT',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(12,1,'SEC','Security',NULL,1,'2026-11-02 02:19:42','2026-11-02 02:19:42');
+(1,1,'EXE','Executive Office',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(2,1,'FO','Front Office',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(3,1,'HK','Housekeeping',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(4,1,'FB','Food & Beverage Service',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(5,1,'KIT','Kitchen & Pastry',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(6,1,'ENG','Engineering',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(7,1,'SM','Sales & Marketing',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(8,1,'ACC','Accounting & Finance',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(9,1,'HR','Human Resources',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(10,1,'PUR','Purchasing',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(11,1,'EDP','EDP / IT',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(12,1,'SEC','Security',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54');
 /*!40000 ALTER TABLE `departments` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `failed_jobs`;
@@ -1145,41 +1145,41 @@ CREATE TABLE `permissions` (
 LOCK TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
 INSERT INTO `permissions` VALUES
-(1,'dashboard.view','Beranda manajerial (KPI, risiko, biaya)','Umum','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(2,'report.view','Melihat laporan','Umum','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(3,'report.export','Ekspor laporan (CSV)','Umum','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(4,'asset.view','Melihat register & kartu aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(5,'asset.edit','Membuat & mengubah data aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(6,'asset.verify','Verifikasi fisik aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(7,'asset.activate','Mengaktifkan / menghentikan aset (siklus hidup)','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(8,'asset.view_financial','Melihat harga & nilai aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(9,'asset.edit_financial','Mengubah data finansial aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(10,'template.manage','Menyusun template aset tipe kamar','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(11,'template.publish','Memeriksa & menerbitkan template','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(12,'generation.run','Pembuatan aset massal untuk kamar','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(13,'label.print','Membuat batch & cetak label QR','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(14,'label.rotate','Rotasi token label (nonaktifkan label lama)','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(15,'label.install','Konfirmasi pemasangan label','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(16,'transfer.request','Mengajukan mutasi aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(17,'transfer.approve','Menyetujui mutasi aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(18,'transfer.receive','Mengirim / menerima mutasi aset','Aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(19,'request.create','Membuat laporan kerusakan','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(20,'request.view_all','Melihat semua laporan (lintas departemen)','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(21,'request.triage','Triase laporan & menetapkan prioritas','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(22,'wo.view','Melihat work order','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(23,'wo.create','Membuat work order','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(24,'wo.assign','Menugaskan & menjadwalkan work order','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(25,'wo.execute','Mengerjakan work order (teknisi)','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(26,'wo.verify','Memverifikasi hasil pekerjaan','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(27,'wo.approve','Menyetujui biaya / lingkup work order','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(28,'wo.close','Menutup & membuka ulang work order','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(29,'wo.cost_finalize','Finalisasi biaya (Finance)','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(30,'room.block_confirm','Konfirmasi blokir kamar (Front Office)','Pemeliharaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(31,'reference.manage','Lokasi, kategori, departemen, tipe kamar, vendor','Pengaturan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(32,'settings.manage','SLA & batas persetujuan','Pengaturan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(33,'user.manage','Pengguna & penugasan peran','Pengaturan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(34,'role.manage','Peran & izin','Pengaturan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(35,'audit.view','Log audit','Pengaturan','2026-11-02 02:19:42','2026-11-02 02:19:42');
+(1,'dashboard.view','Beranda manajerial (KPI, risiko, biaya)','Umum','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(2,'report.view','Melihat laporan','Umum','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(3,'report.export','Ekspor laporan (CSV)','Umum','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(4,'asset.view','Melihat register & kartu aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(5,'asset.edit','Membuat & mengubah data aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(6,'asset.verify','Verifikasi fisik aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(7,'asset.activate','Mengaktifkan / menghentikan aset (siklus hidup)','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(8,'asset.view_financial','Melihat harga & nilai aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(9,'asset.edit_financial','Mengubah data finansial aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(10,'template.manage','Menyusun template aset tipe kamar','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(11,'template.publish','Memeriksa & menerbitkan template','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(12,'generation.run','Pembuatan aset massal untuk kamar','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(13,'label.print','Membuat batch & cetak label QR','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(14,'label.rotate','Rotasi token label (nonaktifkan label lama)','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(15,'label.install','Konfirmasi pemasangan label','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(16,'transfer.request','Mengajukan mutasi aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(17,'transfer.approve','Menyetujui mutasi aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(18,'transfer.receive','Mengirim / menerima mutasi aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(19,'request.create','Membuat laporan kerusakan','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(20,'request.view_all','Melihat semua laporan (lintas departemen)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(21,'request.triage','Triase laporan & menetapkan prioritas','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(22,'wo.view','Melihat work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(23,'wo.create','Membuat work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(24,'wo.assign','Menugaskan & menjadwalkan work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(25,'wo.execute','Mengerjakan work order (teknisi)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(26,'wo.verify','Memverifikasi hasil pekerjaan','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(27,'wo.approve','Menyetujui biaya / lingkup work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(28,'wo.close','Menutup & membuka ulang work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(29,'wo.cost_finalize','Finalisasi biaya (Finance)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(30,'room.block_confirm','Konfirmasi blokir kamar (Front Office)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(31,'reference.manage','Lokasi, kategori, departemen, tipe kamar, vendor','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(32,'settings.manage','SLA & batas persetujuan','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(33,'user.manage','Pengguna & penugasan peran','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(34,'role.manage','Peran & izin','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(35,'audit.view','Log audit','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `properties`;
@@ -1215,7 +1215,7 @@ CREATE TABLE `properties` (
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
 INSERT INTO `properties` VALUES
-(1,'HTL','Hotel Contoh',NULL,'Asia/Jakarta',NULL,NULL,NULL,NULL,NULL,NULL,'Hotel Asset Care',NULL,NULL,NULL,'#1F3A5F','#C8102E','IDR',1,'2026-11-02 02:19:42','2026-11-02 02:19:42');
+(1,'HTL','Hotel Contoh',NULL,'Asia/Jakarta',NULL,NULL,NULL,NULL,NULL,NULL,'SIAGA',NULL,NULL,NULL,'#1F3A5F','#C8102E','IDR',1,'2026-11-02 03:05:54','2026-11-02 03:05:54');
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `quantity_movements`;
@@ -1308,21 +1308,21 @@ CREATE TABLE `roles` (
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
 INSERT INTO `roles` VALUES
-(1,'super-admin','Super Admin','Konsultan / vendor aplikasi — semua izin','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(2,'owner','Owner','Melihat seluruh kinerja & biaya; memutuskan investasi/penghapusan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(3,'owner-rep','Owner Representative','Memantau risiko aset & anggaran; mengkaji prioritas & usulan penggantian','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(4,'gm','General Manager','Mengawasi operasi, backlog, downtime, SLA & persetujuan sesuai batas nilai','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(5,'chief-engineering','Chief Engineering','Triase, prioritas, penjadwalan teknisi & verifikasi pekerjaan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(6,'technician','Teknisi','Melihat tugas & aset relevan; mencatat diagnosis, waktu, material & bukti','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(7,'hod','HOD','Melapor, melihat laporan departemennya, mengonfirmasi layanan & kondisi aset','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(8,'reporter','Pelapor (staf)','Membuat laporan kerusakan & melihat laporan sendiri','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(9,'front-office','Front Office','Melapor & mengonfirmasi blokir kamar terkait perbaikan','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(10,'asset-controller','Asset Controller','Memelihara register, label & inventarisasi; mengusulkan mutasi & koreksi','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(11,'finance','Finance / Chief Accountant','Data finansial, validasi biaya, anggaran & rekonsiliasi','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(12,'storekeeper','Storekeeper','Mengelola stok engineering (rilis B)','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(13,'purchasing','Purchasing','Vendor & referensi pembelian','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(14,'it-admin','IT Administrator','Konfigurasi teknis & akun; tidak otomatis berwenang menyetujui biaya','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(15,'auditor','Auditor','Membaca data & jejak audit dalam lingkup yang ditetapkan','2026-11-02 02:19:42','2026-11-02 02:19:42');
+(1,'super-admin','Super Admin','Konsultan / vendor aplikasi — semua izin','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(2,'owner','Owner','Melihat seluruh kinerja & biaya; memutuskan investasi/penghapusan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(3,'owner-rep','Owner Representative','Memantau risiko aset & anggaran; mengkaji prioritas & usulan penggantian','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(4,'gm','General Manager','Mengawasi operasi, backlog, downtime, SLA & persetujuan sesuai batas nilai','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(5,'chief-engineering','Chief Engineering','Triase, prioritas, penjadwalan teknisi & verifikasi pekerjaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(6,'technician','Teknisi','Melihat tugas & aset relevan; mencatat diagnosis, waktu, material & bukti','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(7,'hod','HOD','Melapor, melihat laporan departemennya, mengonfirmasi layanan & kondisi aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(8,'reporter','Pelapor (staf)','Membuat laporan kerusakan & melihat laporan sendiri','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(9,'front-office','Front Office','Melapor & mengonfirmasi blokir kamar terkait perbaikan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(10,'asset-controller','Asset Controller','Memelihara register, label & inventarisasi; mengusulkan mutasi & koreksi','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(11,'finance','Finance / Chief Accountant','Data finansial, validasi biaya, anggaran & rekonsiliasi','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(12,'storekeeper','Storekeeper','Mengelola stok engineering (rilis B)','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(13,'purchasing','Purchasing','Vendor & referensi pembelian','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(14,'it-admin','IT Administrator','Konfigurasi teknis & akun; tidak otomatis berwenang menyetujui biaya','2026-11-02 03:05:54','2026-11-02 03:05:54'),
+(15,'auditor','Auditor','Membaca data & jejak audit dalam lingkup yang ditetapkan','2026-11-02 03:05:54','2026-11-02 03:05:54');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `room_asset_slots`;
@@ -1664,10 +1664,10 @@ CREATE TABLE `sla_policies` (
 LOCK TABLES `sla_policies` WRITE;
 /*!40000 ALTER TABLE `sla_policies` DISABLE KEYS */;
 INSERT INTO `sla_policies` VALUES
-(1,1,'P1','P1 Darurat','Bahaya listrik, dugaan kebocoran gas, kegagalan utilitas kritis',5,NULL,'24h','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(2,1,'P2','P2 Mendesak','Kamar tidak dapat dijual, chiller gagal, gangguan acara aktif',15,120,'24h','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(3,1,'P3','P3 Normal','Kerusakan dengan layanan alternatif yang aman',120,1440,'business','2026-11-02 02:19:42','2026-11-02 02:19:42'),
-(4,1,'P4','P4 Terencana','Kosmetik atau penyempurnaan tanpa gangguan layanan',540,10080,'business','2026-11-02 02:19:42','2026-11-02 02:19:42');
+(1,1,'P1','P1 Darurat','Bahaya listrik, dugaan kebocoran gas, kegagalan utilitas kritis',5,NULL,'24h','2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(2,1,'P2','P2 Mendesak','Kamar tidak dapat dijual, chiller gagal, gangguan acara aktif',15,120,'24h','2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(3,1,'P3','P3 Normal','Kerusakan dengan layanan alternatif yang aman',120,1440,'business','2026-11-02 03:05:55','2026-11-02 03:05:55'),
+(4,1,'P4','P4 Terencana','Kosmetik atau penyempurnaan tanpa gangguan layanan',540,10080,'business','2026-11-02 03:05:55','2026-11-02 03:05:55');
 /*!40000 ALTER TABLE `sla_policies` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `slot_assignments`;
@@ -1766,7 +1766,7 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,1,NULL,'Super Admin','Super Admin (pengelola aplikasi)','admin@assetcare.local',NULL,NULL,'$2y$12$zgSEn5B5yvi.t8YUNKBcI.yNYuFBt9ORYIUrKFehsjAlozAuxMcAS',NULL,'2026-11-02 02:19:42','2026-11-02 02:19:42',1,1,NULL,NULL,NULL,NULL,NULL);
+(1,1,NULL,'Super Admin','Super Admin (pengelola aplikasi)','admin@siaga.local',NULL,NULL,'$2y$12$h8z0rLtQlu73BLoAQYmxAuxh9BG/bimxkv9qGTwl2NXf4Xdyab2oK',NULL,'2026-11-02 03:05:55','2026-11-02 03:05:55',1,1,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `vendors`;

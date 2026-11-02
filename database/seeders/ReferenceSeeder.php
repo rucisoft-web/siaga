@@ -17,16 +17,16 @@ use Illuminate\Database\Seeder;
 /** Seed referensi (aman diulang): properti hotel, izin & peran, departemen, kategori, SLA, Super Admin. */
 class ReferenceSeeder extends Seeder
 {
-    public const ADMIN_EMAIL = 'admin@assetcare.local';
+    public const ADMIN_EMAIL = 'admin@siaga.local';
 
-    public const ADMIN_PASSWORD = 'AssetCare@2026';
+    public const ADMIN_PASSWORD = 'Siaga@2026';
 
     public function run(): void
     {
-        // Profil hotel dibuat sekali dari .env / assetcare:install; setelah itu diubah lewat Pengaturan › Profil hotel.
+        // Profil hotel dibuat sekali dari .env / siaga:install; setelah itu diubah lewat Pengaturan › Profil hotel.
         $property = Property::firstOrCreate(['code' => config('assetcare.property_code', 'HTL')], [
             'name' => config('assetcare.hotel_name', 'Hotel Contoh'), 'timezone' => config('assetcare.display_timezone', 'Asia/Jakarta'),
-            'app_name' => config('assetcare.brand_name', 'Hotel Asset Care'), 'is_active' => true,
+            'app_name' => config('assetcare.brand_name', 'SIAGA'), 'is_active' => true,
         ]);
         app(CurrentProperty::class)->set($property);
 
@@ -92,7 +92,7 @@ class ReferenceSeeder extends Seeder
         }
 
         // Super Admin awal hanya dibuat bila belum ada satu pun (aman saat seeder diulang pada rilis pembaruan).
-        // assetcare:install membuat Super Admin sendiri (email & sandi diisi saat instalasi).
+        // siaga:install membuat Super Admin sendiri (email & sandi diisi saat instalasi).
         $superRole = Role::where('slug', 'super-admin')->value('id');
         if (config('assetcare.skip_default_admin') || User::whereHas('roles', fn ($q) => $q->where('roles.id', $superRole))->exists()) {
             return;

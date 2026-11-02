@@ -14,9 +14,9 @@ use function Laravel\Prompts\text;
 
 class CreateAdmin extends Command
 {
-    protected $signature = 'assetcare:create-admin {--name=} {--email=} {--password=}';
+    protected $signature = 'siaga:create-admin {--name=} {--email=} {--password=}';
 
-    protected $description = 'Membuat / memulihkan akun Super Admin Hotel Asset Care';
+    protected $description = 'Membuat / memulihkan akun Super Admin SIAGA';
 
     public function handle(): int
     {

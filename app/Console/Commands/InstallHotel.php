@@ -7,42 +7,41 @@ use App\Models\Role;
 use App\Models\User;
 use App\Support\Branding;
 use App\Support\CurrentProperty;
-use Database\Seeders\DemoSeeder;
 use Database\Seeders\ReferenceSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
-use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
 /**
  * Instalasi untuk satu hotel: membuat tabel, profil hotel, peran & data referensi, akun Super Admin,
- * dan (opsional) data contoh. Semua isian bisa diubah lagi di Pengaturan › Profil hotel.
+ tanpa data contoh. Semua isian bisa diubah lagi di Pengaturan › Profil hotel.
  *
- *   php artisan assetcare:install                       (tanya jawab)
- *   php artisan assetcare:install --hotel="Hotel Melati" --code=HML --timezone=Asia/Makassar \
- *       --admin-email=it@hotelmelati.co.id --admin-password=... --demo --fresh --no-interaction
+ *   php artisan siaga:install                       (tanya jawab)
+ *   php artisan siaga:install --hotel="Hotel Melati" --code=HML --timezone=Asia/Makassar \
+ *       --admin-email=it@hotelmelati.co.id --admin-password=... --fresh --no-interaction
+ *
+ * Instalasi selalu BERSIH (tanpa data contoh). Data contoh dipasang terpisah: php artisan siaga:demo
  */
 class InstallHotel extends Command
 {
-    protected $signature = 'assetcare:install
+    protected $signature = 'siaga:install
         {--hotel= : Nama hotel}
         {--code= : Kode properti / prefiks kode aset (2–8 huruf kapital/angka)}
         {--timezone= : Asia/Jakarta, Asia/Makassar, Asia/Jayapura}
         {--admin-email= : Email Super Admin}
         {--admin-password= : Kata sandi Super Admin}
-        {--demo : Isi data contoh (kamar, aset, akun jabatan)}
         {--fresh : Kosongkan seluruh tabel lebih dulu (HAPUS SEMUA DATA)}';
 
-    protected $description = 'Instalasi Hotel Asset Care untuk satu hotel (profil, referensi, Super Admin, data contoh opsional)';
+    protected $description = 'Instalasi SIAGA untuk satu hotel (profil, referensi, Super Admin, data contoh opsional)';
 
     public function handle(): int
     {
-        $this->components->info('Instalasi Hotel Asset Care');
+        $this->components->info('Instalasi SIAGA');
 
         $hotel = $this->option('hotel') ?: text('Nama hotel', placeholder: 'mis. Hotel Melati Bandung', required: true);
         $suggest = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', implode('', array_map(fn ($w) => $w[0] ?? '', preg_split('/\s+/', trim($hotel))))), 0, 4)) ?: 'HTL';
@@ -50,7 +49,6 @@ class InstallHotel extends Command
         $tz = $this->option('timezone') ?: select('Zona waktu', ['Asia/Jakarta' => 'WIB', 'Asia/Makassar' => 'WITA', 'Asia/Jayapura' => 'WIT'], default: 'Asia/Jakarta');
         $email = $this->option('admin-email') ?: text('Email Super Admin', placeholder: 'mis. it@namahotel.com', required: true);
         $pass = $this->option('admin-password') ?: password('Kata sandi Super Admin (min. 10 karakter, huruf & angka)', required: true);
-        $demo = $this->option('demo') || ($this->input->isInteractive() && confirm('Isi data contoh untuk mencoba (kamar 301–310, aset, akun jabatan)?', default: true));
         $fresh = (bool) $this->option('fresh');
 
         $v = Validator::make(compact('hotel', 'code', 'tz', 'email', 'pass'), [
@@ -83,7 +81,7 @@ class InstallHotel extends Command
         }
         $property = Property::updateOrCreate(['code' => $code], ['name' => $hotel, 'timezone' => $tz, 'is_active' => true]);
         if (! $property->app_name) {
-            $property->update(['app_name' => config('assetcare.brand_name', 'Hotel Asset Care')]);
+            $property->update(['app_name' => config('assetcare.brand_name', 'SIAGA')]);
         }
         Branding::flush();
         app(CurrentProperty::class)->set($property);
@@ -100,19 +98,14 @@ class InstallHotel extends Command
             return true;
         });
 
-        if ($demo) {
-            $this->components->task('Data contoh', fn () => (new DemoSeeder)->setContainer(app())->setCommand($this)->__invoke() ?? true);
-        }
 
         $this->newLine();
         $this->components->twoColumnDetail('Hotel', $hotel);
         $this->components->twoColumnDetail('Kode aset', $code.'-AST-000001');
         $this->components->twoColumnDetail('Zona waktu', $tz);
         $this->components->twoColumnDetail('Super Admin', $email);
-        if ($demo) {
-            $this->components->twoColumnDetail('Akun contoh', DemoSeeder::email('gm').' dst. / '.DemoSeeder::PASSWORD);
-        }
         $this->components->info('Selesai. Login di '.url('/admin').' lalu lengkapi logo & warna di Pengaturan › Profil hotel.');
+        $this->line('  Data contoh untuk latihan (opsional, bisa kapan saja): php artisan siaga:demo');
 
         return self::SUCCESS;
     }

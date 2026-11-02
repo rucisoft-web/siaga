@@ -3,15 +3,15 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Hotel Asset Care
+    | SIAGA
     |--------------------------------------------------------------------------
-    | Pengelolaan aset & pemeliharaan hotel. Identitas hotel (nama, logo, warna,
+    | Sistem Informasi Aset & Gangguan. Identitas hotel (nama, logo, warna,
     | zona waktu) diatur di aplikasi: Pengaturan › Profil hotel. Nilai .env di
-    | bawah hanya dipakai saat instalasi pertama (assetcare:install) dan sebagai
+    | bawah hanya dipakai saat instalasi pertama (siaga:install) dan sebagai
     | cadangan bila basis data belum siap.
     */
-    'brand_name' => env('ASSETCARE_BRAND_NAME', 'Hotel Asset Care'),
-    'brand_tagline' => env('ASSETCARE_BRAND_TAGLINE', 'Pengelolaan aset & pemeliharaan hotel'),
+    'brand_name' => env('ASSETCARE_BRAND_NAME', 'SIAGA'),
+    'brand_tagline' => env('ASSETCARE_BRAND_TAGLINE', 'Sistem Informasi Aset & Gangguan'),
     'hotel_name' => env('ASSETCARE_HOTEL_NAME', 'Hotel Contoh'),
     'property_code' => env('ASSETCARE_PROPERTY_CODE', 'HTL'),
     'audit_enabled' => (bool) env('ASSETCARE_AUDIT_ENABLED', true),

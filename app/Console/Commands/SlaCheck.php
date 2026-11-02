@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
 /** Peringatan SLA: 80% → PIC & Chief Engineering; terlewati → GM. Deduplikasi per objek & siklus. */
 class SlaCheck extends Command
 {
-    protected $signature = 'assetcare:sla-check';
+    protected $signature = 'siaga:sla-check';
 
     protected $description = 'Kirim peringatan SLA respons & pemulihan (jalankan tiap menit lewat scheduler)';
 

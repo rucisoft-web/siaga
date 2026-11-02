@@ -1,6 +1,6 @@
-# Panduan Instalasi Hotel Asset Care di Laragon
+# Panduan Instalasi SIAGA di Laragon
 
-Lokasi program: **`C:\laragon\www\hotel-asset-care`** · Alamat: **http://hotel-asset-care.test/admin**
+Lokasi program: **`C:\laragon\www\siaga`** · Alamat: **http://siaga.test/admin**
 
 Folder, database dan alamatnya terpisah dari aplikasi lain di Laragon (mis. Asset Care GPCH atau CRM), jadi bisa berjalan bersamaan.
 
@@ -15,19 +15,19 @@ Folder, database dan alamatnya terpisah dari aplikasi lain di Laragon (mis. Asse
 
 ## 2. Salin program
 
-1. Ekstrak `hotel-asset-care.zip` sehingga ada `C:\laragon\www\hotel-asset-care\artisan`.
-2. Klik **Reload** pada Laragon. Laragon membuat virtual host `hotel-asset-care.test` ke folder `public`.
+1. Ekstrak `siaga.zip` sehingga ada `C:\laragon\www\siaga\artisan`.
+2. Klik **Reload** pada Laragon. Laragon membuat virtual host `siaga.test` ke folder `public`.
 
 ## 3. Instal untuk hotel Anda
 
 Buka **Terminal** Laragon:
 
 ```bat
-cd C:\laragon\www\hotel-asset-care
+cd C:\laragon\www\siaga
 setup-laragon.bat
 ```
 
-Skrip menyiapkan `.env`, APP_KEY dan database `hotel_asset_care`, lalu **menanyakan**:
+Skrip menyiapkan `.env`, APP_KEY dan database `siaga`, lalu **menanyakan**:
 
 | Pertanyaan | Contoh | Keterangan |
 |---|---|---|
@@ -35,15 +35,26 @@ Skrip menyiapkan `.env`, APP_KEY dan database `hotel_asset_care`, lalu **menanya
 | Kode properti | `HMB` | Prefiks kode aset (`HMB-AST-000001`). 2–8 huruf kapital/angka. **Terkunci setelah aset pertama dibuat.** |
 | Zona waktu | WIB / WITA / WIT | |
 | Email & sandi Super Admin | `it@hotelmelati.co.id` | Sandi minimal 10 karakter, huruf & angka |
-| Isi data contoh? | Ya untuk uji coba / pelatihan | Kamar 301–310, aset contoh, akun per jabatan |
 
 Tanpa tanya jawab (mis. untuk beberapa hotel sekaligus):
 
 ```bat
-php artisan assetcare:install --hotel="Hotel Melati Bandung" --code=HMB --timezone=Asia/Jakarta --admin-email=it@hotelmelati.co.id --admin-password=SandiKuat2026 --demo --fresh --no-interaction
+php artisan siaga:install --hotel="Hotel Melati Bandung" --code=HMB --timezone=Asia/Jakarta --admin-email=it@hotelmelati.co.id --admin-password=SandiKuat2026 --fresh --no-interaction
 ```
 
 > `setup-laragon.bat` memakai `--fresh`: menjalankannya ulang **menghapus semua data**.
+
+Instalasi selalu **bersih** (tanpa data contoh), siap diisi data asli hotel.
+
+### Data contoh (opsional, terpisah)
+
+Untuk latihan atau demo, pasang data contoh kapan saja:
+
+```bat
+php artisan siaga:demo
+```
+
+Isinya kamar 301–310, template Deluxe, 10 aset contoh, dan akun per jabatan `@hotel.test` dengan sandi `Hotel-2026!ganti`. Data contoh bercampur dengan data asli dan tidak terhapus otomatis, jadi untuk latihan sebaiknya buat instalasi kedua (folder & database lain, mis. `siaga_latihan`).
 
 ## 4. Lengkapi Profil hotel
 
@@ -68,15 +79,15 @@ Lalu isi **Lokasi & kamar**, **Tipe kamar**, **Departemen**, **Pengguna**, dan s
 ## 7. Peringatan SLA (scheduler)
 
 - Uji coba: `php artisan schedule:work` (biarkan jendela terbuka).
-- Permanen: Windows Task Scheduler, tiap 1 menit, program `C:\laragon\bin\php\php-8.3.x\php.exe`, argumen `C:\laragon\www\hotel-asset-care\artisan schedule:run`.
+- Permanen: Windows Task Scheduler, tiap 1 menit, program `C:\laragon\bin\php\php-8.3.x\php.exe`, argumen `C:\laragon\www\siaga\artisan schedule:run`.
 
 ## 8. Perintah penting
 
 | Perintah | Kegunaan |
 |---|---|
-| `php artisan assetcare:install` | Instalasi hotel (tanya jawab). Tambah `--fresh` untuk mengosongkan data. |
-| `php artisan assetcare:doctor` | Cek konfigurasi, database, izin & peran |
-| `php artisan assetcare:create-admin` | Membuat / memulihkan Super Admin |
+| `php artisan siaga:install` | Instalasi hotel (tanya jawab). Tambah `--fresh` untuk mengosongkan data. |
+| `php artisan siaga:doctor` | Cek konfigurasi, database, izin & peran |
+| `php artisan siaga:create-admin` | Membuat / memulihkan Super Admin |
 | `php artisan test` | Uji otomatis (butuh `composer install` dan database `asset_care_test`) |
 | `php artisan optimize:clear` | Bersihkan cache setelah mengubah `.env` |
 
@@ -84,10 +95,10 @@ Lalu isi **Lokasi & kamar**, **Tipe kamar**, **Departemen**, **Pengguna**, dan s
 
 | Gejala | Solusi |
 |---|---|
-| Halaman putih / error 500 | Lihat `storage\logs\laravel-*.log`; jalankan `php artisan assetcare:doctor`. |
+| Halaman putih / error 500 | Lihat `storage\logs\laravel-*.log`; jalankan `php artisan siaga:doctor`. |
 | Tampilan berantakan | `php artisan filament:assets` lalu Ctrl+F5. |
 | `could not find driver` | Aktifkan `pdo_mysql`. |
 | PDF/QR gagal | Aktifkan ekstensi `gd`. |
 | Logo / warna baru belum tampil | Muat ulang halaman (Ctrl+F5). |
-| Kode properti tidak bisa diubah | Normal setelah ada aset. Untuk mulai dari nol: `php artisan assetcare:install --fresh`. |
+| Kode properti tidak bisa diubah | Normal setelah ada aset. Untuk mulai dari nol: `php artisan siaga:install --fresh`. |
 | Kamera tidak menyala | Normal di HTTP; gunakan **Foto label** atau pasang HTTPS. |

@@ -48,12 +48,12 @@ class Branding
 
     public static function appName(): string
     {
-        return static::property()?->app_name ?: (string) config('assetcare.brand_name', 'Hotel Asset Care');
+        return static::property()?->app_name ?: (string) config('assetcare.brand_name', 'SIAGA');
     }
 
     public static function tagline(): string
     {
-        return static::property()?->tagline ?: (string) config('assetcare.brand_tagline', 'Pengelolaan aset & pemeliharaan hotel');
+        return static::property()?->tagline ?: (string) config('assetcare.brand_tagline', 'Sistem Informasi Aset & Gangguan');
     }
 
     public static function code(): string

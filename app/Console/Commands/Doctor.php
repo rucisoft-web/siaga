@@ -13,9 +13,9 @@ use Throwable;
 
 class Doctor extends Command
 {
-    protected $signature = 'assetcare:doctor';
+    protected $signature = 'siaga:doctor';
 
-    protected $description = 'Pemeriksaan konfigurasi, basis data, izin & peran Hotel Asset Care';
+    protected $description = 'Pemeriksaan konfigurasi, basis data, izin & peran SIAGA';
 
     public function handle(): int
     {
@@ -49,7 +49,7 @@ class Doctor extends Command
         $add('Izin lengkap ('.count(PermissionCatalog::PERMISSIONS).')', $missing === [], $missing ? 'kurang: '.implode(', ', $missing).' → php artisan db:seed' : '');
         $add('Peran ('.count(PermissionCatalog::ROLES).')', Role::count() >= count(PermissionCatalog::ROLES), Role::count().' peran');
         $add('Properti', Property::exists(), Property::pluck('code')->join(', '));
-        $add('Super Admin tersedia', User::whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->exists(), 'php artisan assetcare:create-admin');
+        $add('Super Admin tersedia', User::whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->exists(), 'php artisan siaga:create-admin');
         $noRole = User::where('is_active', true)->whereDoesntHave('roles')->pluck('email');
         $add('Pengguna aktif punya peran', $noRole->isEmpty(), $noRole->join(', '));
         $add('Jadwal (cron) untuk SLA', true, '* * * * * php artisan schedule:run  (Laragon: jalankan "php artisan schedule:work")');

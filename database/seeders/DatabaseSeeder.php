@@ -7,14 +7,14 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Produksi: hanya referensi (izin, peran, departemen, kategori, SLA, Super Admin).
-     * Lokal / ASSETCARE_SEED_DEMO=true: tambah data contoh pilot (terpisah dari produksi).
+     * Hanya referensi (izin, peran, departemen, kategori, SLA, Super Admin).
+     * Data contoh terpisah: php artisan siaga:demo (atau ASSETCARE_SEED_DEMO=true, dipakai uji otomatis).
      */
     public function run(): void
     {
         $this->call(ReferenceSeeder::class);
 
-        if (! app()->isProduction() || config('assetcare.seed_demo')) {
+        if (config('assetcare.seed_demo')) {
             $this->call(DemoSeeder::class);
         }
     }

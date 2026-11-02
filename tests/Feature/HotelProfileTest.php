@@ -29,7 +29,7 @@ class HotelProfileTest extends TestCase
 
     public function test_install_command_sets_up_any_hotel(): void
     {
-        $this->artisan('assetcare:install', [
+        $this->artisan('siaga:install', [
             '--hotel' => 'Hotel Kenanga Makassar', '--code' => 'HKM', '--timezone' => 'Asia/Makassar',
             '--admin-email' => 'it@kenanga.test', '--admin-password' => 'Kenanga2026ok', '--fresh' => true, '--no-interaction' => true,
         ])->assertSuccessful();
@@ -43,7 +43,20 @@ class HotelProfileTest extends TestCase
         $this->assertSame('HKM-AST-000001', Sequence::assetCode($p->id));
         $this->assertTrue(User::where('email', 'it@kenanga.test')->first()->hasPermission('settings.manage'));
         $this->assertFalse(User::where('email', ReferenceSeeder::ADMIN_EMAIL)->exists(), 'tidak ada akun admin bawaan');
-        $this->assertSame(0, Asset::withoutGlobalScopes()->count(), 'tanpa --demo tidak ada data contoh');
+        $this->assertSame(0, Asset::withoutGlobalScopes()->count(), 'instalasi selalu bersih');
+
+        // data contoh dipasang terpisah, kapan saja, tanpa digandakan bila diulang
+        $this->artisan('siaga:demo', ['--force' => true])->assertSuccessful();
+        $this->artisan('siaga:demo', ['--force' => true])->assertSuccessful();
+        $this->assertSame(10, Asset::withoutGlobalScopes()->count());
+        $this->assertStringStartsWith('HKM-AST-', Asset::withoutGlobalScopes()->value('asset_code'));
+        $this->assertTrue(User::where('email', \Database\Seeders\DemoSeeder::email('gm'))->exists());
+    }
+
+    public function test_demo_requires_installation_first(): void
+    {
+        $this->artisan('migrate:fresh', ['--force' => true]);
+        $this->artisan('siaga:demo', ['--force' => true])->assertFailed();
     }
 
     public function test_profile_page_changes_name_colors_and_logo(): void

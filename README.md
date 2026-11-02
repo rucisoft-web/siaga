@@ -1,4 +1,4 @@
-# Hotel Asset Care
+# SIAGA — Sistem Informasi Aset & Gangguan
 
 Aplikasi pengelolaan aset & pemeliharaan untuk **hotel mana saja** — **Laravel 13 · Filament 5 · MySQL 8**.
 Satu paket, satu instalasi per hotel. Nama hotel, kode aset, logo, warna dan zona waktu diatur dari aplikasi
@@ -13,7 +13,7 @@ Instalasi: **PANDUAN-LARAGON.md** (komputer Windows) atau **PANDUAN-CPANEL.md** 
 
 | Yang diatur | Di mana | Catatan |
 |---|---|---|
-| Nama hotel, kode properti, zona waktu, Super Admin | Ditanyakan saat instalasi (`php artisan assetcare:install`) | Kode properti = prefiks kode aset, mis. `HMB` → `HMB-AST-000001` |
+| Nama hotel, kode properti, zona waktu, Super Admin | Ditanyakan saat instalasi (`php artisan siaga:install`) | Kode properti = prefiks kode aset, mis. `HMB` → `HMB-AST-000001` |
 | Logo (terang & gelap), warna utama & aksen, nama aplikasi, tagline, alamat, kelas, jumlah kamar | Pengaturan › Profil hotel | 6 palet cepat; tanpa logo → logo teks bergaris otomatis |
 | Gedung, lantai, kamar, area, tipe kamar | Pengaturan › Lokasi & kamar, Tipe kamar | |
 | Departemen, kategori aset, vendor, SLA P1–P4, batas persetujuan | Menu Pengaturan | Data awal berisi 12 departemen & ~50 kategori aset hotel umum |
@@ -40,9 +40,10 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 Belum termasuk (rilis berikutnya): preventive maintenance terjadwal, suku cadang & stok, stock opname, disposal,
 anggaran, API, mode offline penuh, integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A**.
 
-## Data contoh (opsional)
+## Data contoh (terpisah, opsional)
 
-Bila saat instalasi memilih **data contoh**: kamar 301–310 (Deluxe), template `TPL-DLX` (7 unit per kamar),
+Instalasi selalu **bersih** — siap diisi data asli hotel. Data contoh untuk latihan dipasang terpisah, kapan saja,
+dengan `php artisan siaga:demo` (cPanel: `bash deploy/deploy-cpanel.sh demo`). Isinya: kamar 301–310 (Deluxe), template `TPL-DLX` (7 unit per kamar),
 10 aset utilitas/kitchen/ballroom, dan akun per jabatan dengan sandi `Hotel-2026!ganti` (wajib diganti):
 
 | Email | Peran |
@@ -56,7 +57,7 @@ Bila saat instalasi memilih **data contoh**: kamar 301–310 (Deluxe), template 
 | fo.supervisor@ / hk.supervisor@hotel.test | Pelapor |
 | owner@, director@, it@, exec.hk@, fbm@, purchasing@, auditor@ | Owner, perwakilan owner, IT, HOD, Purchasing, Auditor |
 
-Domain email contoh diatur dengan `ASSETCARE_DEMO_EMAIL_DOMAIN`. Untuk hotel sungguhan, buat akun per orang dan nonaktifkan akun contoh.
+Domain email contoh diatur dengan `ASSETCARE_DEMO_EMAIL_DOMAIN`. Data contoh bercampur dengan data asli dan tidak dihapus otomatis, jadi untuk latihan sebaiknya pakai instalasi/database terpisah (mis. `siaga_latihan`).
 
 ## Uji otomatis
 

@@ -1,9 +1,9 @@
 @echo off
 setlocal
 rem ================================================================
-rem  Hotel Asset Care - instalasi otomatis di Laragon (Windows)
-rem  Jalankan dari Terminal Laragon:  cd C:\laragon\www\hotel-asset-care  lalu  setup-laragon.bat
-rem  PERINGATAN: database hotel_asset_care akan dikosongkan & diisi ulang.
+rem  SIAGA - instalasi otomatis di Laragon (Windows)
+rem  Jalankan dari Terminal Laragon:  cd C:\laragon\www\siaga  lalu  setup-laragon.bat
+rem  PERINGATAN: database siaga akan dikosongkan & diisi ulang.
 rem ================================================================
 cd /d "%~dp0"
 
@@ -26,15 +26,15 @@ echo [3/7] Membuat APP_KEY...
 php artisan key:generate --force
 if errorlevel 1 goto :gagal
 
-echo [4/7] Membuat database hotel_asset_care (utf8mb4)...
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS hotel_asset_care CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+echo [4/7] Membuat database siaga (utf8mb4)...
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS siaga CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 if errorlevel 1 (
   echo Gagal membuat database. Pastikan MySQL Laragon sudah Start All.
   goto :gagal
 )
 
 echo [5/7] Data hotel: jawab beberapa pertanyaan (nama hotel, kode, zona waktu, Super Admin)...
-php artisan assetcare:install --fresh
+php artisan siaga:install --fresh
 if errorlevel 1 goto :gagal
 
 echo [6/7] Menyiapkan aset tampilan Filament...
@@ -42,11 +42,11 @@ php artisan filament:assets
 php artisan optimize:clear
 
 echo [7/7] Pemeriksaan akhir...
-php artisan assetcare:doctor
+php artisan siaga:doctor
 
 echo.
 echo ================================================================
-echo  Selesai. Buka http://hotel-asset-care.test/admin
+echo  Selesai. Buka http://siaga.test/admin
 echo  Login dengan email ^& kata sandi Super Admin yang baru diisi.
 echo  Lengkapi logo ^& warna di menu Pengaturan ^> Profil hotel.
 echo ================================================================

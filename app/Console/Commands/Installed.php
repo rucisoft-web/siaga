@@ -10,7 +10,7 @@ use Throwable;
 /** Dipakai skrip deploy: exit 0 bila database sudah berisi pengguna (instalasi tidak boleh diulang). */
 class Installed extends Command
 {
-    protected $signature = 'assetcare:installed';
+    protected $signature = 'siaga:installed';
 
     protected $description = 'Cek apakah database sudah terpasang & berisi data';
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ============================================================
-#  Hotel Asset Care — instalasi / rilis di cPanel (Terminal / SSH)
+#  SIAGA — instalasi / rilis di cPanel (Terminal / SSH)
 #  Pemakaian:
 #     bash deploy/deploy-cpanel.sh install   # pertama kali: tanya nama hotel, kode, zona waktu, Super Admin (tanpa data contoh)
-#     bash deploy/deploy-cpanel.sh seed      # pertama kali + data contoh (kamar 301–310, template Deluxe, akun jabatan)
+#     bash deploy/deploy-cpanel.sh demo      # opsional, kapan saja: tambah data contoh (kamar 301–310, aset & akun contoh)
 #     bash deploy/deploy-cpanel.sh update    # rilis pembaruan kode (data tetap)
 #  Variabel opsional: PHP_BIN=/opt/cpanel/ea-php83/root/usr/bin/php
 # ============================================================
@@ -41,26 +41,26 @@ find storage bootstrap/cache -type f -exec chmod 664 {} \; 2>/dev/null || true
 chmod 600 .env
 
 case "$MODE" in
-  install|seed)
+  demo)
+    $ART siaga:demo
+    exit 0
+    ;;
+  install)
     $ART config:clear >/dev/null 2>&1 || true
-    if $ART assetcare:installed >/dev/null 2>&1; then
+    if $ART siaga:installed >/dev/null 2>&1; then
       echo "✘ Database sudah berisi data. Instalasi dihentikan agar data tidak tertimpa. Untuk pembaruan pakai: bash deploy/deploy-cpanel.sh update"
       exit 1
     fi
     grep -q '^APP_KEY=base64' .env || $ART key:generate --force
     # Tanya jawab: nama hotel, kode properti (prefiks kode aset), zona waktu, email & sandi Super Admin
-    if [ "$MODE" = "seed" ]; then
-      $ART assetcare:install --demo
-    else
-      $ART assetcare:install
-    fi
+    $ART siaga:install
     ;;
   update)
     $ART down --refresh=15 || true
     $ART migrate --force
     $ART db:seed --class=Database\\Seeders\\ReferenceSeeder --force
     ;;
-  *) echo "Mode tidak dikenal: $MODE (install | seed | update)"; exit 1 ;;
+  *) echo "Mode tidak dikenal: $MODE (install | update | demo)"; exit 1 ;;
 esac
 
 $ART storage:link >/dev/null 2>&1 || true
@@ -68,7 +68,7 @@ $ART filament:assets
 $ART optimize:clear
 $ART optimize
 $ART up || true
-$ART assetcare:doctor
+$ART siaga:doctor
 echo ""
 echo "✔ Selesai ($MODE)."
 echo "  Cron wajib (sekali per menit):  * * * * * $PHP_BIN $APP_DIR/artisan schedule:run >> /dev/null 2>&1"

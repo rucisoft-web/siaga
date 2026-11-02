@@ -17,7 +17,7 @@ use Filament\Schemas\Schema;
 
 /**
  * Pengaturan › Profil hotel: identitas & tampilan aplikasi.
- * Inilah yang membuat satu produk Hotel Asset Care bisa dipakai hotel mana saja tanpa mengubah kode.
+ * Inilah yang membuat satu produk SIAGA bisa dipakai hotel mana saja tanpa mengubah kode.
  */
 class ProfilHotel extends Page
 {
@@ -93,8 +93,8 @@ class ProfilHotel extends Page
                 ])->helperText('Tanggal operasional, SLA & laporan memakai zona ini. Data tetap disimpan UTC.'),
             ]),
             Section::make('Tampilan aplikasi')->columns(2)->schema([
-                TextInput::make('app_name')->label('Nama aplikasi')->placeholder('Hotel Asset Care')->maxLength(60),
-                TextInput::make('tagline')->label('Tagline')->placeholder('Pengelolaan aset & pemeliharaan hotel')->maxLength(120),
+                TextInput::make('app_name')->label('Nama aplikasi')->placeholder('SIAGA')->maxLength(60),
+                TextInput::make('tagline')->label('Tagline')->placeholder('Sistem Informasi Aset & Gangguan')->maxLength(120),
                 Select::make('palette')->label('Pilih palet cepat')->dehydrated(false)->live()
                     ->options(collect(self::PALETTES)->map(fn ($p) => $p[0])->all())
                     ->afterStateUpdated(function ($state, callable $set) {
