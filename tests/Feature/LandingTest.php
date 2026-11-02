@@ -37,9 +37,11 @@ class LandingTest extends TestCase
         config(['assetcare.guest_mode' => true, 'assetcare.landing' => true]);
         $p = $this->demo();
         $this->get('/')->assertOk()
-            ->assertSee('Masalah yang sering terjadi')->assertSee('Workshop pengenalan 2 hari')
+            ->assertSee('Masalah pengelolaan aset tetap')->assertSee('Kenapa terjadi')->assertSee('Solusi SIAGA')->assertSee('Workshop pengenalan 2 hari')
+            ->assertSee('id="angka"', false)->assertSee('chart.umd.min.js', false)
             ->assertSee('Grand Pasundan Convention Hotel')->assertSee('Masuk sebagai tamu')->assertSee('value="GPCH"', false)
             ->assertDontSee('value="HTL"', false);
+        $this->get('/admin/login')->assertOk()->assertSee('Masuk sebagai tamu')->assertSee(route('landing.guest'), false);
         $this->get('/panduan')->assertOk()->assertSee('Dasbor pimpinan');
         $this->get('/panduan/implementasi')->assertOk()->assertSee('Pengadaan yang diperlukan');
         $this->get('/panduan/tidak-ada')->assertNotFound();

@@ -17,7 +17,7 @@ use function Laravel\Prompts\confirm;
  */
 class InstallDemoData extends Command
 {
-    protected $signature = 'siaga:demo-data {set=all : gpch | hermina | kimia-farma | all} {--force : Jalankan tanpa konfirmasi}';
+    protected $signature = 'siaga:demo-data {set=all : gpch | hermina | kimia-farma | all} {--force : Jalankan tanpa konfirmasi} {--admin : Pindahkan akun Super Admin ke perusahaan demo ini agar langsung melihat datanya (hanya untuk satu data demo)}';
 
     protected $description = 'Memasang data demo perusahaan terpisah (GPCH, Hermina Group, Kimia Farma) — untuk situs demo / workshop';
 
@@ -56,6 +56,20 @@ class InstallDemoData extends Command
             }
             $this->components->twoColumnDetail('Akun demo', $seeder->mail('gm').', '.$seeder->mail('ce').', '.$seeder->mail('sv1').', dst.');
             $this->components->twoColumnDetail('Sandi akun demo', $seeder->password());
+        }
+
+        if ($this->option('admin')) {
+            if (count($keys) !== 1) {
+                $this->components->warn('--admin hanya berlaku untuk satu data demo, mis. siaga:demo-data gpch --admin');
+            } else {
+                $p = Property::where('code', DemoSets::SETS[$keys[0]]::CODE)->first();
+                $n = \App\Models\User::withoutGlobalScopes()->whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->update(['property_id' => $p->id]);
+                \App\Support\Branding::flush();
+                $this->components->twoColumnDetail('Super Admin dipindah ke', $p->name.' ('.$n.' akun)');
+                if (config('assetcare.property_code') !== $p->code) {
+                    $this->components->info('Agar halaman login & tamu memakai merek '.$p->name.', isi ASSETCARE_PROPERTY_CODE='.$p->code.' di .env lalu jalankan: php artisan config:cache');
+                }
+            }
         }
 
         return self::SUCCESS;

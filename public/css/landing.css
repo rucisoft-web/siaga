@@ -107,3 +107,46 @@ code { background: var(--bg2); padding: .1rem .35rem; border-radius: 4px; font-s
 
 .ln-foot { padding: 2rem 0; border-top: 1px solid var(--line); color: var(--ink2); font-size: .85rem; }
 @media print { .ln-top, .ln-foot, .ln-doc-nav, .ln-doc-tools, .ln-doc-cta { display: none !important; } .ln-doc-body { border: 0; } body { background: #fff; } }
+
+/* cek cepat, masalah-penyebab-solusi, angka, tur */
+.ln-inline { display: inline; margin: 0; }
+.ln-check { display: grid; gap: .6rem; grid-template-columns: minmax(0, 1fr); margin-top: 1rem; }
+@media (min-width: 720px) { .ln-check { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ln-check-item { display: flex; gap: .7rem; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .85rem 1rem; cursor: pointer; }
+.ln-check-item input { width: 20px; height: 20px; accent-color: var(--p); margin-top: .1rem; flex: none; }
+.ln-check-item:has(input:checked) { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 6%, var(--card)); }
+.ln-check-result { min-height: 1.5rem; font-weight: 650; color: var(--bad); margin-top: .8rem; }
+.ln-psr { display: grid; gap: 1.4rem; margin-top: 1.5rem; }
+.ln-psr-row { display: grid; gap: 1.2rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1.3rem; align-items: center; }
+@media (min-width: 960px) { .ln-psr-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); padding: 1.6rem; } .ln-psr-row:nth-child(even) .ln-psr-img { order: -1; } }
+.ln-psr-no { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--bad); color: #fff; font-weight: 800; }
+.ln-psr-text h3 { font-size: 1.2rem; margin: .5rem 0 .8rem; }
+.ln-psr-cols { display: grid; gap: .8rem; }
+@media (min-width: 720px) { .ln-psr-cols { grid-template-columns: 1fr 1fr; } }
+.ln-psr-cols h4 { margin: 0 0 .3rem; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.ln-psr-cols p { margin: 0; font-size: .92rem; color: var(--ink2); }
+.ln-psr-why { border-left: 3px solid var(--bad); padding-left: .8rem; }
+.ln-psr-why h4 { color: var(--bad); }
+.ln-psr-sol { border-left: 3px solid var(--ok); padding-left: .8rem; }
+.ln-psr-sol h4 { color: var(--ok); }
+.ln-psr-sol b { color: var(--ink); }
+.ln-psr-img { margin: 0; }
+.ln-psr-img img { border-radius: 10px; border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(15, 23, 42, .12); max-height: 360px; width: 100%; object-fit: cover; object-position: top left; }
+.ln-psr-img figcaption { font-size: .8rem; color: var(--ink2); margin-top: .4rem; text-align: center; }
+.ln-kpis { display: grid; gap: .8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 1.2rem 0; }
+@media (min-width: 900px) { .ln-kpis { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.ln-kpis div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .8rem 1rem; display: flex; flex-direction: column; }
+.ln-kpis b { font-size: 1.45rem; letter-spacing: -.01em; }
+.ln-kpis b.bad { color: var(--bad); }
+.ln-kpis span { font-size: .8rem; color: var(--ink2); }
+.ln-charts .ln-card p { margin-bottom: .4rem; }
+.ln-canvas { position: relative; height: 280px; }
+.ln-tour { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 1rem; }
+@media (min-width: 900px) { .ln-tour { grid-template-columns: repeat(6, minmax(0, 1fr)); } .ln-tour-item.wide { grid-column: span 3; } .ln-tour-item.phone { grid-column: span 2; } }
+.ln-tour-item { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.ln-tour-item.wide { grid-column: 1 / -1; }
+@media (min-width: 900px) { .ln-tour-item.wide { grid-column: span 3; } }
+.ln-tour-item img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--line); }
+.ln-tour-item.phone img { aspect-ratio: 9 / 15; object-position: top center; }
+.ln-tour-item figcaption { padding: .7rem .9rem; display: flex; flex-direction: column; gap: .15rem; }
+.ln-tour-item figcaption span { font-size: .85rem; color: var(--ink2); }

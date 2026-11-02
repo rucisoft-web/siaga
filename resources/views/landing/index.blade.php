@@ -13,9 +13,19 @@
             <h1>Setiap aset tercatat. Setiap kerusakan tertangani. Setiap keputusan pakai angka.</h1>
             <p class="ln-lead">SIAGA menyatukan register aset berlabel QR, laporan kerusakan dari HP, work order dengan persetujuan biaya, dan dasbor pimpinan, dalam satu aplikasi yang dipakai dari lantai kamar sampai ruang direksi.</p>
             <div class="ln-cta">
-                <a href="#demo" class="ln-btn">Jelajahi data demo</a>
-                <a href="{{ route('landing.guide', 'implementasi') }}" class="ln-btn ln-btn-ghost">Lihat panduan implementasi</a>
+                @if ($guest && $datasets)
+                    <form method="post" action="{{ route('landing.guest') }}" class="ln-inline">
+                        @csrf
+                        <input type="hidden" name="dataset" value="{{ $datasets[0]['code'] }}">
+                        <button type="submit" class="ln-btn ln-btn-lg">Masuk sebagai tamu</button>
+                    </form>
+                    <a href="#masalah" class="ln-btn ln-btn-ghost ln-btn-lg">Kenali masalahnya</a>
+                @else
+                    <a href="#demo" class="ln-btn">Jelajahi data demo</a>
+                    <a href="#masalah" class="ln-btn ln-btn-ghost">Kenali masalahnya</a>
+                @endif
             </div>
+            @if ($guest && $datasets)<p class="ln-muted">Langsung mencoba semua layar dengan data demo {{ $datasets[0]['title'] }}, tanpa akun. Hanya melihat.</p>@endif
             <ul class="ln-proof">
                 <li><b>1 label QR</b> per aset, dicetak di lapangan</li>
                 <li><b>&lt; 1 menit</b> melapor kerusakan dari HP</li>
@@ -29,19 +39,67 @@
 </section>
 
 {{-- I · INTEREST --}}
-<section class="ln-sec">
+<section class="ln-sec" id="cek">
     <div class="ln-wrap">
-        <h2>Masalah yang sering terjadi</h2>
-        <div class="ln-grid ln-grid-4">
-            <div class="ln-card"><h3>Aset tidak jelas</h3><p>Daftar aset tersebar di Excel, tidak ada yang tahu jumlah, lokasi, dan kondisi sebenarnya. Audit selalu menemukan selisih.</p></div>
-            <div class="ln-card"><h3>Laporan hilang di chat</h3><p>Kerusakan dilaporkan lewat WhatsApp atau telepon. Tidak tercatat siapa menangani, kapan selesai, dan apakah berulang.</p></div>
-            <div class="ln-card"><h3>Biaya tidak terlacak</h3><p>Suku cadang dan jasa vendor dibayar, tapi tidak tertaut ke aset. Aset boros biaya tidak pernah terlihat.</p></div>
-            <div class="ln-card"><h3>Pimpinan menebak</h3><p>Keputusan perbaiki atau ganti, tambah teknisi, atau anggaran tahun depan, diambil tanpa data yang bisa ditelusuri.</p></div>
+        <h2>Apakah ini terjadi di perusahaan Anda?</h2>
+        <p class="ln-lead">Centang yang sesuai. Semakin banyak yang tercentang, semakin besar nilai aset dan pendapatan yang diam-diam hilang.</p>
+        <div class="ln-check" data-check>
+            @foreach ([
+                'Jumlah dan lokasi aset di Excel berbeda dengan kondisi di lapangan',
+                'Kerusakan dilaporkan lewat WhatsApp atau telepon, lalu terlupa',
+                'Aset yang sama rusak lagi dan lagi, tanpa ada yang menyadari',
+                'Biaya perbaikan tidak bisa ditunjukkan per aset',
+                'Kamar atau ruang tidak bisa dipakai lebih lama dari seharusnya',
+                'Pimpinan menunggu laporan bulanan untuk tahu kondisi aset',
+            ] as $i => $q)
+                <label class="ln-check-item"><input type="checkbox"><span>{{ $q }}</span></label>
+            @endforeach
+        </div>
+        <p class="ln-check-result" data-check-result aria-live="polite"></p>
+    </div>
+</section>
+
+<section class="ln-sec ln-alt" id="masalah">
+    <div class="ln-wrap">
+        <h2>Masalah pengelolaan aset tetap, penyebabnya, dan solusi SIAGA</h2>
+        <p class="ln-lead">Aset tetap (bangunan, mesin, peralatan, perabot, kendaraan, IT) adalah porsi terbesar kekayaan perusahaan jasa. Masalahnya jarang karena orangnya tidak peduli. Masalahnya ada pada cara kerja yang tidak memberi informasi yang tepat ke orang yang tepat pada waktu yang tepat.</p>
+        @php
+            $rows = [
+                ['Aset tidak tercatat lengkap dan tidak akurat', 'Register di Excel per departemen, tanpa identitas fisik pada barang. Pemindahan dan penggantian tidak dicatat. Inventarisasi jarang dilakukan karena memakan waktu. Tidak jelas siapa pemilik datanya.',
+                    'Satu register untuk semua aset dengan <b>label QR unik</b>. Pendataan per kamar/ruang memakai <b>daftar isi standar</b>, jadi yang hilang atau berlebih langsung terlihat. Label dicetak di lapangan dengan printer portable. Aset baru aktif setelah diverifikasi Asset Controller.', 'help/img/pendataan-progres.png', 'Progres pendataan per gedung dan lantai'],
+                ['Laporan kerusakan tercecer dan respons lambat', 'Laporan lewat chat, telepon, atau kertas. Tidak ada antrean dan prioritas, tidak ada target waktu, dan pelapor tidak tahu laporannya sedang ditangani atau tidak.',
+                    'Siapa pun <b>scan QR atau pilih lokasi</b> dari HP, tulis gejala, lampirkan foto. Prioritas dan <b>target waktu (SLA)</b> dihitung otomatis dari dampaknya. Laporan ganda digabung. Pelapor bisa memantau status.', 'landing/tur-lapor-hp.png', 'Lapor kerusakan dari HP'],
+                ['Kerusakan berulang dan umur aset pendek', 'Riwayat perbaikan tidak tersimpan per aset. Diagnosis dan akar masalah tidak ditulis. Hasil pekerjaan tidak diverifikasi. Pemeliharaan baru dilakukan setelah rusak.',
+                    'Setiap aset punya <b>kartu dengan riwayat lengkap</b>. Teknisi wajib mencatat diagnosis, akar masalah, dan uji fungsi. Hasil diverifikasi atasan. <b>Kerusakan berulang terdeteksi otomatis</b>, dan pekerjaan preventif tercatat.', 'landing/tur-aset.png', 'Kartu aset dengan riwayat perbaikan'],
+                ['Biaya pemeliharaan bocor dan tidak terkendali', 'Pembelian suku cadang dan jasa vendor tidak tertaut ke aset atau pekerjaan. Persetujuan tidak berjenjang. Tidak ada yang membandingkan biaya perbaikan dengan harga aset baru.',
+                    'Biaya material, vendor, dan tenaga dicatat <b>per work order</b>. Persetujuan mengikuti <b>batas wewenang</b> (Chief Engineer, Finance, GM), lalu difinalkan Finance. Rasio biaya terhadap harga perolehan memberi sinyal <b>perbaiki atau ganti</b>.', 'landing/tur-wo.png', 'Work order dengan biaya dan persetujuan'],
+                ['Pendapatan hilang karena kamar atau ruang tidak bisa dipakai', 'Koordinasi Engineering dengan Front Office lemah. Kamar rusak tidak segera diblokir, atau lupa dibuka kembali setelah selesai. Kerugiannya tidak pernah dihitung.',
+                    'Blokir kamar diusulkan langsung dari work order, <b>dikonfirmasi Front Office</b>, dan dilepas setelah pekerjaan diverifikasi. Total <b>hari-kamar yang hilang</b> tampil di dasbor pimpinan.', 'help/img/room-blocks.png', 'Blokir kamar terkait perbaikan'],
+                ['Pimpinan memutuskan tanpa data', 'Laporan disusun manual, terlambat, dan angkanya tidak bisa ditelusuri. Tidak ada indikator baku seperti SLA, MTTR, atau backlog.',
+                    '<b>Dasbor pimpinan</b> menampilkan kondisi A–E, aset berisiko dan nilai gantinya, SLA, MTTR, backlog, biaya per bulan, aset boros biaya, serta <b>sorotan otomatis</b>. Setiap angka bisa ditelusuri ke daftar sumbernya.', 'landing/dasbor.png', 'Dasbor pimpinan'],
+                ['Tidak jelas siapa mengubah apa', 'File dibagikan tanpa hak akses. Perubahan data tidak tercatat, sehingga sulit diaudit dan mudah disalahgunakan.',
+                    '<b>17 peran dan 36 izin</b> (tolak secara bawaan), <b>log audit</b> setiap perubahan, wajib ganti sandi, batas percobaan login, dan verifikasi dua langkah.', 'help/img/roles.png', 'Peran dan izin'],
+            ];
+        @endphp
+        <div class="ln-psr">
+            @foreach ($rows as $i => [$m, $why, $sol, $img, $cap])
+                <article class="ln-psr-row">
+                    <div class="ln-psr-text">
+                        <span class="ln-psr-no">{{ $i + 1 }}</span>
+                        <h3>{{ $m }}</h3>
+                        <div class="ln-psr-cols">
+                            <div class="ln-psr-why"><h4>Kenapa terjadi</h4><p>{{ $why }}</p></div>
+                            <div class="ln-psr-sol"><h4>Solusi SIAGA</h4><p>{!! $sol !!}</p></div>
+                        </div>
+                    </div>
+                    <figure class="ln-psr-img"><a href="{{ asset($img) }}" target="_blank" rel="noopener"><img src="{{ asset($img) }}" alt="{{ $cap }}" loading="lazy"></a><figcaption>{{ $cap }}</figcaption></figure>
+                </article>
+            @endforeach
         </div>
     </div>
 </section>
 
-<section class="ln-sec ln-alt" id="cara-kerja">
+<section class="ln-sec" id="cara-kerja">
     <div class="ln-wrap">
         <h2>Cara kerja SIAGA</h2>
         <ol class="ln-steps">
@@ -53,8 +111,98 @@
     </div>
 </section>
 
+{{-- grafik nyata dari data demo --}}
+@if ($showcase)
+@php
+    $k = $showcase['kpi'];
+    $jt = fn ($v) => $v >= 1e9 ? 'Rp '.number_format($v / 1e9, 1, ',', '.').' M' : 'Rp '.number_format($v / 1e6, 1, ',', '.').' jt';
+    $sd = array_sum($showcase['survey']['done']); $sa = $sd + array_sum($showcase['survey']['todo']);
+    $gradeColors = ['A' => '#1E7B45', 'B' => '#7FB069', 'C' => '#E0A526', 'D' => '#D9622B', 'E' => '#B42318', '?' => '#B7BEC9'];
+    $gradeNames = \App\Services\LeadershipService::GRADES;
+    $condTotals = collect($showcase['cond']['series'])->map(fn ($v) => array_sum($v))->filter();
+    $lc = [
+        'cond' => ['type' => 'doughnut', 'data' => ['labels' => $condTotals->keys()->map(fn ($g) => $gradeNames[$g])->values(), 'datasets' => [['data' => $condTotals->values(), 'backgroundColor' => $condTotals->keys()->map(fn ($g) => $gradeColors[$g])->values()]]]],
+        'weekly' => ['type' => 'bar', 'data' => ['labels' => $showcase['weekly']['labels'], 'datasets' => [
+            ['type' => 'line', 'label' => 'Work order masuk', 'data' => $showcase['weekly']['in'], 'borderColor' => '#B42318', 'backgroundColor' => '#B42318', 'tension' => .3],
+            ['label' => 'Selesai', 'data' => $showcase['weekly']['out'], 'backgroundColor' => 'P']]]],
+        'cost' => ['type' => 'bar', 'money' => true, 'stacked' => true, 'data' => ['labels' => $showcase['cost']['labels'], 'datasets' => collect($showcase['cost']['series'])->map(fn ($v, $n) => ['label' => $n, 'data' => $v])->values()->map(fn ($d, $i) => $d + ['backgroundColor' => ['P', 'A', '#7FB069', '#B7BEC9'][$i] ?? '#999'])->all()]],
+        'sla' => ['type' => 'bar', 'stacked' => true, 'data' => ['labels' => $showcase['sla']['labels'], 'datasets' => [['label' => 'Tepat waktu', 'data' => $showcase['sla']['met'], 'backgroundColor' => '#1E7B45'], ['label' => 'Terlambat', 'data' => $showcase['sla']['missed'], 'backgroundColor' => '#B42318']]]],
+    ];
+@endphp
+<section class="ln-sec ln-alt" id="angka">
+    <div class="ln-wrap">
+        <h2>Lihat angkanya: dasbor dari data demo {{ $showcase['title'] }}</h2>
+        <p class="ln-lead">Grafik di bawah dihitung langsung oleh SIAGA dari data demo (contoh / proyeksi): register aset, hasil pendataan, laporan kerusakan, work order, dan biaya. Begini tampilan yang akan dilihat pimpinan setiap hari.</p>
+        <div class="ln-kpis">
+            <div><b>{{ number_format($k['assets'], 0, ',', '.') }}</b><span>aset terdaftar</span></div>
+            <div><b>{{ $sa ? round($sd / $sa * 100) : 0 }}%</b><span>kamar/ruang selesai didata</span></div>
+            <div><b class="bad">{{ number_format($k['risk_count'], 0, ',', '.') }}</b><span>aset berisiko (D/E)</span></div>
+            <div><b>{{ $k['sla_pct'] ?? '—' }}%</b><span>perbaikan tepat waktu</span></div>
+            <div><b>{{ $k['mttr_h'] !== null ? number_format($k['mttr_h'], 1, ',', '.').' jam' : '—' }}</b><span>rata-rata waktu pulih</span></div>
+            <div><b>{{ $jt($k['cost_6m']) }}</b><span>biaya pemeliharaan 6 bulan</span></div>
+        </div>
+        <div class="ln-grid ln-grid-2 ln-charts">
+            <div class="ln-card"><h3>Kondisi aset (A–E)</h3><p>Sebaran kondisi hasil pendataan. Porsi D/E adalah kandidat perbaikan besar atau penggantian.</p><div class="ln-canvas"><canvas data-lc="cond"></canvas></div></div>
+            <div class="ln-card"><h3>Work order masuk vs selesai per minggu</h3><p>Garis di atas batang berarti backlog bertambah dan kapasitas teknisi perlu ditinjau.</p><div class="ln-canvas"><canvas data-lc="weekly"></canvas></div></div>
+            <div class="ln-card"><h3>Biaya pemeliharaan per bulan</h3><p>Material, jasa vendor, dan tenaga internal, semuanya tertaut ke aset dan work order.</p><div class="ln-canvas"><canvas data-lc="cost"></canvas></div></div>
+            <div class="ln-card"><h3>Ketepatan waktu per prioritas (SLA)</h3><p>Perbaikan yang pulih sebelum target waktu dibandingkan dengan yang terlambat.</p><div class="ln-canvas"><canvas data-lc="sla"></canvas></div></div>
+        </div>
+        <div class="ln-cta"><a href="{{ route('landing', ['demo' => $showcase['key']]) }}#demo" class="ln-btn">Buka dasbor lengkapnya sebagai tamu</a></div>
+    </div>
+</section>
+<script src="{{ asset('js/vendor/chart.umd.min.js') }}" defer></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+    const charts = @json($lc);
+    const css = getComputedStyle(document.documentElement);
+    const P = css.getPropertyValue('--p').trim() || '#1F3A5F', A = css.getPropertyValue('--a').trim() || '#B8860B';
+    const ink = css.getPropertyValue('--ink2').trim() || '#4B5563', grid = 'rgba(128,128,128,.15)';
+    const col = c => c === 'P' ? P : c === 'A' ? A : c;
+    const rp = v => v >= 1e6 ? 'Rp ' + (v / 1e6).toLocaleString('id-ID', {maximumFractionDigits: 0}) + ' jt' : 'Rp ' + Math.round(v).toLocaleString('id-ID');
+    function go() {
+        if (!window.Chart) return setTimeout(go, 60);
+        Chart.defaults.color = ink;
+        document.querySelectorAll('canvas[data-lc]').forEach(el => {
+            const c = charts[el.dataset.lc];
+            c.data.datasets.forEach(ds => ['backgroundColor', 'borderColor'].forEach(k => { if (ds[k]) ds[k] = Array.isArray(ds[k]) ? ds[k].map(col) : col(ds[k]); }));
+            const scales = c.type === 'doughnut' ? {} : { x: { stacked: !!c.stacked, grid: { color: grid } }, y: { stacked: !!c.stacked, beginAtZero: true, grid: { color: grid }, ticks: c.money ? { callback: rp } : {} } };
+            new Chart(el, { type: c.type, data: c.data, options: { responsive: true, maintainAspectRatio: false, scales,
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } }, tooltip: c.money ? { callbacks: { label: x => x.dataset.label + ': ' + rp(x.raw) } } : {} } } });
+        });
+    }
+    go();
+});
+</script>
+@endif
+
+{{-- tur layar --}}
+<section class="ln-sec" id="tur">
+    <div class="ln-wrap">
+        <h2>Tur layar SIAGA</h2>
+        <p class="ln-lead">Tangkapan layar asli dari data demo. Klik gambar untuk memperbesar.</p>
+        @php
+            $tour = [
+                ['landing/tur-aset.png', 'Kartu aset', 'Identitas, lokasi, kondisi, nilai, label QR, dan riwayat.', 'wide'],
+                ['landing/tur-wo.png', 'Work order', 'Penugasan, biaya, persetujuan, verifikasi, jejak status.', 'wide'],
+                ['landing/tur-beranda-hp.png', 'Beranda di HP', 'Tugas hari ini, scan, dan lapor dari bilah bawah.', 'phone'],
+                ['landing/tur-pendataan-hp.png', 'Pendataan per kamar', 'Checklist isi kamar, kondisi A–E, cetak label di tempat.', 'phone'],
+                ['landing/tur-lapor-hp.png', 'Lapor kerusakan', 'Pilih aset atau lokasi, tulis gejala, foto. Selesai.', 'phone'],
+                ['landing/tur-label.png', 'Cetak label QR', 'Langsung ke printer portable Bluetooth atau lembar A4.', 'wide'],
+                ['landing/dasbor-biaya.png', 'Biaya & dampak', 'Biaya per bulan, per kategori, dan hari-kamar yang hilang.', 'wide'],
+            ];
+        @endphp
+        <div class="ln-tour">
+            @foreach ($tour as [$img, $t, $c, $kind])
+                @if (is_file(public_path($img)))
+                    <figure class="ln-tour-item {{ $kind }}"><a href="{{ asset($img) }}" target="_blank" rel="noopener"><img src="{{ asset($img) }}" alt="{{ $t }}" loading="lazy"></a><figcaption><b>{{ $t }}</b><span>{{ $c }}</span></figcaption></figure>
+                @endif
+            @endforeach
+        </div>
+    </div>
+</section>
+
 {{-- D · DESIRE --}}
-<section class="ln-sec">
+<section class="ln-sec ln-alt">
     <div class="ln-wrap">
         <h2>Manfaat untuk setiap peran</h2>
         <div class="ln-grid ln-grid-4">
@@ -149,4 +297,12 @@
         </div>
     </div>
 </section>
+<script>
+(function () {
+    const box = document.querySelector('[data-check]'), out = document.querySelector('[data-check-result]');
+    if (!box) return;
+    const msg = n => n === 0 ? '' : n <= 2 ? n + ' dari 6: sudah mulai terasa. SIAGA membantu menutup celah ini sejak awal.' : n <= 4 ? n + ' dari 6: aset Anda kemungkinan besar sudah menimbulkan biaya tersembunyi. Lihat penyebab dan solusinya di bawah.' : n + ' dari 6: saatnya berbenah. Coba data demo dan ikuti workshop 2 hari.';
+    box.addEventListener('change', () => { out.textContent = msg(box.querySelectorAll('input:checked').length); });
+})();
+</script>
 @endsection

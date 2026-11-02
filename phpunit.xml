@@ -26,6 +26,9 @@
         <env name="DB_CONNECTION" value="mysql"/>
         <env name="DB_DATABASE" value="asset_care_test"/>
         <env name="ASSETCARE_SEED_DEMO" value="true"/>
+        <env name="ASSETCARE_PROPERTY_CODE" value="HTL"/>
+        <env name="SIAGA_GUEST_MODE" value="false"/>
+        <env name="SIAGA_LANDING" value="false"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>

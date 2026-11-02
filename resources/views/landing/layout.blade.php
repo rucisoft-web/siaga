@@ -12,11 +12,13 @@
     <div class="ln-wrap ln-top-in">
         <a href="{{ route('landing') }}" class="ln-brand"><span class="ln-logo">S</span><span><b>SIAGA</b><small>Sistem Informasi Aset &amp; Gangguan</small></span></a>
         <nav class="ln-nav">
-            <a href="{{ route('landing') }}#cara-kerja">Cara kerja</a>
+            <a href="{{ route('landing') }}#masalah">Masalah &amp; solusi</a>
+            <a href="{{ route('landing') }}#tur">Tur layar</a>
             <a href="{{ route('landing') }}#workshop">Workshop</a>
             <a href="{{ route('landing.guide', 'implementasi') }}">Panduan implementasi</a>
             <a href="{{ route('landing.guides') }}">Panduan penggunaan</a>
-            <a href="{{ route('landing') }}#demo" class="ln-btn ln-btn-sm">Coba demo</a>
+            <a href="{{ url('/admin/login') }}">Masuk staf</a>
+            <a href="{{ route('landing') }}#demo" class="ln-btn ln-btn-sm">Masuk sebagai tamu</a>
         </nav>
     </div>
 </header>

@@ -31,7 +31,32 @@ class LandingController extends Controller
             return redirect('/admin');
         }
 
-        return view('landing.index', ['datasets' => $this->datasets(), 'guest' => GuestAccess::enabled(), 'guides' => Help::index()]);
+        $datasets = $this->datasets();
+
+        return view('landing.index', ['datasets' => $datasets, 'guest' => GuestAccess::enabled(), 'guides' => Help::index(), 'showcase' => $this->showcase($datasets)]);
+    }
+
+    /** angka & grafik nyata dari data demo pertama (mis. GPCH) untuk bagian "Lihat angkanya"; disimpan 10 menit */
+    protected function showcase(array $datasets): ?array
+    {
+        $p = $datasets[0]['property'] ?? null;
+        if (! $p) {
+            return null;
+        }
+
+        return \Illuminate\Support\Facades\Cache::remember('landing:showcase:'.$p->id, 600, function () use ($p, $datasets) {
+            $cp = app(\App\Support\CurrentProperty::class);
+            $prev = $cp->get();
+            $cp->set($p);
+            try {
+                $d = (new \App\Services\LeadershipService)->data();
+            } finally {
+                $cp->set($prev);
+            }
+
+            return ['title' => $datasets[0]['title'], 'code' => $p->code, 'key' => $datasets[0]['key'], 'kpi' => $d['kpi'],
+                'cond' => $d['condition_by_building'], 'weekly' => $d['weekly'], 'cost' => $d['cost_monthly'], 'sla' => $d['sla_priority'], 'survey' => $d['survey']];
+        });
     }
 
     /** data demo yang tersedia: urutan DemoSets, hanya yang sudah dipasang & punya akun tamu */
@@ -85,6 +110,8 @@ class LandingController extends Controller
             return redirect()->route('landing', ['#demo'])->with('landing_error', 'Pilih salah satu data demo terlebih dahulu.');
         }
         Auth::guard('web')->login($user);
+        app(\App\Support\CurrentProperty::class)->set($p);
+        \App\Support\Branding::flush();
         $request->session()->regenerate();
         $request->session()->put('guest_dataset', $p->code);
 

@@ -440,3 +440,13 @@ a { text-underline-offset: 3px; }
 .ac-guest-actions { display: flex; gap: .9rem; flex-wrap: wrap; }
 .ac-guest-actions a { color: var(--k-link); font-weight: 600; }
 @media print { .ac-guest-banner { display: none; } }
+
+/* ---------- Masuk sebagai tamu (halaman login) ---------- */
+.ac-guest-login { margin-top: 1.25rem; }
+.ac-guest-login-or { display: flex; align-items: center; gap: .6rem; color: var(--k-tinta-2); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .9rem; }
+.ac-guest-login-or::before, .ac-guest-login-or::after { content: ""; flex: 1; border-top: 1px solid var(--k-garis); }
+.ac-guest-login-label { display: block; font-size: .85rem; margin: 0 0 .4rem; color: var(--k-tinta); }
+.ac-guest-login-select { width: 100%; padding: .55rem .6rem; border: 1px solid var(--k-garis-tegas); border-radius: 6px; background: var(--k-kartu); color: var(--k-tinta); font-size: .9rem; margin-bottom: .6rem; }
+.ac-guest-login-btn { width: 100%; padding: .65rem 1rem; border-radius: 8px; border: 2px solid var(--a); background: transparent; color: var(--k-tinta); font-weight: 700; cursor: pointer; font-size: .95rem; }
+.ac-guest-login-btn:hover { background: color-mix(in srgb, var(--a) 15%, transparent); }
+.ac-guest-login-note { font-size: .75rem; color: var(--k-tinta-2); margin: .5rem 0 0; text-align: center; }

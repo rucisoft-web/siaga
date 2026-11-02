@@ -66,15 +66,36 @@ Domain email contoh diatur dengan `ASSETCARE_DEMO_EMAIL_DOMAIN`. Data contoh ber
 
 ## Situs demo & pra-workshop (landing page, masuk sebagai tamu)
 
-Untuk calon peserta workshop 2 hari, SIAGA bisa dipasang sebagai situs demo:
+Untuk calon peserta workshop 2 hari, SIAGA bisa dipasang sebagai situs demo.
 
-1. Instal di **database khusus demo** (jangan di data asli): `php artisan siaga:install`.
-2. Pasang tiga perusahaan demo terpisah: `php artisan siaga:demo-data all` (cPanel: `bash deploy/deploy-cpanel.sh demo-site`).
-   Bisa satu per satu: `siaga:demo-data gpch`, `siaga:demo-data hermina`, `siaga:demo-data kimia-farma` (masing-masing 1–3 menit).
-3. Di `.env` set `SIAGA_GUEST_MODE=true` lalu `php artisan config:cache`.
+**Hanya demo Grand Pasundan (disarankan untuk mulai):**
+
+```bash
+php artisan siaga:install --fresh                 # database KHUSUS demo; isi email & sandi Super Admin saat ditanya
+php artisan siaga:demo-data gpch --admin          # hanya GPCH; Super Admin dipindah ke GPCH agar langsung melihat datanya
+```
+
+Lalu di `.env`:
+
+```
+SIAGA_GUEST_MODE=true          # landing page + tombol "Masuk sebagai tamu" (hanya di instalasi demo!)
+ASSETCARE_PROPERTY_CODE=GPCH   # halaman login & tamu memakai merek GPCH
+```
+
+dan jalankan `php artisan config:cache` (wajib setiap kali `.env` diubah; tanpa ini `/` tetap mengarah ke `/admin`).
+Hermina dan Kimia Farma tidak terpasang; bisa ditambah kapan saja dengan `siaga:demo-data hermina` / `siaga:demo-data kimia-farma`.
+
+**Ketiga perusahaan demo:** `php artisan siaga:demo-data all` (cPanel: `bash deploy/deploy-cpanel.sh demo-site`), masing-masing 1–3 menit.
+
+**Akun Super Admin (email & sandi):**
+- Saat instalasi: dijawab di pertanyaan `siaga:install`, atau langsung `php artisan siaga:install --admin-email=admin@perusahaan.id --admin-password='SandiKuat#2026'`.
+- Membuat admin baru / mereset sandi admin yang lupa: `php artisan siaga:create-admin --name="Nama Admin" --email=admin@perusahaan.id --password='SandiKuat#2026'`.
+- Bila memakai impor `database/sql/siaga.sql` (tanpa terminal): masuk dengan `admin@siaga.local` / `Siaga@2026`, sistem langsung meminta ganti sandi. Email bisa diubah di menu **Pengguna**.
+- Setelah masuk, sandi sendiri bisa diganti di menu **Akun saya**.
 
 Hasilnya:
-- **`/`**: landing page (Attention, Interest, Desire, Action): masalah, cara kerja, manfaat per peran, agenda workshop, pilih data demo, lalu **Masuk sebagai tamu**.
+- **`/`**: landing page (Attention, Interest, Desire, Action): cek masalah, 7 masalah aset tetap beserta penyebab dan solusi SIAGA, cara kerja, grafik langsung dari data demo, tur tangkapan layar, manfaat per peran, agenda workshop, pilih data demo, lalu **Masuk sebagai tamu**.
+- Tombol **Masuk sebagai tamu** juga ada di halaman login `/admin/login`.
 - **`/panduan`** dan **`/panduan/implementasi`**: panduan penggunaan per layar dan panduan implementasi, bisa dibaca tanpa login.
 - Akun tamu bersama per perusahaan berperan **Tamu (demo)**: hanya melihat (termasuk nilai & biaya), tidak bisa mengubah data, profil, atau MFA.
 - **Dasbor pimpinan** (menu Umum): 13 grafik kondisi & risiko aset, kinerja perbaikan, biaya & dampak, dengan filter per lokasi dan sorotan otomatis.

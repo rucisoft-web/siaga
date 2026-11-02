@@ -5,6 +5,7 @@
 #     bash deploy/deploy-cpanel.sh install   # pertama kali: tanya nama hotel, kode, zona waktu, Super Admin (tanpa data contoh)
 #     bash deploy/deploy-cpanel.sh demo      # opsional, kapan saja: tambah data contoh (kamar 301–310, aset & akun contoh)
 #     bash deploy/deploy-cpanel.sh demo-site # situs demo/workshop: GPCH, Hermina Group, Kimia Farma + akun tamu (DB khusus demo)
+#     bash deploy/deploy-cpanel.sh demo-gpch # situs demo hanya Grand Pasundan + akun tamu; Super Admin dipindah ke GPCH
 #     bash deploy/deploy-cpanel.sh update    # rilis pembaruan kode (data tetap)
 #  Variabel opsional: PHP_BIN=/opt/cpanel/ea-php83/root/usr/bin/php
 # ============================================================
@@ -44,6 +45,13 @@ chmod 600 .env
 case "$MODE" in
   demo)
     $ART siaga:demo
+    exit 0
+    ;;
+  demo-gpch)
+    # Situs demo hanya Grand Pasundan (GPCH) + akun tamu; Super Admin dipindah ke GPCH.
+    # Lalu di .env: SIAGA_GUEST_MODE=true dan ASSETCARE_PROPERTY_CODE=GPCH, kemudian php artisan config:cache.
+    $ART siaga:demo-data gpch --force --admin
+    $ART optimize:clear >/dev/null 2>&1 || true
     exit 0
     ;;
   demo-site)
