@@ -21,6 +21,9 @@ return [
     // Domain email akun contoh (data demo). Ganti ke domain hotel bila ingin.
     // Mode tamu (landing page + tombol "Masuk sebagai tamu", hanya melihat). Khusus situs demo/workshop; JANGAN aktif di data asli.
     'guest_mode' => (bool) env('SIAGA_GUEST_MODE', false),
+
+    // Halaman depan publik (landing page AIDA + panduan tanpa login). Default: ikut mode tamu.
+    'landing' => (bool) env('SIAGA_LANDING', env('SIAGA_GUEST_MODE', false)),
     'demo_email_domain' => env('ASSETCARE_DEMO_EMAIL_DOMAIN', 'hotel.test'),
 
     // Domain resolver label QR. Pakai domain milik hotel agar label tetap berlaku saat hosting pindah.

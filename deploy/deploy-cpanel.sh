@@ -4,6 +4,7 @@
 #  Pemakaian:
 #     bash deploy/deploy-cpanel.sh install   # pertama kali: tanya nama hotel, kode, zona waktu, Super Admin (tanpa data contoh)
 #     bash deploy/deploy-cpanel.sh demo      # opsional, kapan saja: tambah data contoh (kamar 301–310, aset & akun contoh)
+#     bash deploy/deploy-cpanel.sh demo-site # situs demo/workshop: GPCH, Hermina Group, Kimia Farma + akun tamu (DB khusus demo)
 #     bash deploy/deploy-cpanel.sh update    # rilis pembaruan kode (data tetap)
 #  Variabel opsional: PHP_BIN=/opt/cpanel/ea-php83/root/usr/bin/php
 # ============================================================
@@ -45,6 +46,13 @@ case "$MODE" in
     $ART siaga:demo
     exit 0
     ;;
+  demo-site)
+    # Situs demo / pra-workshop: 3 perusahaan demo terpisah (GPCH, Hermina Group, Kimia Farma) + akun tamu.
+    # Pasang di database KHUSUS demo, lalu set SIAGA_GUEST_MODE=true di .env.
+    $ART siaga:demo-data all --force
+    $ART optimize:clear >/dev/null 2>&1 || true
+    exit 0
+    ;;
   install)
     $ART config:clear >/dev/null 2>&1 || true
     if $ART siaga:installed >/dev/null 2>&1; then
@@ -60,7 +68,7 @@ case "$MODE" in
     $ART migrate --force
     $ART db:seed --class=Database\\Seeders\\ReferenceSeeder --force
     ;;
-  *) echo "Mode tidak dikenal: $MODE (install | update | demo)"; exit 1 ;;
+  *) echo "Mode tidak dikenal: $MODE (install | update | demo | demo-site)"; exit 1 ;;
 esac
 
 $ART storage:link >/dev/null 2>&1 || true

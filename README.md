@@ -17,7 +17,7 @@ Instalasi: **PANDUAN-LARAGON.md** (komputer Windows) atau **PANDUAN-CPANEL.md** 
 | Logo (terang & gelap), warna utama & aksen, nama aplikasi, tagline, alamat, kelas, jumlah kamar | Pengaturan › Profil hotel | 6 palet cepat; tanpa logo → logo teks bergaris otomatis |
 | Gedung, lantai, kamar, area, tipe kamar | Pengaturan › Lokasi & kamar, Tipe kamar | |
 | Departemen, kategori aset, vendor, SLA P1–P4, batas persetujuan | Menu Pengaturan | Data awal berisi 12 departemen & ~50 kategori aset hotel umum |
-| Pengguna & peran | Pengaturan › Pengguna, Peran | 16 peran bawaan (termasuk Petugas Pendataan) (GM, Chief Engineering, Teknisi, FO, HOD, Finance, dll.) |
+| Pengguna & peran | Pengaturan › Pengguna, Peran | 17 peran bawaan (termasuk Petugas Pendataan dan Tamu demo) (GM, Chief Engineering, Teknisi, FO, HOD, Finance, dll.) |
 
 Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di label.
 
@@ -40,7 +40,7 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 | Mutasi aset | Aset › Mutasi aset | Ajukan → setujui → kirim → terima → selesai |
 | Blokir kamar | Pemeliharaan › Blokir kamar | Usulan Engineering, konfirmasi/lepas oleh Front Office |
 | Laporan & KPI | Laporan & KPI | Backlog, kepatuhan SLA, MTTR, kegagalan berulang, downtime, biaya, ekspor CSV |
-| Keamanan | Pengaturan | 16 peran & 36 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
+| Keamanan | Pengaturan | 17 peran & 36 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
 
 Belum termasuk (rilis berikutnya): preventive maintenance terjadwal, suku cadang & stok, stock opname, disposal,
 anggaran, API, mode offline penuh, integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A**.
@@ -64,9 +64,35 @@ dengan `php artisan siaga:demo` (cPanel: `bash deploy/deploy-cpanel.sh demo`). I
 
 Domain email contoh diatur dengan `ASSETCARE_DEMO_EMAIL_DOMAIN`. Data contoh bercampur dengan data asli dan tidak dihapus otomatis, jadi untuk latihan sebaiknya pakai instalasi/database terpisah (mis. `siaga_latihan`).
 
+## Situs demo & pra-workshop (landing page, masuk sebagai tamu)
+
+Untuk calon peserta workshop 2 hari, SIAGA bisa dipasang sebagai situs demo:
+
+1. Instal di **database khusus demo** (jangan di data asli): `php artisan siaga:install`.
+2. Pasang tiga perusahaan demo terpisah: `php artisan siaga:demo-data all` (cPanel: `bash deploy/deploy-cpanel.sh demo-site`).
+   Bisa satu per satu: `siaga:demo-data gpch`, `siaga:demo-data hermina`, `siaga:demo-data kimia-farma` (masing-masing 1–3 menit).
+3. Di `.env` set `SIAGA_GUEST_MODE=true` lalu `php artisan config:cache`.
+
+Hasilnya:
+- **`/`**: landing page (Attention, Interest, Desire, Action): masalah, cara kerja, manfaat per peran, agenda workshop, pilih data demo, lalu **Masuk sebagai tamu**.
+- **`/panduan`** dan **`/panduan/implementasi`**: panduan penggunaan per layar dan panduan implementasi, bisa dibaca tanpa login.
+- Akun tamu bersama per perusahaan berperan **Tamu (demo)**: hanya melihat (termasuk nilai & biaya), tidak bisa mengubah data, profil, atau MFA.
+- **Dasbor pimpinan** (menu Umum): 13 grafik kondisi & risiko aset, kinerja perbaikan, biaya & dampak, dengan filter per lokasi dan sorotan otomatis.
+
+| Data demo | Isi (contoh / proyeksi) | Akun jabatan · sandi |
+|---|---|---|
+| Grand Pasundan Convention Hotel (GPCH) | 164 kamar, 2 gedung, ruang meeting, kitchen, laundry, power house · ±4.300 aset | `gm@gpch.demo`, `ce@gpch.demo`, … · `Gpch-2026!demo` |
+| Hermina Group (HRM) | RS Hermina Kemayoran & RS Hermina Bekasi: 135 kamar rawat inap, IGD, ICU, NICU, bedah sentral, radiologi, hemodialisa · ±3.500 aset | `gm@hrm.demo`, … · `Hermina-2026!demo` |
+| Kimia Farma (KF) | 47 outlet apotek / apotek + klinik / lab klinik di Bandung Raya + gudang distribusi · ±1.600 aset | `gm@kf.demo`, … · `KimiaFarma-2026!demo` |
+
+Setiap data demo berisi pendataan berjalan, laporan kerusakan & work order di semua status, persetujuan biaya, blokir kamar/outlet,
+mutasi, kalibrasi/PM, dan riwayat 6 bulan untuk tren. Fakta publik (alamat, kelas RS, jaringan outlet) diambil dari laporan tahunan 2025;
+sisanya proyeksi dan ditandai "(demo)", "contoh", atau "asumsi". **Bukan data resmi perusahaan.**
+Halaman depan bisa diaktifkan tanpa mode tamu dengan `SIAGA_LANDING=true`.
+
 ## Uji otomatis
 
-`composer install` lalu `php artisan test` (database `asset_care_test`) — 13 skenario, termasuk instalasi hotel baru,
+`composer install` lalu `php artisan test` (database `asset_care_test`) — 26 skenario, termasuk landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
 Profil hotel (nama, warna, logo, zona waktu), kode properti terkunci, validasi warna, dan tidak ada sisa merek lama.
 
 ## Catatan teknis

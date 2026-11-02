@@ -261,3 +261,13 @@ Setelah itu, atur document root subdomain ke `public_html/asset`.
 | Super Admin | Diisi saat instalasi (Cara A) atau `admin@siaga.local` / `Siaga@2026` (Cara B) |
 | Cron | `schedule:run` setiap menit dan `backup-db.sh` setiap hari 02:00 |
 | Backup | `~/backups/siaga` (30 hari) |
+
+## Situs demo / pra-workshop (opsional)
+
+Untuk calon peserta workshop: pasang di **database terpisah khusus demo**, lalu jalankan:
+
+```
+bash deploy/deploy-cpanel.sh demo-site
+```
+
+Perintah ini memasang tiga perusahaan demo terpisah (GPCH, Hermina Group dengan RS Kemayoran & Bekasi, Kimia Farma dengan jaringan apotek & klinik), masing-masing 1–3 menit. Setelah itu set `SIAGA_GUEST_MODE=true` di `.env` dan jalankan `php artisan config:cache`. Halaman depan (`/`) menampilkan landing page, pilihan data demo, dan tombol **Masuk sebagai tamu** (hanya melihat). Panduan bisa dibaca tanpa login di `/panduan`. **Jangan aktifkan mode tamu pada instalasi berisi data asli.**

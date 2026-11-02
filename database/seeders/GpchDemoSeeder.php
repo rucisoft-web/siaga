@@ -83,6 +83,7 @@ class GpchDemoSeeder extends Seeder
         $this->areaSurvey();
         $this->activate();
         $this->financials();
+        $this->history();
         $this->maintenance();
         $this->transfers();
         Carbon::setTestNow();
@@ -116,7 +117,7 @@ class GpchDemoSeeder extends Seeder
     /** nama perusahaan, ringkasan & sumber data untuk halaman pilih data demo */
     public static function about(): array
     {
-        return ['title' => 'Grand Pasundan Convention Hotel', 'sector' => 'Hotel & MICE · Bandung', 'summary' => '164 kamar di dua gedung, 10 ruang meeting, kitchen, laundry & power house. Pendataan berjalan minggu ke-3, laporan kerusakan & work order 30 hari.', 'source' => 'Workbook master aset GPCH; nomor kamar, hasil pendataan & riwayat perbaikan = proyeksi.'];
+        return ['title' => 'Grand Pasundan Convention Hotel', 'sector' => 'Hotel & MICE · Bandung', 'summary' => '164 kamar di dua gedung, 10 ruang meeting, kitchen, laundry & power house. Pendataan berjalan minggu ke-3, laporan kerusakan & work order 30 hari, riwayat biaya 6 bulan.', 'source' => 'Workbook master aset GPCH; nomor kamar, hasil pendataan & riwayat perbaikan = proyeksi.'];
     }
 
     protected function propertyInfo(): array
@@ -566,6 +567,107 @@ class GpchDemoSeeder extends Seeder
                 'acquisition_cost' => round($base * mt_rand(85, 115) / 100, -3), 'replacement_estimate' => round($base * 1.35, -3),
                 'cost_center' => 'ENG-OPS', 'notes' => 'ASUMSI demo — bukan nilai buku resmi', 'verification_status' => 'unverified',
             ]);
+        }
+    }
+
+    // ------------------------------------------------------------------ riwayat 6 bulan (PROYEKSI, untuk tren dasbor pimpinan)
+
+    /** pola kerusakan per kata kunci nama aset: [regex, kategori laporan, mode kegagalan[], biaya min, biaya maks, dampak] */
+    protected function failurePatterns(): array
+    {
+        return [
+            ['/^AC|AHU|Exhaust|Chiller$|Cooling|Air handling/i', 'ac', ['Freon bocor', 'Saluran drain tersumbat', 'Kapasitor kompresor rusak', 'PCB indoor rusak'], 250000, 2800000, 'kamar_tidak_dijual'],
+            ['/Kulkas|Freezer|Chiller kitchen|Cold room|Mini refrigerator|Mobil box/i', 'ac', ['Thermostat rusak', 'Kompresor lemah', 'Karet pintu tidak rapat'], 300000, 4500000, 'keselamatan'],
+            ['/monitor|Ventilator|pump|Defibrillator|Inkubator|warmer|analyzer|EKG|USG|X-ray|CT scan|Autoclave|hemodialisa|anestesi|Dental|CPAP|CTG|Suction|Flowmeter|Tensimeter|Phototherapy|Centrifuge|Nebulizer/i', 'alat_medis', ['Hasil ukur bergeser, perlu kalibrasi', 'Baterai internal lemah', 'Aksesori / kabel pasien rusak', 'Board kontrol error'], 400000, 12000000, 'keselamatan'],
+            ['/Genset|Panel|UPS|Trafo|Lampu|lamp/i', 'listrik', ['Aki / baterai soak', 'MCB / kontaktor rusak', 'Sambungan kabel longgar'], 150000, 6500000, 'layanan_alternatif'],
+            ['/Kloset|Wastafel|Shower|Pompa|Water heater|Sink/i', 'air', ['Seal / karet aus', 'Saluran tersumbat', 'Valve bocor'], 75000, 1500000, 'layanan_alternatif'],
+            ['/Komputer|Computer|Printer|POS|Router|Server|scanner|CCTV|DVR|switch|Access point/i', 'it', ['Hang / perlu pasang ulang', 'Adaptor / power supply rusak', 'Kabel jaringan putus'], 0, 2500000, 'layanan_alternatif'],
+            ['/Televisi|TV|Proyektor|Sound|Telepon/i', 'elektronik', ['Konektor longgar', 'Lampu / panel redup', 'Remote / input rusak'], 0, 2200000, 'kosmetik'],
+            ['/Bed|Kursi|Meja|Lemari|cabinet|Sofa|Etalase|table/i', 'furniture', ['Sambungan lepas', 'Roda / rem rusak', 'Aktuator rusak'], 50000, 1900000, 'kosmetik'],
+            ['/Lift/i', 'lift', ['Sensor pintu kotor', 'Rem / tali perlu penyetelan'], 500000, 9500000, 'keselamatan'],
+            ['/Oven|Kompor|Steamer|Mesin cuci|Dryer|ironer/i', 'kitchen', ['Elemen pemanas putus', 'Thermostat rusak', 'Bearing aus'], 250000, 5500000, 'layanan_alternatif'],
+        ];
+    }
+
+    /** WO selesai 6 bulan ke belakang (H-200 s.d. H-31) pada aset aktif: tren biaya, MTTR, SLA, kerusakan berulang, blokir. */
+    protected function history(): void
+    {
+        $ce = $this->as('ce');
+        $techs = [$this->u['tek1'], $this->u['tek2'], $this->u['tek3']];
+        $patterns = $this->failurePatterns();
+        $pool = [];
+        foreach (Asset::where('lifecycle_status', 'active')->with('location')->get(['id', 'name', 'location_id']) as $a) {
+            foreach ($patterns as $i => $pt) {
+                if (preg_match($pt[0], $a->name)) {
+                    $pool[] = [$a, $i];
+                    break;
+                }
+            }
+        }
+        if (! $pool) {
+            return;
+        }
+        // aset "langganan rusak": beberapa aset muncul berkali-kali → kerusakan berulang & biaya tertinggi
+        $bad = array_map(fn () => $pool[mt_rand(0, count($pool) - 1)], range(1, 8));
+        $hours = ['P1' => 4, 'P2' => 24, 'P3' => 72, 'P4' => 168];
+        $n = (int) min(110, max(60, count($pool) / 12));
+        for ($k = 0; $k < $n; $k++) {
+            [$a, $pi] = mt_rand(1, 100) <= 28 ? $bad[mt_rand(0, 7)] : $pool[mt_rand(0, count($pool) - 1)];
+            [, $cat, $modes, $min, $max, $impact] = $patterns[$pi];
+            $mode = $modes[mt_rand(0, count($modes) - 1)];
+            $prio = $impact === 'keselamatan' ? (mt_rand(0, 1) ? 'P1' : 'P2') : ($impact === 'kamar_tidak_dijual' ? 'P2' : (mt_rand(0, 3) ? 'P3' : 'P4'));
+            // makin dekat makin banyak (adopsi pelaporan meningkat)
+            $day = -31 - (int) floor(169 * (1 - sqrt(mt_rand(0, 1000) / 1000)));
+            $this->at($day, mt_rand(7, 21), mt_rand(0, 59));
+            $recv = now()->copy();
+            $due = $recv->copy()->addHours($hours[$prio]);
+            $late = mt_rand(1, 100) <= 18;
+            $restored = $late ? $due->copy()->addHours(mt_rand(2, 48)) : $recv->copy()->addMinutes(mt_rand(30, (int) ($hours[$prio] * 60 * 0.9)));
+            $cost = $max > 0 && mt_rand(1, 100) <= 70 ? round(mt_rand($min, $max), -3) : 0;
+            $acq = (float) AssetFinancial::where('asset_id', $a->id)->value('acquisition_cost');
+            if ($cost && $acq > 0) {
+                $cost = min($cost, max(50000, round($acq * mt_rand(4, 40) / 100, -3))); // perbaikan wajar terhadap harga aset
+            }
+            $tech = $techs[mt_rand(0, 2)];
+            $sr = $this->try('riwayat lapor', fn () => ServiceRequest::create([
+                'asset_id' => $a->id, 'location_id' => $a->location_id, 'reporter_id' => ($this->u['hk'] ?? $ce)->id, 'category' => $cat,
+                'symptom' => $a->name.': '.Str::lcfirst($mode).' (riwayat proyeksi)', 'impact' => $impact, 'is_safety' => $impact === 'keselamatan', 'priority' => $prio,
+                'status' => 'closed', 'received_at' => $recv, 'response_due_at' => $recv->copy()->addMinutes($prio === 'P1' ? 15 : 60),
+                'response_at' => $recv->copy()->addMinutes(mt_rand(5, $late ? 120 : 50)), 'responded_by' => $ce->id, 'triaged_at' => $recv->copy()->addMinutes(10), 'triaged_by' => $ce->id,
+                'resolved_at' => $restored, 'closed_at' => $restored->copy()->addHours(4),
+            ]));
+            $wo = $this->try('riwayat WO', fn () => WorkOrder::create([
+                'type' => 'corrective', 'title' => Str::limit($a->name.': '.$mode, 80), 'description' => 'Riwayat proyeksi (data demo) — rekap pemeliharaan sebelum SIAGA',
+                'asset_id' => $a->id, 'location_id' => $a->location_id, 'priority' => $prio, 'is_safety' => $impact === 'keselamatan', 'status' => 'closed',
+                'received_at' => $recv, 'response_due_at' => $recv->copy()->addHour(), 'due_at' => $due, 'estimated_cost' => $cost, 'approved_by' => $ce->id, 'approved_at' => $recv->copy()->addMinutes(20),
+                'pic_id' => $tech->id, 'started_at' => $recv->copy()->addMinutes(40), 'failure_mode' => $mode, 'diagnosis' => $mode, 'root_cause' => $mode,
+                'action_taken' => 'Perbaikan / penggantian komponen sesuai diagnosis', 'function_test_result' => 'pass', 'evidence_exception_reason' => 'Riwayat proyeksi',
+                'restored_at' => $restored, 'completed_at' => $restored, 'completed_by' => $tech->id, 'cost_status' => 'final', 'no_cost_reason' => $cost ? null : 'Tanpa material',
+                'verified_by' => $ce->id, 'verified_at' => $restored->copy()->addHours(2), 'asset_status_after' => 'serviceable', 'closed_at' => $restored->copy()->addHours(3), 'closed_by' => $ce->id,
+                'created_by' => $ce->id, 'created_at' => $recv, 'updated_at' => $restored,
+            ]));
+            if (! $wo) {
+                continue;
+            }
+            if ($sr) {
+                $wo->requests()->attach($sr->id, ['created_at' => $recv, 'updated_at' => $recv]);
+            }
+            if ($cost > 0) {
+                $type = $cost > 2500000 ? 'vendor' : 'material';
+                \App\Models\WoCostLine::create(['work_order_id' => $wo->id, 'type' => $type, 'description' => $type === 'vendor' ? 'Jasa servis vendor (riwayat)' : 'Suku cadang (riwayat)',
+                    'quantity' => 1, 'unit_cost' => $cost, 'amount' => $cost, 'cost_status' => 'final', 'is_cash_out' => true, 'created_by' => $ce->id, 'finalized_by' => $this->u['fin']->id,
+                    'finalized_at' => $restored->copy()->addDay(), 'period' => $restored->format('Y-m'), 'created_at' => $restored, 'updated_at' => $restored]);
+                if (mt_rand(0, 1)) {
+                    $lab = mt_rand(1, 4);
+                    \App\Models\WoCostLine::create(['work_order_id' => $wo->id, 'type' => 'labor', 'description' => 'Jam kerja teknisi', 'quantity' => $lab, 'unit_cost' => 40000, 'amount' => $lab * 40000,
+                        'cost_status' => 'final', 'is_cash_out' => false, 'created_by' => $ce->id, 'finalized_by' => $this->u['fin']->id, 'finalized_at' => $restored->copy()->addDay(),
+                        'period' => $restored->format('Y-m'), 'created_at' => $restored, 'updated_at' => $restored]);
+                }
+            }
+            if ($impact === 'kamar_tidak_dijual' && $a->location?->isRoom()) {
+                RoomBlock::create(['room_id' => $a->location_id, 'work_order_id' => $wo->id, 'status' => 'released', 'started_at' => $recv->copy()->addMinutes(30), 'ended_at' => $restored,
+                    'reason' => $this->blockReason().' (riwayat)', 'proposed_by' => $ce->id, 'fo_confirmed_by' => ($this->u['fom'] ?? $ce)->id, 'fo_confirmed_at' => $recv->copy()->addMinutes(30)]);
+            }
         }
     }
 

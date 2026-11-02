@@ -13,7 +13,7 @@ class Help
 {
     /** urutan & pengelompokan di halaman daftar panduan */
     public const GROUPS = [
-        'Mulai' => ['implementasi', 'beranda', 'scan-qr', 'profil'],
+        'Mulai' => ['implementasi', 'beranda', 'dasbor-pimpinan', 'scan-qr', 'profil'],
         'Pendataan aset awal' => ['impor-master', 'pendataan', 'stok-label'],
         'Aset & label' => ['assets', 'asset-quantity-groups', 'room-asset-templates', 'generate-assets', 'generation-batches', 'cetak-label', 'label-print-batches', 'konfirmasi-pemasangan', 'asset-transfers'],
         'Gangguan & pekerjaan' => ['service-requests', 'work-orders', 'room-blocks', 'laporan'],

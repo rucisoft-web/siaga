@@ -120,3 +120,13 @@ Panduan rinci tiap layar ada di tombol **? Panduan** pojok kanan atas aplikasi.
 | Logo / warna baru belum tampil | Muat ulang halaman (Ctrl+F5). |
 | Kode properti tidak bisa diubah | Normal setelah ada aset. Untuk mulai dari nol: `php artisan siaga:install --fresh`. |
 | Kamera tidak menyala | Normal di HTTP; gunakan **Foto label** atau pasang HTTPS. |
+
+## Situs demo / pra-workshop (opsional)
+
+Untuk calon peserta workshop: pasang di **database terpisah khusus demo**, lalu jalankan:
+
+```
+php artisan siaga:demo-data all
+```
+
+Perintah ini memasang tiga perusahaan demo terpisah (GPCH, Hermina Group dengan RS Kemayoran & Bekasi, Kimia Farma dengan jaringan apotek & klinik), masing-masing 1–3 menit. Setelah itu set `SIAGA_GUEST_MODE=true` di `.env` dan jalankan `php artisan config:cache`. Halaman depan (`/`) menampilkan landing page, pilihan data demo, dan tombol **Masuk sebagai tamu** (hanya melihat). Panduan bisa dibaca tanpa login di `/panduan`. **Jangan aktifkan mode tamu pada instalasi berisi data asli.**

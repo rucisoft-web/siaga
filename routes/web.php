@@ -6,7 +6,11 @@ use App\Http\Controllers\QrController;
 use App\Http\Controllers\ReportExportController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/admin');
+// Halaman depan (landing AIDA), panduan publik & "Masuk sebagai tamu" — hanya aktif di situs demo (SIAGA_LANDING / SIAGA_GUEST_MODE)
+Route::get('/', [\App\Http\Controllers\LandingController::class, 'index'])->name('landing');
+Route::get('/panduan', [\App\Http\Controllers\LandingController::class, 'guideIndex'])->name('landing.guides');
+Route::get('/panduan/{key}', [\App\Http\Controllers\LandingController::class, 'guide'])->where('key', '[a-z0-9-]+')->name('landing.guide');
+Route::post('/demo/masuk', [\App\Http\Controllers\LandingController::class, 'guestLogin'])->middleware('throttle:20,1')->name('landing.guest');
 
 Route::get('/brand/logo/{variant}', [\App\Http\Controllers\BrandLogoController::class, 'show'])
     ->whereIn('variant', ['light', 'dark'])->name('brand.logo');
