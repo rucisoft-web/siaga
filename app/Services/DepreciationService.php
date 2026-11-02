@@ -87,7 +87,7 @@ class DepreciationService
     {
         return Asset::query()->with(['financial', 'category', 'location:id,name,full_path'])
             ->whereHas('financial', fn ($q) => $q->where('acquisition_cost', '>', 0))
-            ->where('lifecycle_status', '!=', 'disposed')
+            ->whereNotIn('lifecycle_status', ['disposed', 'lost'])
             ->when($categoryId, fn ($q) => $q->where('category_id', $categoryId))
             ->when($locationIds !== null, fn ($q) => $q->whereIn('location_id', $locationIds))
             ->orderBy('asset_code')->get()

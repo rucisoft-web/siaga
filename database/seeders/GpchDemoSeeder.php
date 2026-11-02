@@ -86,6 +86,7 @@ class GpchDemoSeeder extends Seeder
         $this->history();
         $this->maintenance();
         $this->transfers();
+        $this->controls();
         Carbon::setTestNow();
         GuestAccess::ensure($this->p);
         Auth::logout();
@@ -551,6 +552,109 @@ class GpchDemoSeeder extends Seeder
                 'ownership' => $a->ownership ?: 'milik',
             ])->saveQuietly();
             $this->try('aktivasi', fn () => $svc->activate($a->fresh(), $ce));
+        }
+    }
+
+    /** Stock opname (1 selesai + 1 berjalan) dan penghapusan aset di berbagai status. Dapat dipanggil ulang pada data demo lama. */
+    public function controls(?Property $p = null): void
+    {
+        if ($p) {
+            $this->p = $p;
+            app(CurrentProperty::class)->set($p);
+            $this->today = Carbon::now(config('assetcare.display_timezone', 'Asia/Jakarta'))->startOfDay()->utc();
+            foreach (['ac', 'fin', 'gm', 'ce'] as $k) {
+                $this->u[$k] = User::where('email', $this->mail($k))->firstOrFail();
+            }
+        }
+        if (\App\Models\StockTake::exists()) {
+            return;
+        }
+        mt_srand(77);
+        $so = app(\App\Services\StockTakeService::class);
+        $floors = Location::where('location_type', 'floor')->orderBy('sort_key')->get()
+            ->map(fn ($f) => [$f, Asset::whereIn('location_id', $so->scopeIds($f->id))->whereNotIn('lifecycle_status', ['disposed', 'lost'])->count()])
+            ->filter(fn ($x) => $x[1] >= 30)->values();
+        if ($floors->count() < 1) {
+            return;
+        }
+        // 1) sesi selesai
+        $ac = $this->as('ac');
+        $this->at(-21, 8);
+        $take = $so->open(['title' => 'Stock opname semester II (contoh) · '.$floors[0][0]->full_path, 'location_id' => $floors[0][0]->id, 'cutoff_date' => $this->today->copy()->addDays(-21)->toDateString(), 'notes' => 'Data demo'], $ac);
+        $items = $take->items()->with('asset')->get();
+        $rooms = $items->pluck('expected_location_id')->filter()->unique()->values();
+        $n = $items->count();
+        foreach ($items as $i => $it) {
+            $this->at(-21 + intdiv($i * 3, max(1, $n)), 9 + ($i % 8), $i % 60);
+            if ($i % 41 === 7 && $rooms->count() > 1) {
+                $to = $rooms->first(fn ($r) => $r !== $it->expected_location_id);
+                $so->mark($take, $it, $to, null, null, $ac);
+            } elseif ($i % 53 === 11) {
+                $so->mark($take, $it, null, null, 'Dicari di gudang & ruang sebelah, tidak ada', $ac, true);
+            } else {
+                $grade = $i % 37 === 5 ? (($it->asset?->condition_grade ?? 'B') === 'A' ? 'C' : 'D') : ($it->asset?->condition_grade ? null : 'B');
+                $so->mark($take, $it, null, $grade, null, $ac);
+            }
+        }
+        $so->addUnregistered($take, 'Kursi lipat besi (4 unit) tanpa label', $rooms->first(), 'Kemungkinan pindahan dari ballroom', $ac);
+        $so->addUnregistered($take, 'Dispenser air panas-dingin', $rooms->last(), 'Merek Miyako, kondisi baik', $ac);
+        $this->at(-17, 16);
+        $so->close($take, true, $ac);
+        // tindak lanjut: aset tidak ditemukan diusulkan hapus (hilang)
+        $ds = app(\App\Services\DisposalService::class);
+        $lost = $take->items()->where('result', 'not_found')->with('asset')->get();
+        foreach ($lost->take(2) as $k => $it) {
+            $this->as('ac');
+            $this->at(-15, 10 + $k);
+            $d = $this->try('penghapusan', fn () => $ds->propose($it->asset, ['method' => 'lost', 'reason' => 'Tidak ditemukan pada '.$take->number, 'stock_take_id' => $take->id, 'justification' => 'Sudah dicari ulang 2x bersama Housekeeping & Security. (contoh)'], $this->u['ac']));
+            if ($d && $k === 0) {
+                $this->as('fin');
+                $this->at(-12, 11);
+                $ds->decide($d, true, 'Disetujui, catat sebagai kerugian aset hilang (contoh)', $this->u['fin']);
+                $this->as('ac');
+                $this->at(-10, 14);
+                $ds->complete($d->fresh(), ['document_ref' => 'BA-HPS/'.$this->today->format('Y').'/001 (contoh)'], $this->u['ac']);
+            }
+        }
+        // 2) sesi berjalan
+        if ($floors->count() > 1) {
+            $this->as('ac');
+            $this->at(-2, 8);
+            $t2 = $so->open(['title' => 'Stock opname tahunan (contoh) · '.$floors[1][0]->full_path, 'location_id' => $floors[1][0]->id, 'cutoff_date' => $this->today->copy()->addDays(-2)->toDateString()], $ac);
+            $it2 = $t2->items()->orderBy('expected_location_id')->orderBy('id')->get();
+            foreach ($it2->take((int) ($it2->count() * .42)) as $i => $it) {
+                $this->at(-2 + intdiv($i, 60), 9 + ($i % 8), $i % 60);
+                $i % 47 === 9 ? $so->mark($t2, $it, null, null, null, $ac, true) : $so->mark($t2, $it, null, null, null, $ac);
+            }
+        }
+        // 3) penghapusan aset rusak berat / dijual
+        $cands = Asset::with('financial')->whereIn('condition_grade', ['D', 'E'])->whereHas('financial', fn ($q) => $q->where('acquisition_cost', '>', 0))
+            ->whereNotIn('lifecycle_status', ['disposed', 'lost'])->with('category')->get()
+            ->sortByDesc(fn ($a) => (new \App\Services\DepreciationService)->forAsset($a, \Carbon\CarbonImmutable::now())['book'] ?? 0)->take(4)->values();
+        $plan = [
+            ['scrap', 'Rusak berat, biaya perbaikan > 60% harga baru', 'submitted'],
+            ['sale', 'Diganti unit baru, unit lama dijual ke pengepul', 'approved'],
+            ['scrap', 'Korosi berat, tidak aman dipakai', 'completed'],
+            ['donation', 'Masih berfungsi, dihibahkan ke yayasan mitra', 'rejected'],
+        ];
+        foreach ($cands as $k => $a) {
+            [$method, $reason, $end] = $plan[$k];
+            $this->as($k % 2 ? 'ce' : 'ac');
+            $this->at(-9 + $k * 2, 10);
+            $requester = $k % 2 ? $this->u['ce'] : $this->u['ac'];
+            $proceeds = $method === 'sale' ? round((float) $a->financial->acquisition_cost * .08, -3) : null;
+            $d = $this->try('penghapusan', fn () => $ds->propose($a, ['method' => $method, 'reason' => $reason.' (contoh)', 'proceeds' => $proceeds, 'justification' => 'Kajian teknis Chief Engineer terlampir. (contoh)'], $requester));
+            if (! $d || $end === 'submitted') {
+                continue;
+            }
+            $this->as('gm');
+            $this->at(-8 + $k * 2, 15);
+            $ds->decide($d, $end !== 'rejected', $end === 'rejected' ? 'Masih layak pakai; pindahkan ke area back office' : 'Setuju', $this->u['gm']);
+            if ($end === 'completed') {
+                $this->as('ac');
+                $this->at(-7 + $k * 2, 10);
+                $ds->complete($d->fresh(), ['document_ref' => 'BA-HPS/'.$this->today->format('Y').'/00'.($k + 2).' (contoh)'], $this->u['ac']);
+            }
         }
     }
 

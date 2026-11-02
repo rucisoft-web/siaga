@@ -46,6 +46,11 @@ class InstallDemoData extends Command
             $p = Property::where('code', $class::CODE)->first();
             if ($p && Location::withoutGlobalScopes()->where('property_id', $p->id)->exists()) {
                 $this->components->warn($about['title'].': data demo sudah ada (lewati). Untuk mengulang, mulai dari basis data bersih.');
+                // lengkapi data demo lama dengan fitur baru (stock opname & penghapusan) bila belum ada
+                $seeder = (new $class)->setContainer(app())->setCommand($this);
+                $seeder->controls($p);
+                \Illuminate\Support\Facades\Auth::logout();
+                \Illuminate\Support\Carbon::setTestNow();
 
                 continue;
             }

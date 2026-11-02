@@ -17,7 +17,7 @@ class Help
         'Pendataan aset awal' => ['impor-master', 'pendataan', 'stok-label'],
         'Aset & label' => ['assets', 'struktur-lokasi', 'asset-quantity-groups', 'room-asset-templates', 'generate-assets', 'generation-batches', 'cetak-label', 'label-print-batches', 'konfirmasi-pemasangan', 'asset-transfers'],
         'Gangguan & pekerjaan' => ['service-requests', 'work-orders', 'room-blocks', 'laporan'],
-        'Keuangan & audit' => ['penyusutan'],
+        'Keuangan & audit' => ['penyusutan', 'stock-opname', 'penghapusan-aset'],
         'Data referensi' => ['locations', 'room-types', 'asset-categories', 'departments', 'vendors', 'sla-policies', 'approval-limits'],
         'Pengaturan & keamanan' => ['profil-hotel', 'users', 'roles', 'audit-logs'],
     ];
