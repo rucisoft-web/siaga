@@ -63,7 +63,7 @@ class AssetResource extends Resource
         return $schema->columns(1)->components([
             Tabs::make('aset')->persistTabInQueryString()->tabs([
                 Tab::make('Identitas')->columns(3)->schema([
-                    Placeholder::make('asset_code_view')->label('Kode aset')->content(fn ($record) => $record?->asset_code ?? 'Dibuat otomatis saat disimpan (GPCH-AST-xxxxxx)'),
+                    Placeholder::make('asset_code_view')->label('Kode aset')->content(fn ($record) => $record?->asset_code ?? 'Dibuat otomatis saat disimpan ('.\App\Support\Branding::code().'-AST-xxxxxx)'),
                     TextInput::make('name')->label('Nama aset')->required()->columnSpan(2),
                     Select::make('category_id')->label('Kategori')->required()->native(false)->searchable()
                         ->options(fn () => AssetCategory::where('is_active', true)->where('tracking_mode', 'individual')->orderBy('name')->pluck('name', 'id')),

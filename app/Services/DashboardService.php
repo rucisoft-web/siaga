@@ -22,7 +22,7 @@ class DashboardService
 
     public function period(int $days = 30): array
     {
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
         $to = now();
         $from = now()->timezone($tz)->subDays($days - 1)->startOfDay()->utc();
 

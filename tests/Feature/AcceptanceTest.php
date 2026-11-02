@@ -20,9 +20,10 @@ use App\Services\TransferService;
 use App\Services\WorkflowException;
 use App\Services\WorkOrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Database\Seeders\DemoSeeder;
 use Tests\TestCase;
 
-/** Uji penerimaan utama (spesifikasi bagian 27) di atas data contoh GPCH. */
+/** Uji penerimaan utama (spesifikasi bagian 27) di atas data contoh hotel. */
 class AcceptanceTest extends TestCase
 {
     use RefreshDatabase;
@@ -51,7 +52,7 @@ class AcceptanceTest extends TestCase
 
     public function test_ac17_ten_rooms_seven_units_give_seventy_candidates(): void
     {
-        $u = $this->user('eng.admin@grandpasundanhotel.com');
+        $u = $this->user(DemoSeeder::email('eng.admin'));
         $this->actingAs($u);
         $tpl = RoomAssetTemplate::where('code', 'TPL-DLX')->firstOrFail();
         $preview = app(RoomTemplateService::class)->preview($tpl, $this->rooms());
@@ -71,7 +72,7 @@ class AcceptanceTest extends TestCase
 
     public function test_ac18_resubmitting_same_batch_does_not_duplicate(): void
     {
-        $u = $this->user('eng.admin@grandpasundanhotel.com');
+        $u = $this->user(DemoSeeder::email('eng.admin'));
         $this->actingAs($u);
         $batch = $this->generate($u);
         $again = app(RoomTemplateService::class)->commit($batch->fresh(), [], $u);
@@ -87,7 +88,7 @@ class AcceptanceTest extends TestCase
 
     public function test_ac19_room_changed_after_preview_is_rejected_as_conflict(): void
     {
-        $u = $this->user('eng.admin@grandpasundanhotel.com');
+        $u = $this->user(DemoSeeder::email('eng.admin'));
         $this->actingAs($u);
         $svc = app(RoomTemplateService::class);
         $tpl = RoomAssetTemplate::where('code', 'TPL-DLX')->first();
@@ -107,7 +108,7 @@ class AcceptanceTest extends TestCase
 
     public function test_ac20_matching_old_asset_maps_instead_of_creating(): void
     {
-        $u = $this->user('eng.admin@grandpasundanhotel.com');
+        $u = $this->user(DemoSeeder::email('eng.admin'));
         $this->actingAs($u);
         $old = Asset::where('legacy_code', 'LEG-TV-305')->firstOrFail();
         $room = $old->location_id;
@@ -120,11 +121,11 @@ class AcceptanceTest extends TestCase
 
     public function test_service_request_to_work_order_full_flow_with_controls(): void
     {
-        $fo = $this->user('fo.supervisor@grandpasundanhotel.com');
-        $ce = $this->user('engineering@grandpasundanhotel.com');
-        $gm = $this->user('gm@grandpasundanhotel.com');
-        $tech = $this->user('teknisi1@grandpasundanhotel.com');
-        $tech2 = $this->user('teknisi2@grandpasundanhotel.com');
+        $fo = $this->user(DemoSeeder::email('fo.supervisor'));
+        $ce = $this->user(DemoSeeder::email('chief.engineer'));
+        $gm = $this->user(DemoSeeder::email('gm'));
+        $tech = $this->user(DemoSeeder::email('teknisi1'));
+        $tech2 = $this->user(DemoSeeder::email('teknisi2'));
         $asset = Asset::where('legacy_code', 'LEG-CHL-01')->firstOrFail();
 
         $this->actingAs($fo);
@@ -197,7 +198,7 @@ class AcceptanceTest extends TestCase
 
     public function test_labels_pdf_qr_resolution_and_installation(): void
     {
-        $u = $this->user('eng.admin@grandpasundanhotel.com');
+        $u = $this->user(DemoSeeder::email('eng.admin'));
         $this->actingAs($u);
         $batch = $this->generate($u);
         $labels = app(LabelService::class)->select(['generation_batch_id' => $batch->id, 'include_unverified' => true]);
@@ -233,7 +234,7 @@ class AcceptanceTest extends TestCase
 
     public function test_ac27_transfer_updates_location_releases_slot_and_flags_relabel(): void
     {
-        $ac = $this->user('eng.admin@grandpasundanhotel.com');
+        $ac = $this->user(DemoSeeder::email('eng.admin'));
         $this->actingAs($ac);
         $batch = $this->generate($ac);
         $asset = Asset::where('generation_batch_id', $batch->id)->where('name', 'TV utama')->first();
@@ -253,7 +254,7 @@ class AcceptanceTest extends TestCase
         } catch (WorkflowException $e) {
             $this->assertSame(403, $e->getCode());
         }
-        $gm = $this->user('gm@grandpasundanhotel.com');
+        $gm = $this->user(DemoSeeder::email('gm'));
         $this->actingAs($gm);
         $svc->approve($t, $gm);
         $this->actingAs($ac);
@@ -269,7 +270,7 @@ class AcceptanceTest extends TestCase
 
     public function test_access_is_denied_by_default_and_reporter_cannot_see_register(): void
     {
-        $hk = $this->user('hk.supervisor@grandpasundanhotel.com');
+        $hk = $this->user(DemoSeeder::email('hk.supervisor'));
         $hk->forceFill(['must_change_password' => false])->save();
         $this->actingAs($hk);
         $this->assertTrue($hk->hasPermission('request.create'));

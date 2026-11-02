@@ -16,7 +16,7 @@
     <p class="arah-muted" style="text-align:center" x-show="!secure" x-cloak>Mode jaringan lokal (HTTP): gunakan "Foto label". Kamera langsung aktif bila aplikasi dibuka lewat HTTPS.</p>
     <div class="ac-scan-msg err" x-show="message" x-text="message" x-cloak></div>
     <form x-on:submit.prevent="submitManual()" style="display:flex; gap:.5rem; margin-top:.8rem">
-        <input x-ref="manual" class="ac-input" placeholder="Ketik kode aset (GPCH-AST-000123) atau gunakan scanner USB" autocomplete="off" inputmode="text">
+        <input x-ref="manual" class="ac-input" placeholder="Ketik kode aset (mis. {{ \App\Support\Branding::code() }}-AST-000123) atau gunakan scanner USB" autocomplete="off" inputmode="text">
         <button type="submit" class="arah-btn">Cari</button>
     </form>
 </div>

@@ -14,7 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
-/** Komponen form/tabel yang dipakai berulang (gaya sama dengan Arah GPCH). */
+/** Komponen form/tabel yang dipakai berulang (tema Garis). */
 class F
 {
     public static function user(string $name, string $label = 'Penanggung jawab', ?string $permission = null): Select

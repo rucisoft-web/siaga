@@ -13,7 +13,7 @@ class ReportExportController extends Controller
         $u = $request->user();
         abort_unless($u->hasPermission('report.export'), 403);
         abort_unless(array_key_exists($report, $reports->available($u)), 403);
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
         $from = $request->date('from')?->toDateString() ?? now($tz)->subDays(29)->toDateString();
         $to = $request->date('to')?->toDateString() ?? now($tz)->toDateString();
         $data = $reports->build($report, $u, $from, $to);

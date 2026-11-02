@@ -1,5 +1,5 @@
 /*
- * Pemindai QR Asset Care GPCH.
+ * Pemindai QR Hotel Asset Care.
  * 1) Kamera langsung: BarcodeDetector (Chrome Android) atau jsQR (fallback). Butuh HTTPS atau localhost.
  * 2) Foto: <input capture> — berfungsi juga di HTTP jaringan lokal.
  * 3) Input manual / scanner USB (keyboard wedge).

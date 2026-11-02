@@ -18,39 +18,47 @@ use App\Support\CurrentProperty;
 use Illuminate\Database\Seeder;
 
 /**
- * Data contoh pilot (TERPISAH dari produksi): satu lantai kamar, area kitchen, MICE & utilitas,
- * template Deluxe (6 jenis / 7 unit), akun jabatan GPCH. Struktur & jumlah kamar wajib diverifikasi GPCH.
+ * Data contoh (TERPISAH dari produksi) untuk mencoba aplikasi: satu lantai kamar, area kitchen,
+ * ballroom & utilitas, template Deluxe (6 jenis / 7 unit), akun per jabatan hotel.
+ * Nama orang, email & nominal adalah CONTOH — ganti/nonaktifkan sebelum dipakai sungguhan.
  */
 class DemoSeeder extends Seeder
 {
-    public const PASSWORD = 'GPCH-2026!ganti';
+    public const PASSWORD = 'Hotel-2026!ganti';
+
+    /** Email akun contoh: bagian-lokal@ASSETCARE_DEMO_EMAIL_DOMAIN (default hotel.test). */
+    public static function email(string $local): string
+    {
+        return $local.'@'.config('assetcare.demo_email_domain', 'hotel.test');
+    }
 
     public function run(): void
     {
-        $p = Property::where('code', config('assetcare.property_code', 'GPCH'))->firstOrFail();
+        $p = Property::where('code', config('assetcare.property_code', 'HTL'))->first() ?? Property::orderBy('id')->firstOrFail();
         app(CurrentProperty::class)->set($p);
         $dept = fn ($code) => Department::withoutGlobalScopes()->where('property_id', $p->id)->where('code', $code)->value('id');
         $cat = fn ($code) => AssetCategory::withoutGlobalScopes()->where('property_id', $p->id)->where('code', $code)->value('id');
 
-        // ---- pengguna (nama/jabatan mengikuti data Arah GPCH; email usulan — konfirmasi dengan HR)
+        // ---- pengguna contoh per jabatan (struktur organisasi hotel umum)
         $people = [
-            ['edp@grandpasundanhotel.com', 'Admin EDP GPCH (isi nama)', 'EDP / IT Manager', 'EDP', ['it-admin']],
-            ['gm@grandpasundanhotel.com', 'Ibu Vivera', 'General Manager', 'EXE', ['gm']],
-            ['owner@grandpasundanhotel.com', 'Bapak Wimpy', 'Pemilik', 'EXE', ['owner']],
-            ['yodi@grandpasundanhotel.com', 'Bapak Yodi S. Ibrahim', 'Direksi', 'EXE', ['owner-rep']],
-            ['ca@grandpasundanhotel.com', 'Bapak Indra', 'Chief Accountant', 'ACC', ['finance']],
-            ['engineering@grandpasundanhotel.com', 'Bapak Wahyudin', 'Chief Engineer (Plt.)', 'ENG', ['chief-engineering']],
-            ['eng.admin@grandpasundanhotel.com', 'Rara', 'Engineering Admin', 'ENG', ['asset-controller']],
-            ['teknisi1@grandpasundanhotel.com', 'Teknisi 1 (isi nama)', 'Teknisi Engineering', 'ENG', ['technician']],
-            ['teknisi2@grandpasundanhotel.com', 'Teknisi 2 (isi nama)', 'Teknisi Engineering', 'ENG', ['technician']],
-            ['fom@grandpasundanhotel.com', 'Bapak Rizki', 'Front Office Manager', 'FO', ['hod', 'front-office']],
-            ['fo.supervisor@grandpasundanhotel.com', 'Muhamad Ihsan', 'Front Office Supervisor', 'FO', ['reporter', 'front-office']],
-            ['hk@grandpasundanhotel.com', 'Ibu Wina', 'Executive Housekeeper (Plt.)', 'HK', ['hod']],
-            ['hk.supervisor@grandpasundanhotel.com', 'Ujang Nur M', 'Housekeeping Supervisor', 'HK', ['reporter']],
-            ['fbm@grandpasundanhotel.com', 'Bapak Asep Agus Damil Arifin', 'F&B Manager / Executive Chef', 'KIT', ['hod']],
-            ['purchasing@grandpasundanhotel.com', 'Bapak Daniel', 'Purchasing', 'PUR', ['purchasing']],
-            ['wiwin@visiperencana.id', 'Bapak I.G. Wiwin Suyasa', 'Auditor Operasional', 'EXE', ['auditor']],
+            ['it', 'Admin IT (contoh)', 'IT Manager', 'EDP', ['it-admin']],
+            ['gm', 'General Manager (contoh)', 'General Manager', 'EXE', ['gm']],
+            ['owner', 'Pemilik (contoh)', 'Pemilik', 'EXE', ['owner']],
+            ['director', 'Direksi (contoh)', 'Direksi / perwakilan pemilik', 'EXE', ['owner-rep']],
+            ['finance', 'Chief Accountant (contoh)', 'Chief Accountant', 'ACC', ['finance']],
+            ['chief.engineer', 'Chief Engineer (contoh)', 'Chief Engineer', 'ENG', ['chief-engineering']],
+            ['eng.admin', 'Engineering Admin (contoh)', 'Engineering Admin', 'ENG', ['asset-controller']],
+            ['teknisi1', 'Teknisi 1 (contoh)', 'Teknisi Engineering', 'ENG', ['technician']],
+            ['teknisi2', 'Teknisi 2 (contoh)', 'Teknisi Engineering', 'ENG', ['technician']],
+            ['fom', 'Front Office Manager (contoh)', 'Front Office Manager', 'FO', ['hod', 'front-office']],
+            ['fo.supervisor', 'FO Supervisor (contoh)', 'Front Office Supervisor', 'FO', ['reporter', 'front-office']],
+            ['exec.hk', 'Executive Housekeeper (contoh)', 'Executive Housekeeper', 'HK', ['hod']],
+            ['hk.supervisor', 'HK Supervisor (contoh)', 'Housekeeping Supervisor', 'HK', ['reporter']],
+            ['fbm', 'F&B Manager (contoh)', 'F&B Manager / Executive Chef', 'KIT', ['hod']],
+            ['purchasing', 'Purchasing (contoh)', 'Purchasing', 'PUR', ['purchasing']],
+            ['auditor', 'Auditor (contoh)', 'Auditor Internal', 'EXE', ['auditor']],
         ];
+        $people = array_map(fn ($r) => [self::email($r[0]), ...array_slice($r, 1)], $people);
         $roles = Role::pluck('id', 'slug');
         foreach ($people as [$email, $name, $title, $d, $r]) {
             $u = User::firstOrCreate(['email' => $email], [
@@ -59,12 +67,12 @@ class DemoSeeder extends Seeder
             ]);
             $u->roles()->syncWithoutDetaching(collect($r)->mapWithKeys(fn ($slug) => [$roles[$slug] => ['property_id' => $p->id]])->all());
         }
-        User::whereIn('email', ['teknisi1@grandpasundanhotel.com', 'teknisi2@grandpasundanhotel.com'])->update(['labor_rate' => 35000]);
+        User::whereIn('email', [self::email('teknisi1'), self::email('teknisi2')])->update(['labor_rate' => 35000]);
 
         // ---- batas persetujuan CONTOH (nominal wajib disahkan manajemen sebelum produksi)
-        $gm = User::where('email', 'gm@grandpasundanhotel.com')->first();
-        $ce = User::where('email', 'engineering@grandpasundanhotel.com')->first();
-        $ca = User::where('email', 'ca@grandpasundanhotel.com')->first();
+        $gm = User::where('email', self::email('gm'))->first();
+        $ce = User::where('email', self::email('chief.engineer'))->first();
+        $ca = User::where('email', self::email('finance'))->first();
         foreach ([[$ce, 2500000], [$gm, 25000000], [$ca, 10000000]] as [$u, $max]) {
             ApprovalLimit::withoutGlobalScopes()->firstOrCreate(['property_id' => $p->id, 'user_id' => $u->id, 'object_type' => 'work_order'], [
                 'max_amount' => $max, 'valid_from' => now()->startOfYear(), 'note' => 'CONTOH — nominal wajib disahkan manajemen',
@@ -92,7 +100,7 @@ class DemoSeeder extends Seeder
         $kitchen = $loc('GU-L1-KIT', 'Kitchen Utama', 'area', $l1);
         $pastry = $loc('GU-L1-PASTRY', 'Pastry', 'area', $l1);
         $mice = $loc('MICE', 'Zona MICE', 'zone');
-        $dome = $loc('MICE-DOME', 'Malibu Dome', 'venue', $mice);
+        $ballroom = $loc('MICE-BALL', 'Grand Ballroom', 'venue', $mice);
         $mep = $loc('MEP', 'Zona MEP & utilitas', 'zone');
         $genset = $loc('MEP-GENSET', 'Ruang Genset', 'area', $mep);
         $boiler = $loc('MEP-BOILER', 'Ruang Boiler', 'area', $mep);
@@ -101,8 +109,8 @@ class DemoSeeder extends Seeder
         // ---- template Deluxe: 6 jenis, 7 unit per kamar (contoh rancangan, bukan hasil inventarisasi)
         $tpl = RoomAssetTemplate::withoutGlobalScopes()->firstOrCreate(['property_id' => $p->id, 'code' => 'TPL-DLX', 'version' => 1], [
             'name' => 'Perlengkapan standar Deluxe', 'room_type_id' => $dlx->id, 'status' => 'draft',
-            'prepared_by' => User::where('email', 'eng.admin@grandpasundanhotel.com')->value('id'),
-            'notes' => 'Contoh dari spesifikasi bagian 24. Jumlah, merek & perlengkapan aktual tetap diperiksa di lapangan.',
+            'prepared_by' => User::where('email', self::email('eng.admin'))->value('id'),
+            'notes' => 'Contoh. Jumlah, merek & perlengkapan aktual tetap diperiksa di lapangan.',
         ]);
         if ($tpl->items()->doesntExist()) {
             $hk = $dept('HK');
@@ -140,8 +148,8 @@ class DemoSeeder extends Seeder
             ['PANEL', 'Panel LVMDP', $panel, 'ENG', 'B', 'critical', 'LEG-PNL-01'],
             ['CHILL', 'Chiller kitchen 1', $kitchen, 'KIT', 'B', 'high', 'LEG-CHL-01'],
             ['FREEZ', 'Freezer pastry', $pastry, 'KIT', 'C', 'high', 'LEG-FRZ-01'],
-            ['PROJ', 'Projector Malibu Dome', $dome, 'SM', 'B', 'medium', 'LEG-PRJ-01'],
-            ['SOUND', 'Sound system Malibu Dome', $dome, 'SM', 'B', 'medium', 'LEG-SND-01'],
+            ['PROJ', 'Projector Grand Ballroom', $ballroom, 'SM', 'B', 'medium', 'LEG-PRJ-01'],
+            ['SOUND', 'Sound system Grand Ballroom', $ballroom, 'SM', 'B', 'medium', 'LEG-SND-01'],
             ['APAR', 'APAR lobby 01', $lobby, 'SEC', 'A', 'critical', 'LEG-APR-01'],
             ['CCTV', 'CCTV lobby 01', $lobby, 'SEC', 'A', 'high', 'LEG-CTV-01'],
         ];

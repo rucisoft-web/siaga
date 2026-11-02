@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/admin');
 
+Route::get('/brand/logo/{variant}', [\App\Http\Controllers\BrandLogoController::class, 'show'])
+    ->whereIn('variant', ['light', 'dark'])->name('brand.logo');
+
 // URL pada label QR. Tamu diarahkan ke login lalu kembali ke sini; token disimpan hanya dalam bentuk hash.
 Route::get('/q/{token}', [QrController::class, 'show'])->where('token', '[A-Za-z0-9_-]{20,64}')
     ->middleware('throttle:60,1')->name('qr.show');

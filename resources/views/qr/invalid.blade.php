@@ -2,23 +2,26 @@
 <html lang="id">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Label tidak berlaku · {{ config('assetcare.brand') }}</title>
+<title>Label tidak berlaku · {{ \App\Support\Branding::appName() }}</title>
 <link rel="icon" href="{{ asset('favicon.png') }}">
 <style>
-    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#f5f1e8; color:#1c1917; display:flex; min-height:100vh; align-items:center; justify-content:center; padding:1rem; }
-    .card { max-width:26rem; background:#fffdf8; border:1px solid #e7dfcf; border-radius:1rem; padding:1.6rem; text-align:center; box-shadow:0 6px 24px rgba(0,0,0,.06); }
-    h1 { font-size:1.15rem; margin:.8rem 0 .4rem; color:#A8432A; }
-    p { color:#57534e; font-size:.92rem; line-height:1.5; }
-    a { display:inline-block; margin-top:.8rem; padding:.6rem 1rem; border-radius:.5rem; background:#006632; color:#fff; text-decoration:none; font-weight:600; }
+    {!! \App\Support\Branding::cssVars() !!}
+    body { margin:0; font-family: Inter, system-ui, sans-serif; background:#F3F4F6; color:#111827; display:flex; min-height:100vh; align-items:center; justify-content:center; padding:1rem; border-top: 6px solid var(--p); }
+    .card { max-width:26rem; background:#fff; border:1px solid #9AA3B0; border-top:3px solid var(--a); border-radius:2px; padding:1.6rem; text-align:left; }
+    .hotel { font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:#5B6472; font-weight:700; padding-bottom:.6rem; border-bottom:1px solid #D5D9E0; }
+    h1 { font-size:1.15rem; margin:.9rem 0 .4rem; color:#B42318; }
+    p { color:#374151; font-size:.92rem; line-height:1.5; }
+    a { display:inline-block; margin-top:.8rem; padding:.6rem 1rem; border-radius:2px; background:var(--p); color:#fff; text-decoration:none; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:.8rem; }
 </style>
 </head>
 <body>
 <div class="card">
-    <img src="{{ asset('images/logo-gpch.png') }}" alt="" style="height:44px">
+    @if ($logo = \App\Support\Branding::logoUrl())<img src="{{ $logo }}" alt="" style="height:40px;margin-bottom:.6rem">@endif
+    <div class="hotel">{{ \App\Support\Branding::hotelName() }} · {{ \App\Support\Branding::appName() }}</div>
     <h1>Label tidak dapat digunakan</h1>
     <p>{{ $message ?? 'Label ini sudah tidak berlaku.' }}</p>
     <p>Bila ada kerusakan, laporkan melalui aplikasi atau hubungi Engineering.</p>
-    <a href="{{ url('/admin') }}">Buka Asset Care</a>
+    <a href="{{ url('/admin') }}">Buka aplikasi</a>
 </div>
 </body>
 </html>

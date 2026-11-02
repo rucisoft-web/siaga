@@ -30,7 +30,7 @@ class QrResolver
             $host = parse_url($input, PHP_URL_HOST);
             $path = (string) parse_url($input, PHP_URL_PATH);
             if (! in_array($host, $this->allowedHosts(), true)) {
-                return ['type' => 'foreign', 'message' => 'QR bukan label Asset Care GPCH ('.$host.'). Tidak dibuka.'];
+                return ['type' => 'foreign', 'message' => 'QR bukan label '.\App\Support\Branding::appName().' ('.$host.'). Tidak dibuka.'];
             }
             if (! preg_match('#/q/([A-Za-z0-9_-]{20,64})$#', $path, $m)) {
                 return ['type' => 'invalid', 'message' => 'Format QR tidak dikenal.'];
@@ -53,7 +53,7 @@ class QrResolver
             return $this->fromToken($input);
         }
 
-        return ['type' => 'invalid', 'message' => 'Masukkan URL label, atau kode aset seperti GPCH-AST-000001.'];
+        return ['type' => 'invalid', 'message' => 'Masukkan URL label, atau kode aset seperti '.\App\Support\Branding::code().'-AST-000001.'];
     }
 
     public function fromToken(string $token): array

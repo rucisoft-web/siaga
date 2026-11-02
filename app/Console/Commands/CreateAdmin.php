@@ -16,7 +16,7 @@ class CreateAdmin extends Command
 {
     protected $signature = 'assetcare:create-admin {--name=} {--email=} {--password=}';
 
-    protected $description = 'Membuat / memulihkan akun Super Admin Asset Care GPCH';
+    protected $description = 'Membuat / memulihkan akun Super Admin Hotel Asset Care';
 
     public function handle(): int
     {

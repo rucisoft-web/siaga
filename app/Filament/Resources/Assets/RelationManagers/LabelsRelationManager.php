@@ -25,7 +25,7 @@ class LabelsRelationManager extends RelationManager
                 TextColumn::make('activated_at')->label('Aktif sejak')->dateTime('d M Y H:i'),
                 TextColumn::make('print_items_count')->label('Dicetak'),
                 TextColumn::make('install')->label('Pemasangan')->state(fn ($record) => InstallationEvent::STATUSES[$record->currentInstallationStatus()] ?? '-')
-                    ->description(fn ($record) => $record->latestInstallation ? $record->latestInstallation->actor?->name.' · '.$record->latestInstallation->occurred_at->timezone(config('assetcare.display_timezone'))->format('d/m/Y H:i') : null),
+                    ->description(fn ($record) => $record->latestInstallation ? $record->latestInstallation->actor?->name.' · '.$record->latestInstallation->occurred_at->timezone(\App\Support\Fmt::tz())->format('d/m/Y H:i') : null),
                 TextColumn::make('revoke_reason')->label('Alasan rotasi')->placeholder('—')->wrap(),
             ])
             ->defaultSort('id', 'desc');

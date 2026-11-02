@@ -30,7 +30,7 @@ class ReportService
     /** @return array{headers:array, rows:array} */
     public function build(string $report, User $u, string $from, string $to): array
     {
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
         $f = CarbonImmutable::parse($from, $tz)->startOfDay()->utc();
         $t = CarbonImmutable::parse($to, $tz)->endOfDay()->utc();
         $fin = $u->canSeeFinancials();

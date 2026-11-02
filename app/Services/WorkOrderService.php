@@ -378,7 +378,7 @@ class WorkOrderService
 
     public function hasApprovalAuthority(User $u, float $amount, int $propertyId): bool
     {
-        $today = now()->timezone(config('assetcare.display_timezone'))->toDateString();
+        $today = now()->timezone(\App\Support\Fmt::tz())->toDateString();
         $q = fn ($query) => $query->withoutGlobalScopes()->where('property_id', $propertyId)->where('object_type', 'work_order')
             ->whereDate('valid_from', '<=', $today)->where(fn ($w) => $w->whereNull('valid_to')->orWhereDate('valid_to', '>=', $today))
             ->where(fn ($w) => $w->whereNull('max_amount')->orWhere('max_amount', '>=', $amount));

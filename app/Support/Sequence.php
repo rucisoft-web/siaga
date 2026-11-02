@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Penomoran server per properti (baris dikunci, aman untuk permintaan bersamaan).
- *   assetCode()  → GPCH-AST-000001 (permanen, tidak dipakai ulang, tanpa tahun/lokasi)
+ *   assetCode()  → {KODE}-AST-000001 (permanen, tidak dipakai ulang, tanpa tahun/lokasi)
  *   next('LK')   → LK-2026-00001   (laporan kerusakan), WO-2026-00001, MUT-…, LBL-…, GEN-…
  */
 class Sequence

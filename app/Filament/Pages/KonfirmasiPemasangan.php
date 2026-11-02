@@ -94,7 +94,7 @@ class KonfirmasiPemasangan extends Page
 
     protected function push(string $level, string $message): void
     {
-        array_unshift($this->feed, ['level' => $level, 'message' => $message, 'at' => now()->timezone(config('assetcare.display_timezone'))->format('H:i:s')]);
+        array_unshift($this->feed, ['level' => $level, 'message' => $message, 'at' => now()->timezone(\App\Support\Fmt::tz())->format('H:i:s')]);
         $this->feed = array_slice($this->feed, 0, 15);
     }
 }

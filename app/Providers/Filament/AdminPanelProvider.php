@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Beranda;
 use App\Http\Middleware\EnsurePasswordChanged;
+use App\Support\Branding;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-/** Panel /admin dengan tema yang sama dengan Arah GPCH (hijau Pasundan, emas, marun, kertas). */
+/** Panel /admin, tema "Garis" ala property management system. Identitas & warna dari Pengaturan › Profil hotel. */
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -39,18 +40,18 @@ class AdminPanelProvider extends PanelProvider
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable()->brandName(config('assetcare.brand_name')),
             ])
-            ->brandName(config('assetcare.brand_name'))
-            ->brandLogo(asset('images/logo-gpch.png'))
-            ->darkModeBrandLogo(asset('images/logo-gpch-dark.png'))
-            ->brandLogoHeight('3.1rem')
+            ->brandName(fn () => Branding::appName().' · '.Branding::hotelName())
+            ->brandLogo(fn () => Branding::panelLogo())
+            ->darkModeBrandLogo(fn () => Branding::panelLogo(dark: true))
+            ->brandLogoHeight('2.4rem')
             ->favicon(asset('favicon.png'))
-            ->colors([
-                'primary' => Color::generateV3Palette('#006632'),  // hijau Pasundan (logo)
-                'danger' => Color::generateV3Palette('#A8432A'),   // kencu
-                'warning' => Color::generateV3Palette('#C08A1E'),
-                'success' => Color::generateV3Palette('#2F7A3F'),
-                'info' => Color::generateV3Palette('#34506E'),
-                'gray' => Color::Stone,
+            ->colors(fn () => [
+                'primary' => Color::generateV3Palette(Branding::primary()),
+                'danger' => Color::generateV3Palette('#B42318'),
+                'warning' => Color::generateV3Palette('#B54708'),
+                'success' => Color::generateV3Palette('#1E7B45'),
+                'info' => Color::generateV3Palette('#1D4E89'),
+                'gray' => Color::Slate,
             ])
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
@@ -72,9 +73,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([])
             ->renderHook(PanelsRenderHook::TOPBAR_START, fn () => Blade::render('<x-ac.property-badge />'))
             ->renderHook(PanelsRenderHook::FOOTER, fn () => Blade::render('<x-ac.footer />'))
-            ->renderHook(PanelsRenderHook::SIDEBAR_FOOTER, fn () => Blade::render('<x-ac.sidebar-wayang />'))
             ->renderHook(PanelsRenderHook::BODY_END, fn () => Blade::render('<x-ac.login-ornament /><x-ac.bottom-nav />'))
-            ->renderHook(PanelsRenderHook::HEAD_END, fn () => new HtmlString('<meta name="theme-color" content="#006632"><link rel="preconnect" href="https://fonts.bunny.net"><link href="https://fonts.bunny.net/css?family=cormorant-garamond:600,700i,700&display=swap" rel="stylesheet">'))
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => new HtmlString('<meta name="theme-color" content="'.e(Branding::primary()).'"><style>'.Branding::cssVars().'</style>'))
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

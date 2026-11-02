@@ -62,7 +62,7 @@ class SlaPolicyResource extends Resource
             TextColumn::make('recovery_minutes')->label('Pemulihan')->formatStateUsing(fn ($state) => $state ? Fmt::minutes($state) : 'per kasus')->placeholder('per kasus'),
             TextColumn::make('calendar')->label('Kalender')->formatStateUsing(fn ($state) => $state === 'business' ? 'Kalender kerja' : '24 jam'),
         ])->defaultSort('priority')->paginated(false)->recordActions([EditAction::make()])
-            ->description('Usulan konfigurasi awal (spesifikasi bagian 9) — sahkan bersama GM & Engineering. Kalender kerja: '.$days.' '.config('assetcare.business_calendar.start').'–'.config('assetcare.business_calendar.end').' WIB.');
+            ->description('Usulan konfigurasi awal — sahkan bersama GM & Engineering. Kalender kerja: '.$days.' '.config('assetcare.business_calendar.start').'–'.config('assetcare.business_calendar.end').' '.\App\Support\Branding::timezoneLabel().'.');
     }
 
     public static function getPages(): array

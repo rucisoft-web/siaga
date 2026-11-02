@@ -14,14 +14,19 @@ use App\Support\CurrentProperty;
 use App\Support\PermissionCatalog;
 use Illuminate\Database\Seeder;
 
-/** Seed referensi (aman diulang): properti GPCH, izin & peran, departemen, kategori, SLA, Super Admin. */
+/** Seed referensi (aman diulang): properti hotel, izin & peran, departemen, kategori, SLA, Super Admin. */
 class ReferenceSeeder extends Seeder
 {
+    public const ADMIN_EMAIL = 'admin@assetcare.local';
+
+    public const ADMIN_PASSWORD = 'AssetCare@2026';
+
     public function run(): void
     {
-        $property = Property::updateOrCreate(['code' => config('assetcare.property_code', 'GPCH')], [
-            'name' => 'Grand Pasundan Convention Hotel', 'timezone' => 'Asia/Jakarta',
-            'address' => 'Jl. Peta No. 147–149, Bandung', 'is_active' => true,
+        // Profil hotel dibuat sekali dari .env / assetcare:install; setelah itu diubah lewat Pengaturan › Profil hotel.
+        $property = Property::firstOrCreate(['code' => config('assetcare.property_code', 'HTL')], [
+            'name' => config('assetcare.hotel_name', 'Hotel Contoh'), 'timezone' => config('assetcare.display_timezone', 'Asia/Jakarta'),
+            'app_name' => config('assetcare.brand_name', 'Hotel Asset Care'), 'is_active' => true,
         ]);
         app(CurrentProperty::class)->set($property);
 
@@ -44,7 +49,7 @@ class ReferenceSeeder extends Seeder
             Department::withoutGlobalScopes()->updateOrCreate(['property_id' => $property->id, 'code' => $code], ['name' => $name, 'is_active' => true]);
         }
 
-        // kategori per kelompok objek hotel (bagian 5)
+        // kategori per kelompok objek hotel
         $cats = [
             // kode, nama, kelompok, kritikalitas, mode, interval PM usulan (hari)
             ['AC-SPLIT', 'AC split kamar', 'kamar', 'medium', 'individual', 90], ['TV', 'Televisi', 'kamar', 'low', 'individual', null],
@@ -86,10 +91,22 @@ class ReferenceSeeder extends Seeder
             ]);
         }
 
-        $admin = User::firstOrCreate(['email' => 'admin@assetcare.local'], [
-            'name' => 'Konsultan Asset Care', 'job_title' => 'Super Admin (vendor aplikasi)', 'password' => 'AssetCare@GPCH2026',
-            'property_id' => $property->id, 'is_active' => true, 'must_change_password' => false,
+        // Super Admin awal hanya dibuat bila belum ada satu pun (aman saat seeder diulang pada rilis pembaruan).
+        // assetcare:install membuat Super Admin sendiri (email & sandi diisi saat instalasi).
+        $superRole = Role::where('slug', 'super-admin')->value('id');
+        if (config('assetcare.skip_default_admin') || User::whereHas('roles', fn ($q) => $q->where('roles.id', $superRole))->exists()) {
+            return;
+        }
+        // Lokal: sandi tetap untuk uji coba. Produksi: ASSETCARE_ADMIN_PASSWORD atau sandi acak yang ditampilkan sekali.
+        $prod = app()->isProduction();
+        $pass = $prod ? (env('ASSETCARE_ADMIN_PASSWORD') ?: 'AC-'.\Illuminate\Support\Str::password(14, symbols: false)) : self::ADMIN_PASSWORD;
+        $admin = User::firstOrCreate(['email' => self::ADMIN_EMAIL], [
+            'name' => 'Super Admin', 'job_title' => 'Super Admin (pengelola aplikasi)', 'password' => $pass,
+            'property_id' => $property->id, 'is_active' => true, 'must_change_password' => $prod,
         ]);
-        $admin->roles()->syncWithoutDetaching([Role::where('slug', 'super-admin')->value('id') => ['property_id' => null]]);
+        if ($admin->wasRecentlyCreated && $prod && $this->command) {
+            $this->command->warn('Super Admin: '.self::ADMIN_EMAIL.'  /  '.$pass.'  (CATAT sekarang; wajib diganti saat login pertama)');
+        }
+        $admin->roles()->syncWithoutDetaching([$superRole => ['property_id' => null]]);
     }
 }

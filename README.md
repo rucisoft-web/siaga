@@ -1,53 +1,72 @@
-# Asset Care GPCH
+# Hotel Asset Care
 
-Aplikasi pengelolaan aset & pemeliharaan Grand Pasundan Convention Hotel — **Laravel 13 · Filament 5 · MySQL 8**, tampilan mengikuti Arah GPCH (warna hijau GPCH, ornamen wayang, font Inter & Cormorant Garamond).
+Aplikasi pengelolaan aset & pemeliharaan untuk **hotel mana saja** — **Laravel 13 · Filament 5 · MySQL 8**.
+Satu paket, satu instalasi per hotel. Nama hotel, kode aset, logo, warna dan zona waktu diatur dari aplikasi
+(**Pengaturan › Profil hotel**), tanpa mengubah kode.
 
-Instalasi: lihat **PANDUAN-LARAGON.md** (cukup jalankan `setup-laragon.bat`).
+Tampilan: tema **"Garis"** ala property management system — topbar gelap, garis aksen tipis, sudut siku,
+tabel rapat berpembatas kolom, label kapital kecil, angka & kode monospace.
 
-## Isi Rilis A (sudah dibuat)
+Instalasi: **PANDUAN-LARAGON.md** (komputer Windows) atau **PANDUAN-CPANEL.md** (hosting).
 
-| Modul spesifikasi | Menu | Isi |
+## Menyesuaikan untuk hotel baru
+
+| Yang diatur | Di mana | Catatan |
 |---|---|---|
-| M01 Lokasi & referensi | Pengaturan, Lokasi & kamar | Gedung › lantai › kamar/ruang, tipe kamar, kategori (~50), departemen, vendor, kebijakan SLA P1–P4, batas persetujuan |
-| M02 Register aset | Aset › Register aset | Kode permanen `GPCH-AST-000001`, kartu aset, verifikasi fisik, aktivasi (field wajib), komponen, riwayat status, dokumen privat, kelompok jumlah |
-| M03 Label QR | Pengendalian Aset | Token acak (hanya hash tersimpan), cetak massal PDF ukuran aktual (A4 50×30, A4 75×50, roll), mulai sel, cetak ulang beralasan, rotasi token, konfirmasi pemasangan per kamar, Scan QR (kamera / foto / ketik kode) |
-| M04 Laporan kerusakan | Pemeliharaan › Laporan kerusakan | Form cepat dari scan QR, saran prioritas, anti-tiket ganda, triase dengan alasan, gabung/tautkan, tolak/duplikat |
-| M05 Work order | Pemeliharaan › Work order | Status terkontrol (draft → persetujuan → tugas → dikerjakan → selesai → verifikasi → tutup, hold/batal/buka ulang), batas persetujuan, pembuat ≠ penyetuju, pekerjaan kritis diverifikasi orang lain, izin kerja, garansi, jam kerja, biaya sementara/final + reversal, foto bukti, cek versi (409) |
-| SLA & notifikasi | Lonceng notifikasi | Respons & pemulihan, kalender 24 jam / jam kerja, hold tidak dihitung, peringatan 80% & terlewat (`assetcare:sla-check`) |
-| Template & generate massal | Template aset kamar, Generate aset kamar | Template berversi (penyusun ≠ pemeriksa), preview selisih, pencocokan aset lama, kandidat draft, idempoten, konflik per kamar, retry |
-| Mutasi aset | Aset › Mutasi aset | Ajukan → setujui → kirim → terima (kondisi) → selesai; slot kamar dilepas, label ditandai perlu cetak ulang |
-| Blokir kamar | Pemeliharaan › Blokir kamar | Usulan Engineering, konfirmasi/lepas oleh Front Office (PMS tetap manual) |
-| M08 Laporan | Laporan & KPI | Backlog & umur, kepatuhan SLA, MTTR bruto/bersih, kegagalan berulang, downtime, register, status label, biaya (khusus izin keuangan), ekspor CSV aman |
-| M10 Keamanan | Pengaturan | 15 peran & 35 izin (deny by default), log audit dengan alasan & request id, ganti sandi wajib, batas login, MFA opsional, lampiran privat |
+| Nama hotel, kode properti, zona waktu, Super Admin | Ditanyakan saat instalasi (`php artisan assetcare:install`) | Kode properti = prefiks kode aset, mis. `HMB` → `HMB-AST-000001` |
+| Logo (terang & gelap), warna utama & aksen, nama aplikasi, tagline, alamat, kelas, jumlah kamar | Pengaturan › Profil hotel | 6 palet cepat; tanpa logo → logo teks bergaris otomatis |
+| Gedung, lantai, kamar, area, tipe kamar | Pengaturan › Lokasi & kamar, Tipe kamar | |
+| Departemen, kategori aset, vendor, SLA P1–P4, batas persetujuan | Menu Pengaturan | Data awal berisi 12 departemen & ~50 kategori aset hotel umum |
+| Pengguna & peran | Pengaturan › Pengguna, Peran | 15 peran bawaan (GM, Chief Engineering, Teknisi, FO, HOD, Finance, dll.) |
 
-## Belum termasuk (Rilis B/C)
+Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di label.
 
-Preventive maintenance terjadwal, suku cadang & stok, stock opname/inventarisasi berkala, disposal, anggaran, API `/api/v1`, mode offline penuh (antrian kiriman), integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A** dengan keterangan.
+## Modul
 
-## Akun contoh
+| Modul | Menu | Isi |
+|---|---|---|
+| Lokasi & referensi | Pengaturan, Lokasi & kamar | Gedung › lantai › kamar/ruang, tipe kamar, kategori, departemen, vendor, SLA P1–P4, batas persetujuan |
+| Register aset | Aset › Register aset | Kode permanen `{KODE}-AST-000001`, kartu aset, verifikasi fisik, aktivasi, komponen, riwayat status, dokumen privat, kelompok jumlah |
+| Label QR | Pengendalian Aset | Token acak (hanya hash tersimpan), PDF ukuran aktual (A4 50×30, A4 75×50, roll), cetak ulang beralasan, rotasi token, konfirmasi pemasangan, Scan QR (kamera / foto / ketik kode) |
+| Laporan kerusakan | Pemeliharaan › Laporan kerusakan | Form cepat dari scan QR, saran prioritas, anti-tiket ganda, triase, gabung/tautkan |
+| Work order | Pemeliharaan › Work order | Draft → persetujuan → tugas → dikerjakan → selesai → verifikasi → tutup; batas persetujuan, pembuat ≠ penyetuju, izin kerja, garansi, jam kerja, biaya, foto bukti |
+| SLA & notifikasi | Lonceng notifikasi | Respons & pemulihan, kalender 24 jam / jam kerja, peringatan 80% & terlewat |
+| Template & generate massal | Template aset kamar, Generate aset kamar | Template berversi, preview selisih, pencocokan aset lama, idempoten |
+| Mutasi aset | Aset › Mutasi aset | Ajukan → setujui → kirim → terima → selesai |
+| Blokir kamar | Pemeliharaan › Blokir kamar | Usulan Engineering, konfirmasi/lepas oleh Front Office |
+| Laporan & KPI | Laporan & KPI | Backlog, kepatuhan SLA, MTTR, kegagalan berulang, downtime, biaya, ekspor CSV |
+| Keamanan | Pengaturan | 15 peran & 35 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
 
-Super Admin: `admin@assetcare.local` / `AssetCare@GPCH2026`. Akun jabatan memakai `GPCH-2026!ganti` (wajib diganti):
+Belum termasuk (rilis berikutnya): preventive maintenance terjadwal, suku cadang & stok, stock opname, disposal,
+anggaran, API, mode offline penuh, integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A**.
+
+## Data contoh (opsional)
+
+Bila saat instalasi memilih **data contoh**: kamar 301–310 (Deluxe), template `TPL-DLX` (7 unit per kamar),
+10 aset utilitas/kitchen/ballroom, dan akun per jabatan dengan sandi `Hotel-2026!ganti` (wajib diganti):
 
 | Email | Peran |
 |---|---|
-| gm@grandpasundanhotel.com | General Manager |
-| engineering@grandpasundanhotel.com | Chief Engineering |
-| eng.admin@grandpasundanhotel.com | Asset Controller |
-| teknisi1@ / teknisi2@grandpasundanhotel.com | Teknisi |
-| ca@grandpasundanhotel.com | Finance |
-| fom@grandpasundanhotel.com | HOD + Front Office |
-| fo.supervisor@ / hk.supervisor@grandpasundanhotel.com | Pelapor |
-| owner@, yodi@, edp@, hk@, fbm@, purchasing@, wiwin@ | Owner, perwakilan owner, IT, HOD, Purchasing, Auditor |
+| gm@hotel.test | General Manager |
+| chief.engineer@hotel.test | Chief Engineering |
+| eng.admin@hotel.test | Asset Controller |
+| teknisi1@ / teknisi2@hotel.test | Teknisi |
+| finance@hotel.test | Finance |
+| fom@hotel.test | HOD + Front Office |
+| fo.supervisor@ / hk.supervisor@hotel.test | Pelapor |
+| owner@, director@, it@, exec.hk@, fbm@, purchasing@, auditor@ | Owner, perwakilan owner, IT, HOD, Purchasing, Auditor |
 
-Nama, email & batas persetujuan adalah **contoh** — konfirmasi dengan HR/manajemen sebelum dipakai. Data contoh juga berisi kamar 301–310 (Deluxe) dan template `TPL-DLX` (7 unit per kamar) untuk mencoba generate massal.
+Domain email contoh diatur dengan `ASSETCARE_DEMO_EMAIL_DOMAIN`. Untuk hotel sungguhan, buat akun per orang dan nonaktifkan akun contoh.
 
 ## Uji otomatis
 
-Paket ini berisi `vendor` tanpa alat uji. Untuk menjalankan uji: `composer install` lalu `php artisan test` (database `asset_care_test`) — 8 skenario: AC17 (10 kamar → 70 kandidat), AC18 (kirim ulang tanpa duplikat), AC19 (konflik per kamar), AC20 (pencocokan aset lama), alur laporan → WO lengkap dengan kontrol, PDF label + QR + pemasangan + rotasi, AC27 mutasi, akses ditolak secara default.
+`composer install` lalu `php artisan test` (database `asset_care_test`) — 13 skenario, termasuk instalasi hotel baru,
+Profil hotel (nama, warna, logo, zona waktu), kode properti terkunci, validasi warna, dan tidak ada sisa merek lama.
 
 ## Catatan teknis
 
-- Waktu disimpan UTC, ditampilkan WIB (`ASSETCARE_DISPLAY_TIMEZONE`).
-- Struktur sudah multi-properti (`property_id`), data awal satu hotel.
+- Waktu disimpan UTC, ditampilkan sesuai zona waktu di Profil hotel (WIB/WITA/WIT).
+- Struktur sudah multi-properti (`property_id`); paket ini dipasang satu hotel per instalasi.
+- Logo disimpan privat di `storage/app/private/brand` dan disajikan lewat `/brand/logo/...` (tidak perlu `storage:link`).
 - URL label = `ASSETCARE_QR_BASE_URL/q/{token}`; tentukan domain final sebelum cetak massal.
 - Pembaca QR memakai BarcodeDetector bawaan browser dengan cadangan jsQR (Apache-2.0, `public/js/vendor`).

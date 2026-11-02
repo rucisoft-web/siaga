@@ -50,7 +50,7 @@ class SlaService
         if ($calendar !== 'business') {
             return $start->copy()->addMinutes($minutes);
         }
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
         $cfg = config('assetcare.business_calendar');
         $t = CarbonImmutable::instance($start)->timezone($tz);
         $left = $minutes;
@@ -84,7 +84,7 @@ class SlaService
         if ($calendar !== 'business') {
             return (int) $from->diffInMinutes($to);
         }
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
         $cfg = config('assetcare.business_calendar');
         $t = CarbonImmutable::instance($from)->timezone($tz);
         $end = CarbonImmutable::instance($to)->timezone($tz);

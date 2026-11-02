@@ -102,7 +102,7 @@ class UserResource extends Resource
                     ->visible(fn (User $record) => static::canEdit($record))
                     ->requiresConfirmation()->modalDescription('Kata sandi sementara dibuat; pengguna wajib menggantinya saat login.')
                     ->action(function (User $record) {
-                        $tmp = 'GPCH-'.Str::upper(Str::random(4)).'-'.random_int(1000, 9999);
+                        $tmp = 'HAC-'.Str::upper(Str::random(4)).'-'.random_int(1000, 9999);
                         $record->auditReason = 'Reset kata sandi oleh admin';
                         $record->forceFill(['password' => Hash::make($tmp), 'must_change_password' => true])->save();
                         Notification::make()->title('Kata sandi sementara: '.$tmp)->body('Sampaikan langsung kepada '.$record->name.'. Tidak ditampilkan lagi.')->success()->persistent()->send();

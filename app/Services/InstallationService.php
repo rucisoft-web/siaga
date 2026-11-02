@@ -37,7 +37,7 @@ class InstallationService
             $label = $label->newQuery()->whereKey($label->id)->lockForUpdate()->first();
             $last = $label->installationEvents()->first();
             if ($status === 'installed' && $last?->status === 'installed' && (int) $last->location_id === (int) $target->location_id) {
-                return ['ok' => true, 'level' => 'info', 'message' => ($target->asset_code ?? $target->group_code).' sudah tercatat terpasang ('.$last->occurred_at->timezone(config('assetcare.display_timezone'))->format('d/m H:i').'). Tidak dicatat ganda.'];
+                return ['ok' => true, 'level' => 'info', 'message' => ($target->asset_code ?? $target->group_code).' sudah tercatat terpasang ('.$last->occurred_at->timezone(\App\Support\Fmt::tz())->format('d/m H:i').'). Tidak dicatat ganda.'];
             }
             $printItem = $label->printItems()->latest('id')->first();
             $ev = InstallationEvent::create([

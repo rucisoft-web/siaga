@@ -27,14 +27,14 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Timestamp tersimpan UTC; seluruh tampilan & input memakai Asia/Jakarta
-        FilamentTimezone::set(config('assetcare.display_timezone'));
+        // Timestamp tersimpan UTC; tampilan & input memakai zona waktu hotel (Pengaturan › Profil hotel)
+        \Filament\Facades\Filament::serving(fn () => FilamentTimezone::set(\App\Support\Fmt::tz()));
         \Filament\Forms\Components\DatePicker::configureUsing(fn ($c) => $c->native(false)->displayFormat('d/m/Y'));
         \Filament\Forms\Components\DateTimePicker::configureUsing(fn ($c) => $c->native(false)->displayFormat('d/m/Y H:i')->seconds(false));
         \Filament\Tables\Table::configureUsing(fn ($t) => $t->defaultPaginationPageOption(25)->striped());
 
         FilamentAsset::register([
-            Css::make('asset-care-gpch', asset('css/assetcare.css').'?v=2'),
+            Css::make('hotel-asset-care', asset('css/assetcare.css').'?v=3'),
             Js::make('jsqr', asset('js/vendor/jsQR.js').'?v=1.4.0'),
             Js::make('asset-care-scan', asset('js/assetcare-scan.js').'?v=1'),
         ]);

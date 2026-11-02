@@ -13,9 +13,10 @@
     <div class="arah-card">
         <div class="arah-hero">
             <div>
-                <h2>Sampurasun, {{ $user->name }}</h2>
+                @php $jam = (int) now(\App\Support\Fmt::tz())->format('H'); @endphp
+                <h2>{{ $jam < 11 ? 'Selamat pagi' : ($jam < 15 ? 'Selamat siang' : ($jam < 18 ? 'Selamat sore' : 'Selamat malam')) }}, {{ $user->name }}</h2>
                 <div class="arah-muted">{{ $user->job_title }} · {{ $roles ?: 'tanpa peran' }}</div>
-                <div class="arah-muted" style="margin-top:.25rem">{{ $property?->name }} · diperbarui {{ Fmt::dt(now(), 'd M Y H:i') }} WIB
+                <div class="arah-muted" style="margin-top:.25rem">{{ $property?->name }} · diperbarui {{ Fmt::dt(now(), 'd M Y H:i') }} {{ \App\Support\Branding::timezoneLabel() }}
                     <span class="ac-net" x-data="{ on: navigator.onLine }" x-on:online.window="on = true" x-on:offline.window="on = false">
                         · <span class="arah-dot" :style="'background:' + (on ? '#4F7A3A' : '#A8432A')"></span><span x-text="on ? 'online' : 'offline — kiriman belum dapat diproses'"></span>
                     </span>
@@ -102,7 +103,7 @@
                 <li><span><a href="{{ SR::getUrl('view', ['record' => $r]) }}">{{ $r->number }}</a> {{ \Illuminate\Support\Str::limit($r->symptom, 50) }}<br><span class="arah-muted">{{ $r->location?->full_path }}</span></span>
                     <span class="arah-badge {{ Fmt::badgeClass(ServiceRequest::STATUS_COLORS[$r->status] ?? null) }}">{{ ServiceRequest::STATUSES[$r->status] }}</span></li>
             @empty
-                <li class="arah-empty">Tidak ada laporan terbuka. Temukan kerusakan? Tekan <strong>Scan</strong> lalu <strong>Lapor kerusakan</strong>.</li>
+                <li class="arah-empty"><span>Tidak ada laporan terbuka. Temukan kerusakan? Tekan <strong>Scan</strong> lalu <strong>Lapor kerusakan</strong>.</span></li>
             @endforelse
             </ul>
         </div>

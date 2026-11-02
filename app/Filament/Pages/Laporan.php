@@ -34,7 +34,7 @@ class Laporan extends Page
 
     public function mount(): void
     {
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
         $this->from = now($tz)->subDays(29)->toDateString();
         $this->to = now($tz)->toDateString();
     }
@@ -50,7 +50,7 @@ class Laporan extends Page
     {
         $u = auth()->user();
         $svc = app(ReportService::class);
-        $tz = config('assetcare.display_timezone');
+        $tz = \App\Support\Fmt::tz();
 
         return [
             'reports' => $svc->available($u),

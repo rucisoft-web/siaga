@@ -5,7 +5,7 @@ namespace App\Support;
 use App\Models\Property;
 
 /**
- * Properti aktif. Data awal satu hotel (GPCH); skema memuat property_id agar ekspansi
+ * Properti aktif. Data awal satu hotel; skema memuat property_id agar ekspansi
  * tidak mengubah struktur. Pengguna dengan property_id hanya melihat properti tersebut.
  */
 class CurrentProperty

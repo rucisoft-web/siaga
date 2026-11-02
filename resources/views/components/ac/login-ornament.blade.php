@@ -1,6 +1,6 @@
 @if (request()->routeIs('filament.admin.auth.*'))
-    <div class="ac-login-wayang" aria-hidden="true">
-        <img src="{{ asset('images/wayang-golek.png') }}" alt="" class="arah-wayang-foto">
+    <div class="ac-login-strip" aria-hidden="true">
+        <span>{{ \App\Support\Branding::hotelName() }}</span>
+        <span>{{ \App\Support\Branding::appName() }} · {{ \App\Support\Branding::code() }}</span>
     </div>
-    <div class="ac-login-lines" aria-hidden="true"></div>
 @endif

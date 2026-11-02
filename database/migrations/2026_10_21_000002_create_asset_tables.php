@@ -27,7 +27,7 @@ return new class extends Migration
             $t->id();
             $t->ulid('public_id')->unique();
             $t->foreignId('property_id')->constrained()->restrictOnDelete();
-            $t->string('asset_code', 30)->comment('permanen, dibuat server, mis. GPCH-AST-000001');
+            $t->string('asset_code', 30)->comment('permanen, dibuat server, mis. HTL-AST-000001 (prefiks = kode properti)');
             $t->string('name');
             $t->foreignId('category_id')->constrained('asset_categories')->restrictOnDelete();
             $t->string('brand')->nullable();

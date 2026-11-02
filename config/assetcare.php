@@ -3,21 +3,25 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | GPCH Asset Care
+    | Hotel Asset Care
     |--------------------------------------------------------------------------
-    | Pengelolaan aset & pemeliharaan Grand Pasundan Convention Hotel.
-    | Nilai di bawah adalah konfigurasi awal usulan (lihat spesifikasi bagian 9),
-    | harus disahkan GM & Engineering sebelum produksi.
+    | Pengelolaan aset & pemeliharaan hotel. Identitas hotel (nama, logo, warna,
+    | zona waktu) diatur di aplikasi: Pengaturan › Profil hotel. Nilai .env di
+    | bawah hanya dipakai saat instalasi pertama (assetcare:install) dan sebagai
+    | cadangan bila basis data belum siap.
     */
-    'brand_name' => env('ASSETCARE_BRAND_NAME', 'GPCH Asset Care'),
-    'brand_tagline' => env('ASSETCARE_BRAND_TAGLINE', 'Pengelolaan Aset & Pemeliharaan Grand Pasundan'),
-    'property_code' => env('ASSETCARE_PROPERTY_CODE', 'GPCH'),
+    'brand_name' => env('ASSETCARE_BRAND_NAME', 'Hotel Asset Care'),
+    'brand_tagline' => env('ASSETCARE_BRAND_TAGLINE', 'Pengelolaan aset & pemeliharaan hotel'),
+    'hotel_name' => env('ASSETCARE_HOTEL_NAME', 'Hotel Contoh'),
+    'property_code' => env('ASSETCARE_PROPERTY_CODE', 'HTL'),
     'audit_enabled' => (bool) env('ASSETCARE_AUDIT_ENABLED', true),
     'display_timezone' => env('ASSETCARE_DISPLAY_TIMEZONE', 'Asia/Jakarta'),
     'notify_mail' => (bool) env('ASSETCARE_NOTIFY_MAIL', false),
     'seed_demo' => (bool) env('ASSETCARE_SEED_DEMO', false),
+    // Domain email akun contoh (data demo). Ganti ke domain hotel bila ingin.
+    'demo_email_domain' => env('ASSETCARE_DEMO_EMAIL_DOMAIN', 'hotel.test'),
 
-    // Domain resolver label QR. Pakai domain milik GPCH agar label tetap berlaku saat hosting pindah.
+    // Domain resolver label QR. Pakai domain milik hotel agar label tetap berlaku saat hosting pindah.
     'qr_base_url' => rtrim(env('ASSETCARE_QR_BASE_URL') ?: env('APP_URL', 'http://localhost'), '/'),
     // Host yang diterima pembaca QR di aplikasi (selain host qr_base_url). Pisahkan dengan koma.
     'qr_extra_hosts' => array_filter(array_map('trim', explode(',', (string) env('ASSETCARE_QR_EXTRA_HOSTS', '')))),

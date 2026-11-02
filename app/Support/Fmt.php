@@ -27,10 +27,10 @@ class Fmt
 
     public static function tz(): string
     {
-        return config('assetcare.display_timezone', 'Asia/Jakarta');
+        return Branding::timezone();
     }
 
-    /** Timestamp UTC → waktu lokal (Asia/Jakarta). */
+    /** Timestamp UTC → waktu lokal (zona waktu hotel). */
     public static function dt(?CarbonInterface $v, string $format = 'd/m/Y H:i'): string
     {
         return $v ? $v->copy()->timezone(self::tz())->translatedFormat($format) : '-';

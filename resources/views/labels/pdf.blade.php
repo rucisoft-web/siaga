@@ -3,7 +3,8 @@
     $qr = min($p['qr_mm'], $p['label_h'] - 2 * $pad);
     $textW = $p['label_w'] - $qr - 3 * $pad;
     $big = $p['label_h'] >= 40;
-    $brand = config('assetcare.brand');
+    $brand = \App\Support\Branding::hotelName();
+    $brandColor = \App\Support\Branding::primary();
 @endphp
 <!doctype html>
 <html lang="id">
@@ -20,7 +21,7 @@
     .guide { outline: 0.2mm dashed #a8a29e; }
     .qr { position: absolute; left: {{ $pad }}mm; top: {{ ($p['label_h'] - $qr) / 2 }}mm; width: {{ $qr }}mm; height: {{ $qr }}mm; }
     .txt { position: absolute; left: {{ $qr + 2 * $pad }}mm; top: {{ $pad }}mm; width: {{ $textW }}mm; height: {{ $p['label_h'] - 2 * $pad }}mm; overflow: hidden; }
-    .brand { font-size: {{ $big ? 6.5 : 5 }}pt; color: #006632; font-weight: bold; letter-spacing: .2pt; text-transform: uppercase; }
+    .brand { font-size: {{ $big ? 6.5 : 5 }}pt; color: {{ $brandColor }}; font-weight: bold; letter-spacing: .2pt; text-transform: uppercase; }
     .code { font-size: {{ $big ? 9.5 : 7 }}pt; font-weight: bold; margin-top: .6mm; }
     .name { font-size: {{ $big ? 7.5 : 5.6 }}pt; margin-top: .6mm; line-height: 1.15; max-height: {{ $big ? 9 : 5.2 }}mm; overflow: hidden; }
     .loc { font-size: {{ $big ? 7 : 5.4 }}pt; margin-top: .6mm; font-weight: bold; color: #44403c; }
