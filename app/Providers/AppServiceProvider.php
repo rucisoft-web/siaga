@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         \Filament\Tables\Table::configureUsing(fn ($t) => $t->defaultPaginationPageOption(25)->striped());
 
         FilamentAsset::register([
-            Css::make('siaga', asset('css/assetcare.css').'?v=3'),
+            Css::make('siaga', asset('css/assetcare.css').'?v='.@filemtime(public_path('css/assetcare.css'))),
             Js::make('jsqr', asset('js/vendor/jsQR.js').'?v=1.4.0'),
             Js::make('asset-care-scan', asset('js/assetcare-scan.js').'?v=1'),
         ]);

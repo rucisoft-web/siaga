@@ -75,14 +75,7 @@ php artisan siaga:install --fresh                 # database KHUSUS demo; isi em
 php artisan siaga:demo-data gpch --admin          # hanya GPCH; Super Admin dipindah ke GPCH agar langsung melihat datanya
 ```
 
-Lalu di `.env`:
-
-```
-SIAGA_GUEST_MODE=true          # landing page + tombol "Masuk sebagai tamu" (hanya di instalasi demo!)
-ASSETCARE_PROPERTY_CODE=GPCH   # halaman login & tamu memakai merek GPCH
-```
-
-dan jalankan `php artisan config:cache` (wajib setiap kali `.env` diubah; tanpa ini `/` tetap mengarah ke `/admin`).
+Perintah ini otomatis mengisi `.env` dengan `SIAGA_GUEST_MODE=true` dan `ASSETCARE_PROPERTY_CODE=GPCH` lalu memperbarui cache konfigurasi, sehingga landing page dan kotak **Coba SIAGA tanpa akun** (pilih perusahaan demo, lalu **Masuk sebagai tamu**) langsung tampil di atas form login. Tambahkan `--no-guest` bila tidak ingin mode tamu. Kalau `.env` tidak bisa ditulis, isi kedua baris itu manual lalu `php artisan config:cache`.
 Hermina dan Kimia Farma tidak terpasang; bisa ditambah kapan saja dengan `siaga:demo-data hermina` / `siaga:demo-data kimia-farma`.
 
 **Ketiga perusahaan demo:** `php artisan siaga:demo-data all` (cPanel: `bash deploy/deploy-cpanel.sh demo-site`), masing-masing 1–3 menit.
@@ -95,7 +88,7 @@ Hermina dan Kimia Farma tidak terpasang; bisa ditambah kapan saja dengan `siaga:
 
 Hasilnya:
 - **`/`**: landing page (Attention, Interest, Desire, Action): cek masalah, 7 masalah aset tetap beserta penyebab dan solusi SIAGA, cara kerja, grafik langsung dari data demo, tur tangkapan layar, manfaat per peran, agenda workshop, pilih data demo, lalu **Masuk sebagai tamu**.
-- Tombol **Masuk sebagai tamu** juga ada di halaman login `/admin/login`.
+- Halaman login `/admin/login` menampilkan kotak **Coba SIAGA tanpa akun** di atas form: pilih perusahaan demo, lalu **Masuk sebagai tamu**.
 - **`/panduan`** dan **`/panduan/implementasi`**: panduan penggunaan per layar dan panduan implementasi, bisa dibaca tanpa login.
 - Akun tamu bersama per perusahaan berperan **Tamu (demo)**: hanya melihat (termasuk nilai & biaya), tidak bisa mengubah data, profil, atau MFA.
 - **Dasbor pimpinan** (menu Umum): 13 grafik kondisi & risiko aset, kinerja perbaikan, biaya & dampak, dengan filter per lokasi dan sorotan otomatis.

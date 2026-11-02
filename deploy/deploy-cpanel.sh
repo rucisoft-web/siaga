@@ -49,7 +49,7 @@ case "$MODE" in
     ;;
   demo-gpch)
     # Situs demo hanya Grand Pasundan (GPCH) + akun tamu; Super Admin dipindah ke GPCH.
-    # Lalu di .env: SIAGA_GUEST_MODE=true dan ASSETCARE_PROPERTY_CODE=GPCH, kemudian php artisan config:cache.
+    # .env otomatis diisi SIAGA_GUEST_MODE=true dan ASSETCARE_PROPERTY_CODE=GPCH.
     $ART siaga:demo-data gpch --force --admin
     $ART optimize:clear >/dev/null 2>&1 || true
     exit 0
