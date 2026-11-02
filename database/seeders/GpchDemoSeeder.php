@@ -87,6 +87,7 @@ class GpchDemoSeeder extends Seeder
         $this->maintenance();
         $this->transfers();
         $this->controls();
+        $this->pmDemo();
         Carbon::setTestNow();
         $this->groupDirector();
         GuestAccess::ensure($this->p);
@@ -572,6 +573,97 @@ class GpchDemoSeeder extends Seeder
     }
 
     /** Stock opname (1 selesai + 1 berjalan) dan penghapusan aset di berbagai status. Dapat dipanggil ulang pada data demo lama. */
+    /** Jadwal PM/inspeksi/kalibrasi contoh [judul, jenis, interval, pola nama aset, kelompok?, jatuh tempo H+, dasar]. Yang tidak cocok dilewati. */
+    protected function pmSpecs(): array
+    {
+        return [
+            ['Uji beban genset bulanan', 'preventive', 30, ['Genset%'], false, 2, 'Permen ESDM 38/2018 (contoh)', "Uji beban 30 menit\nCek oli, air radiator & aki\nCatat jam operasi dan level solar"],
+            ['Inspeksi smoke detector per lantai', 'inspection', 90, ['Smoke detector%', 'Detektor asap%'], true, -4, 'Uji fungsi sistem proteksi kebakaran (contoh)', "Uji asap tiap detektor\nCek lampu indikator\nCatat detektor yang gagal"],
+            ['Kalibrasi defibrillator', 'calibration', 365, ['Defibrillator%'], false, 20, 'Permenkes 54/2015 kalibrasi alat kesehatan (contoh)', "Uji energi keluaran\nUji sinkronisasi\nTempel label kalibrasi baru"],
+            ['Kalibrasi ventilator', 'calibration', 365, ['Ventilator%'], false, 35, 'Permenkes 54/2015 kalibrasi alat kesehatan (contoh)', null],
+            ['Kalibrasi infusion pump', 'calibration', 180, ['Infusion pump%'], false, 12, 'Permenkes 54/2015 kalibrasi alat kesehatan (contoh)', null],
+            ['Kalibrasi termostat combi oven', 'calibration', 180, ['Combi oven%'], false, 15, 'HACCP keamanan pangan (contoh)', "Ukur suhu ruang oven di 3 titik\nBandingkan dengan termometer acuan\nSetel offset bila selisih > 2 °C"],
+            ['Servis UPS sentral triwulan', 'preventive', 90, ['UPS%'], false, 40, null, "Uji baterai (discharge test)\nBersihkan filter & kipas"],
+        ];
+    }
+
+    /** Data demo jadwal PM, garansi & kontrak. Aman dijalankan ulang (dilewati bila sudah ada jadwal). */
+    public function pmDemo(?Property $p = null): void
+    {
+        if ($p) {
+            $this->p = $p;
+            app(CurrentProperty::class)->set($p);
+            $this->today = Carbon::now(config('assetcare.display_timezone', 'Asia/Jakarta'))->startOfDay()->utc();
+            foreach (['ce', 'tek2'] as $k) {
+                $this->u[$k] = User::where('email', $this->mail($k))->first() ?? User::where('email', $this->mail('ce'))->firstOrFail();
+            }
+        }
+        if (\App\Models\PmSchedule::exists()) {
+            return;
+        }
+        $day = fn (int $n) => $this->today->copy()->addDays($n)->timezone(config('assetcare.display_timezone', 'Asia/Jakarta'))->toDateString();
+        $svc = app(\App\Services\PmService::class);
+        $wos = app(WorkOrderService::class);
+        $tek = $this->u['tek2'] ?? $this->u['ce'];
+        $first = true;
+        foreach ($this->pmSpecs() as [$title, $type, $interval, $patterns, $group, $due, $reg, $check]) {
+            $a = null;
+            foreach ($patterns as $pat) {
+                $a ??= Asset::where('name', 'like', $pat)->whereIn('lifecycle_status', ['draft', 'active'])->orderBy('asset_code')->first();
+            }
+            if (! $a) {
+                continue;
+            }
+            $floor = $group ? ($a->location?->floor() ?? $a->location) : null;
+            $this->as('ce');
+            $this->at(-40, 8);
+            $s = \App\Models\PmSchedule::create([
+                'title' => $title, 'type' => $type, 'asset_id' => $group ? null : $a->id,
+                'category_id' => $group ? $a->category_id : null, 'location_id' => $floor?->id,
+                'interval_days' => $interval, 'next_due' => $day($due), 'lead_days' => $type === 'calibration' ? 14 : 3,
+                'priority' => $type === 'calibration' ? 'P3' : 'P4', 'estimated_hours' => $group ? 4 : 1.5, 'pic_id' => $tek->id,
+                'regulation' => $reg, 'checklist' => $check, 'is_active' => true,
+            ]);
+            // satu siklus lalu yang selesai tepat waktu → kepatuhan PM terisi
+            if ($first) {
+                $first = false;
+                $s->update(['next_due' => $day($due - $interval)]);
+                $this->at($due - $interval - 3, 7);
+                $wo = $this->try('PM jadwal', fn () => $svc->generate($s->fresh(), $this->as('ce')));
+                if ($wo) {
+                    $ce = $this->as('ce');
+                    $wo = $this->try('PM setujui', fn () => $wos->run($wo, 'approve_direct', ['reason' => 'PM terjadwal'], $ce)) ?? $wo;
+                    $wo = $this->try('PM tugas', fn () => $wos->run($wo->fresh(), 'assign', ['pic_id' => $tek->id], $ce, $wo->fresh()->version)) ?? $wo;
+                    $this->at($due - $interval, 9);
+                    $t = $this->as($tek === $this->u['ce'] ? 'ce' : 'tek2');
+                    $wo = $this->try('PM mulai', fn () => $wos->run($wo->fresh(), 'start', [], $t)) ?? $wo;
+                    Carbon::setTestNow(now()->addHour());
+                    $wo = $this->try('PM selesai', fn () => $wos->run($wo->fresh(), 'complete', ['diagnosis' => 'Kondisi normal', 'action_taken' => 'Sesuai daftar periksa', 'function_test_result' => 'pass', 'evidence_exception_reason' => 'Data demo', 'no_cost_reason' => 'PM rutin tanpa material'], $t)) ?? $wo;
+                    $wo = $this->try('PM verif', fn () => $wos->run($wo->fresh(), 'verify', ['asset_status_after' => 'serviceable'], $this->as('ce'))) ?? $wo;
+                    $this->try('PM tutup', fn () => $wos->run($wo->fresh(), 'close', [], $this->as('ce')));
+                }
+            }
+            // jadwal yang sudah lewat: WO dibuat saat itu dan belum dikerjakan (tampil sebagai terlambat)
+            if ($due < 0) {
+                $this->at($due - 3, 6);
+                $this->try('PM jadwal', fn () => $svc->generate($s->fresh()));
+            }
+        }
+        Carbon::setTestNow();
+        Auth::logout();
+        // WO untuk jadwal yang masuk masa tenggang hari ini (seperti tugas harian siaga:pm-run)
+        $this->try('PM harian', fn () => $svc->runDue($this->p->id));
+
+        // garansi & kontrak yang segera berakhir (tanggal contoh)
+        foreach ([5, 21, 48] as $i => $d) {
+            Asset::whereIn('lifecycle_status', ['active'])->whereNull('warranty_until')->whereHas('category', fn ($q) => $q->whereIn('code', ['ELEKTRONIK', 'MEKANIKAL', 'ENGINEERING-LISTRIK', 'KITCHEN-HOT']))
+                ->orderBy('asset_code')->skip($i * 3)->limit(2)->get()->each(fn ($a) => $a->update(['warranty_until' => $day($d)]));
+        }
+        foreach (\App\Models\Vendor::orderBy('code')->limit(3)->get() as $i => $v) {
+            $v->update(['contract_ref' => 'KTR/'.$this->today->year.'/'.sprintf('%03d', $i + 11).' (contoh)', 'contract_until' => $day([25, 6, 75][$i])]);
+        }
+    }
+
     public function controls(?Property $p = null): void
     {
         if ($p) {

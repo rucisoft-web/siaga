@@ -608,3 +608,10 @@ a { text-underline-offset: 3px; }
 .dg-sw button { border: 0; background: none; padding: 0; color: var(--p); cursor: pointer; text-align: left; font-size: .84rem; }
 .dg-sw button b { font-family: var(--mono); margin-right: .3rem; }
 .dg-sw button:hover { text-decoration: underline; }
+
+/* Jadwal PM */
+.pm-type { font-size: .7rem; padding: .05rem .4rem; border-radius: 4px; margin-left: .3rem; background: color-mix(in srgb, var(--p) 10%, transparent); color: var(--p); font-weight: 600; }
+.pm-type.pm-calibration { background: color-mix(in srgb, #7c3aed 12%, transparent); color: #6d28d9; }
+.pm-type.pm-inspection { background: color-mix(in srgb, #E0A526 18%, transparent); color: #92400e; }
+.pm-off { opacity: .6; }
+.pm-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }

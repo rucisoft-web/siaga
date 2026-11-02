@@ -47,6 +47,9 @@ class VendorResource extends Resource
             TextInput::make('email')->label('Email')->email(),
             TextInput::make('service_hours')->label('Jam layanan'),
             TextInput::make('sla_note')->label('SLA kontrak'),
+            TextInput::make('contract_ref')->label('No. kontrak'),
+            \Filament\Forms\Components\DatePicker::make('contract_until')->label('Kontrak berlaku s.d.')->native(false)->displayFormat('d M Y')
+                ->helperText('Pengingat dikirim H-30 dan H-7 ke pengelola jadwal PM.'),
             Textarea::make('notes')->label('Catatan')->columnSpanFull(),
             Toggle::make('is_active')->label('Aktif')->default(true),
         ]);
@@ -59,6 +62,8 @@ class VendorResource extends Resource
             TextColumn::make('name')->label('Nama')->searchable(),
             TextColumn::make('specialization')->label('Spesialisasi')->wrap(),
             TextColumn::make('contact_person')->label('Kontak')->description(fn ($record) => $record->phone),
+            TextColumn::make('contract_until')->label('Kontrak s.d.')->date('d M Y')->sortable()
+                ->color(fn ($state) => $state && \Carbon\Carbon::parse($state)->lte(now()->addDays(30)) ? 'danger' : null),
             IconColumn::make('is_active')->label('Aktif')->boolean(),
         ])->defaultSort('name')->recordActions([EditAction::make()]);
     }

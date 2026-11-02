@@ -35,7 +35,7 @@ class GroupService
 
                         return $c->d ? round($c->f / $c->d * 100) : null;
                     })() : null;
-                    $pm = class_exists(\App\Models\PmSchedule::class) ? \App\Models\PmSchedule::where('is_active', true)->whereDate('next_due', '<', now())->count() : null;
+                    $pm = \App\Models\WorkOrder::whereNotNull('pm_schedule_id')->whereIn('status', \App\Models\WorkOrder::OPEN)->where('due_at', '<', now())->count();
 
                     return [
                         'id' => $p->id, 'code' => $p->code, 'name' => $p->name, 'city' => $p->city,

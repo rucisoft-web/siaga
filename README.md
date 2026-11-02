@@ -40,12 +40,14 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 | Mutasi aset | Aset › Mutasi aset | Ajukan → setujui → kirim → terima → selesai |
 | Blokir kamar | Pemeliharaan › Blokir kamar | Usulan Engineering, konfirmasi/lepas oleh Front Office |
 | Laporan & KPI | Laporan & KPI | Backlog, kepatuhan SLA, MTTR, kegagalan berulang, downtime, biaya, ekspor CSV |
-| Struktur lokasi | Aset › Struktur lokasi | Pohon gedung › lantai › kamar/ruang dengan jumlah aset, aset berisiko, WO terbuka, nilai, pencarian, daftar aset per lokasi |
+| Struktur lokasi | Aset › Struktur lokasi | Pohon gedung › lantai › kamar/ruang dengan jumlah aset, aset berisiko, WO terbuka, nilai, pencarian, daftar aset per lokasi; jenis barang per lokasi dan matriks lokasi × jenis barang |
 | Dasbor pimpinan | Umum › Dasbor pimpinan | 13 grafik kondisi & risiko, kinerja perbaikan, biaya & dampak, filter lokasi, sorotan otomatis |
 | Penyusutan & nilai buku | Laporan › Penyusutan & nilai buku | PSAK 16: garis lurus / saldo menurun ganda / tidak disusutkan, masa manfaat & residu per kategori (bisa ditimpa per aset), nilai buku per akhir bulan, usulan jurnal, ekspor Excel daftar aset tetap |
 | Stock opname | Pengendalian Aset › Stock opname | Sesi per cakupan lokasi, hitung per ruang dengan scan QR, ditemukan / pindah lokasi / tidak ditemukan / temuan tak terdaftar, tutup & terapkan ke register, berita acara |
 | Penghapusan aset | Pengendalian Aset › Penghapusan aset | Usul → setuju/tolak (pemisahan tugas) → selesai; jual, musnah, hibah, tukar tambah, hilang; nilai buku dibekukan, laba (rugi) pelepasan, usulan jurnal, berita acara |
-| Keamanan | Pengaturan | 17 peran & 40 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
+| Jadwal PM & kalibrasi | Pemeliharaan › Jadwal PM & kalibrasi | PM, inspeksi, kalibrasi per aset atau per kategori di lokasi; WO dibuat otomatis tiap pagi (H-n), kepatuhan PM, pengingat garansi aset & kontrak vendor (H-30, H-7) |
+| Dasbor grup | Umum › Dasbor grup | Konsolidasi semua perusahaan dalam satu instalasi untuk peran Direksi grup; pindah perusahaan aktif dari topbar (tercatat di log audit) |
+| Keamanan | Pengaturan | 18 peran & 42 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
 
 Belum termasuk (rilis berikutnya, lihat rencana korporasi): konsolidasi grup lintas perusahaan, preventive maintenance terjadwal,
 suku cadang & stok, anggaran, API & integrasi ERP, SSO, mode offline penuh, integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A**.
@@ -111,7 +113,7 @@ Halaman depan bisa diaktifkan tanpa mode tamu dengan `SIAGA_LANDING=true`.
 
 ## Uji otomatis
 
-`composer install` lalu `php artisan test` (database `asset_care_test`) — 29 skenario, termasuk penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
+`composer install` lalu `php artisan test` (database `asset_care_test`) — 32 skenario, termasuk jadwal PM & pengingat garansi, dasbor grup & pindah perusahaan, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
 Profil hotel (nama, warna, logo, zona waktu), kode properti terkunci, validasi warna, dan tidak ada sisa merek lama.
 
 ## Catatan teknis

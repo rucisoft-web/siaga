@@ -33,7 +33,7 @@ class WorkOrder extends Model
 
     public const OPEN = ['draft', 'awaiting_approval', 'approved', 'assigned', 'in_progress', 'on_hold', 'completed', 'verified', 'reopened'];
 
-    public const TYPES = ['corrective' => 'Perbaikan (korektif)', 'emergency' => 'Darurat', 'preventive' => 'Preventive maintenance', 'inspection' => 'Inspeksi', 'improvement' => 'Penyempurnaan'];
+    public const TYPES = ['corrective' => 'Perbaikan (korektif)', 'emergency' => 'Darurat', 'preventive' => 'Preventive maintenance', 'inspection' => 'Inspeksi', 'improvement' => 'Penyempurnaan', 'calibration' => 'Kalibrasi'];
 
     public const PERMITS = ['ptw' => 'Permit to work', 'loto' => 'Isolasi energi / LOTO', 'hot_work' => 'Hot work', 'height' => 'Kerja di ketinggian', 'room_access' => 'Serah terima akses kamar (FO)'];
 
@@ -42,7 +42,7 @@ class WorkOrder extends Model
     protected function casts(): array
     {
         return [
-            'is_safety' => 'boolean', 'is_emergency' => 'boolean', 'requires_approval' => 'boolean', 'needs_vendor' => 'boolean',
+            'is_safety' => 'boolean', 'pm_due_date' => 'date', 'is_emergency' => 'boolean', 'requires_approval' => 'boolean', 'needs_vendor' => 'boolean',
             'room_access_needed' => 'boolean', 'fo_confirmed' => 'boolean',
             'team_ids' => 'array', 'permits' => 'array', 'checklist' => 'array',
             'estimated_cost' => 'decimal:2', 'estimated_hours' => 'decimal:2',
@@ -68,6 +68,11 @@ class WorkOrder extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function pmSchedule(): BelongsTo
+    {
+        return $this->belongsTo(PmSchedule::class);
     }
 
     public function pic(): BelongsTo

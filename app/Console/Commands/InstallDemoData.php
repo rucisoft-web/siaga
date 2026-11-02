@@ -49,6 +49,7 @@ class InstallDemoData extends Command
                 // lengkapi data demo lama dengan fitur baru (stock opname & penghapusan) bila belum ada
                 $seeder = (new $class)->setContainer(app())->setCommand($this);
                 $seeder->controls($p);
+                $seeder->pmDemo($p);
                 $seeder->groupDirector();
                 \Illuminate\Support\Facades\Auth::logout();
                 \Illuminate\Support\Carbon::setTestNow();
