@@ -505,3 +505,19 @@ a { text-underline-offset: 3px; }
 .sl-legend .sl-grade { width: 1.3rem; height: 1.3rem; font-size: .7rem; }
 .sl-empty { color: var(--k-tinta-2); font-size: .9rem; }
 @media (max-width: 640px) { .sl-stats { margin-left: 1.65rem; width: 100%; } }
+
+/* Penyusutan */
+.ps-filter { display: flex; flex-wrap: wrap; gap: .8rem; align-items: flex-end; margin-bottom: 1rem; }
+.ps-filter label { display: flex; flex-direction: column; font-size: .75rem; color: var(--k-tinta-2); gap: .2rem; }
+.ps-filter select { padding: .45rem .6rem; border: 1px solid var(--k-garis-tegas); background: var(--k-kartu); color: var(--k-tinta); border-radius: 6px; font-size: .88rem; min-width: 12rem; }
+.ps-filter .sl-btn { margin-left: auto; }
+.ps-note { border-left: 4px solid #E0A526; background: color-mix(in srgb, #E0A526 12%, var(--k-kartu)); padding: .6rem .9rem; margin: .4rem 0 0; font-size: .88rem; }
+.ps-tbl-wrap { overflow-x: auto; background: var(--k-kartu); border: 1px solid var(--k-garis); }
+.ps-tbl { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.ps-tbl th { text-align: left; font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--k-tinta-2); padding: .55rem .7rem; border-bottom: 2px solid var(--k-garis-tegas); white-space: nowrap; }
+.ps-tbl td { padding: .45rem .7rem; border-bottom: 1px solid var(--k-garis); vertical-align: top; }
+.ps-tbl .r { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ps-tbl tfoot td { font-weight: 700; border-top: 2px solid var(--k-garis-tegas); }
+.ps-tbl a { color: var(--p); font-family: ui-monospace, monospace; white-space: nowrap; }
+.ps-ind { padding-left: 2rem !important; }
+.ps-small { font-size: .75rem; color: var(--k-tinta-2); font-weight: 400; }

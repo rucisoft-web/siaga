@@ -58,6 +58,12 @@ class ViewAsset extends ViewRecord
                 TextEntry::make('financial.acquisition_cost')->label('Biaya perolehan')->formatStateUsing(fn ($state) => Fmt::rp($state))->placeholder('belum diketahui'),
                 TextEntry::make('financial.replacement_estimate')->label('Estimasi pengganti')->formatStateUsing(fn ($state) => Fmt::rp($state))->placeholder('belum diketahui'),
                 TextEntry::make('financial.accounting_ref')->label('Ref. akuntansi')->placeholder('-'),
+                TextEntry::make('book_value')->label('Nilai buku (akhir bulan lalu)')
+                    ->state(function ($record) {
+                        $d = (new \App\Services\DepreciationService)->forAsset($record, \Carbon\CarbonImmutable::now()->subMonthNoOverflow()->endOfMonth());
+
+                        return $d ? Fmt::rp($d['book']).' · akumulasi '.Fmt::rp($d['accum']).' · '.$d['months'].'/'.$d['life'].' bln'.($d['fully'] ? ' (habis disusutkan)' : '') : null;
+                    })->placeholder('belum ada harga perolehan')->columnSpan(2),
                 TextEntry::make('maint_cost')->label('Biaya perawatan 12 bulan')
                     ->state(fn ($record) => Fmt::rp(\App\Models\WoCostLine::whereHas('workOrder', fn ($q) => $q->where('asset_id', $record->id))->where('created_at', '>=', now()->subYear())->sum('amount'))),
             ]),

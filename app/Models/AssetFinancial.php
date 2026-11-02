@@ -15,6 +15,8 @@ class AssetFinancial extends Model
     {
         return [
             'acquisition_date' => 'date',
+            'depreciation_start' => 'date',
+            'residual_value' => 'decimal:2',
             'acquisition_cost' => 'decimal:2',
             'replacement_estimate' => 'decimal:2',
         ];

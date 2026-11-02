@@ -24,4 +24,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/labels/{batch}/print', [LabelPdfController::class, 'print'])->name('labels.print');
     Route::get('/attachments/{attachment}', [AttachmentController::class, 'show'])->name('attachments.show');
     Route::get('/reports/{report}/export', [ReportExportController::class, 'export'])->name('reports.export');
+    Route::get('/laporan/penyusutan.xlsx', [\App\Http\Controllers\DepreciationExportController::class, 'export'])->name('reports.depreciation');
 });

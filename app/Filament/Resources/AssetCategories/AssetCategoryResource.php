@@ -50,6 +50,16 @@ class AssetCategoryResource extends Resource
             Select::make('tracking_mode')->label('Pelacakan')->options(['individual' => 'Per unit (kode & QR per unit)', 'quantity' => 'Kelompok kuantitas per lokasi'])->default('individual')->native(false),
             TextInput::make('default_pm_interval_days')->label('Interval PM usulan (hari)')->numeric()->minValue(1),
             Toggle::make('is_active')->label('Aktif')->default(true),
+            \Filament\Schemas\Components\Section::make('Penyusutan (PSAK 16) & akun buku besar')->columns(3)->columnSpanFull()
+                ->visible(fn () => auth()->user()?->hasPermission('asset.view_financial'))
+                ->schema([
+                    Select::make('depreciation_method')->label('Metode')->options(\App\Services\DepreciationService::METHODS)->default('straight_line')->native(false)->required(),
+                    TextInput::make('useful_life_months')->label('Masa manfaat (bulan)')->numeric()->minValue(1)->maxValue(600)->helperText('Mis. 48 = 4 tahun (IT), 96 = 8 tahun, 240 = 20 tahun (bangunan)'),
+                    TextInput::make('residual_pct')->label('Nilai residu (% perolehan)')->numeric()->minValue(0)->maxValue(100)->default(0),
+                    TextInput::make('gl_asset_account')->label('Akun aset tetap')->maxLength(30),
+                    TextInput::make('gl_expense_account')->label('Akun beban penyusutan')->maxLength(30),
+                    TextInput::make('gl_accum_account')->label('Akun akumulasi penyusutan')->maxLength(30),
+                ]),
         ]);
     }
 
@@ -62,6 +72,8 @@ class AssetCategoryResource extends Resource
             TextColumn::make('default_criticality')->label('Kritikalitas')->formatStateUsing(fn ($state) => Asset::CRITICALITY[$state] ?? $state),
             TextColumn::make('tracking_mode')->label('Pelacakan')->formatStateUsing(fn ($state) => $state === 'quantity' ? 'Kuantitas' : 'Per unit'),
             TextColumn::make('assets_count')->label('Aset')->counts('assets'),
+            TextColumn::make('useful_life_months')->label('Masa manfaat')->formatStateUsing(fn ($state, $record) => $record->depreciation_method === 'none' ? 'tidak disusutkan' : ($state ? round($state / 12, 1).' th' : '-'))
+                ->visible(fn () => auth()->user()?->hasPermission('asset.view_financial')),
             IconColumn::make('is_active')->label('Aktif')->boolean(),
         ])->filters([SelectFilter::make('group')->label('Kelompok')->options(self::GROUPS)])
             ->defaultSort('code')->recordActions([EditAction::make()]);
