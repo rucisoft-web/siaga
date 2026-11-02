@@ -20,3 +20,15 @@ Pohon lokasi aset: gedung › lantai › kamar / ruang / area, lengkap dengan ju
 ## Tips
 - Lokasi tanpa aset biasanya belum didata. Cek progresnya di **Pendataan aset › Progres**.
 - Lantai atau gedung dengan banyak aset berisiko adalah kandidat program perbaikan / penggantian per area.
+
+## Jenis barang: ada apa di sini, dan ada di mana
+- Panel kanan menampilkan **Jenis barang di lokasi ini**, dikelompokkan per kategori, beserta jumlah unit dan aset berisiko D/E. "Nakas Unit 1" dan "Nakas Unit 2" dihitung sebagai satu jenis "Nakas".
+- Klik salah satu jenis, atau isi **Jenis barang** / **Kategori** di atas pohon. Pohon kemudian hanya menampilkan lokasi yang memiliki barang tersebut, lengkap dengan jumlahnya, serta ringkasan "N unit di M lokasi" dan lokasi terbanyak.
+
+## Matriks lokasi × jenis barang
+Tab **Matriks** menampilkan tabel: baris = lokasi (pilih tingkat **Gedung**, **Lantai & area**, atau **Kamar / ruang**), kolom = kategori. Bila kategori dipilih, kolom berubah menjadi jenis barang. Warna sel makin gelap bila jumlahnya makin banyak.
+- Baca **satu baris** untuk melihat isi sebuah lokasi.
+- Baca **satu kolom** untuk melihat sebaran sebuah jenis barang. Klik judul kolom untuk merinci.
+- Klik **sel** untuk membuka lokasi itu di pohon dengan filter yang sama.
+
+![Matriks lokasi × jenis barang](img/struktur-lokasi-matriks.png)

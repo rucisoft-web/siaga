@@ -57,6 +57,8 @@ class LandingTest extends TestCase
         $this->assertFalse($u->hasPermission('asset.edit'));
         $this->get(DasborPimpinan::getUrl())->assertOk()->assertSee('Sorotan untuk pimpinan')->assertSee('ac-guest-banner', false)->assertSee('Kondisi aset per lokasi');
         $this->get(\App\Filament\Pages\StrukturLokasi::getUrl())->assertOk()->assertSee('Struktur lokasi aset')->assertSee('sl-tree', false);
+        $this->get(\App\Filament\Pages\StrukturLokasi::getUrl().'?tampilan=matriks')->assertOk()->assertSee('sl-mx', false);
+        $this->get(\App\Filament\Pages\StrukturLokasi::getUrl().'?jenis=AC')->assertOk();
         $this->get('/admin/profile')->assertRedirect();
     }
 
