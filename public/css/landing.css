@@ -150,3 +150,4 @@ code { background: var(--bg2); padding: .1rem .35rem; border-radius: 4px; font-s
 .ln-tour-item.phone img { aspect-ratio: 9 / 15; object-position: top center; }
 .ln-tour-item figcaption { padding: .7rem .9rem; display: flex; flex-direction: column; gap: .15rem; }
 .ln-tour-item figcaption span { font-size: .85rem; color: var(--ink2); }
+.ln-small { font-size: .82rem; color: var(--ln-muted, #5b6472); margin-top: .5rem; font-family: ui-monospace, monospace; }

@@ -77,8 +77,14 @@
                     'Blokir kamar diusulkan langsung dari work order, <b>dikonfirmasi Front Office</b>, dan dilepas setelah pekerjaan diverifikasi. Total <b>hari-kamar yang hilang</b> tampil di dasbor pimpinan.', 'help/img/room-blocks.png', 'Blokir kamar terkait perbaikan'],
                 ['Pimpinan memutuskan tanpa data', 'Laporan disusun manual, terlambat, dan angkanya tidak bisa ditelusuri. Tidak ada indikator baku seperti SLA, MTTR, atau backlog.',
                     '<b>Dasbor pimpinan</b> menampilkan kondisi A–E, aset berisiko dan nilai gantinya, SLA, MTTR, backlog, biaya per bulan, aset boros biaya, serta <b>sorotan otomatis</b>. Setiap angka bisa ditelusuri ke daftar sumbernya.', 'landing/dasbor.png', 'Dasbor pimpinan'],
+                ['Pemeliharaan baru dilakukan setelah rusak; kalibrasi dan garansi terlewat', 'Jadwal PM, inspeksi, dan kalibrasi ada di kepala orang atau di kalender pribadi. Tanggal habis garansi dan kontrak vendor tidak dipantau, sehingga klaim terlambat dan alat medis atau peralatan keselamatan lewat masa kalibrasi.',
+                    '<b>Jadwal PM, inspeksi & kalibrasi</b> per aset atau per kelompok (mis. semua detektor asap di satu lantai). Setiap pagi SIAGA <b>membuat work order otomatis</b> sebelum jatuh tempo, menghitung <b>kepatuhan PM</b>, dan mengingatkan <b>garansi & kontrak</b> H-30 dan H-7.', 'help/img/jadwal-pm.png', 'Jadwal PM, inspeksi & kalibrasi'],
+                ['Nilai buku aset tidak cocok dengan laporan keuangan', 'Penyusutan dihitung terpisah di spreadsheet keuangan, sementara register aset ada di bagian lain. Aset yang sudah rusak, hilang, atau dijual masih tercatat. Auditor menemukan selisih setiap tahun.',
+                    '<b>Penyusutan & nilai buku</b> (PSAK 16): garis lurus atau saldo menurun, masa manfaat per kategori, <b>usulan jurnal</b> per bulan, dan ekspor Excel daftar aset tetap. Filter per lokasi atau per badan usaha (PT).', 'help/img/penyusutan.png', 'Penyusutan & nilai buku'],
+                ['Aset hilang dari catatan tanpa jejak', 'Pemeriksaan fisik (stock opname) jarang tuntas karena dicocokkan manual. Aset rusak dibuang atau dijual tanpa persetujuan dan tanpa berita acara.',
+                    '<b>Stock opname</b> per lokasi dengan scan QR: ditemukan, pindah lokasi, tidak ditemukan, temuan baru, lalu <b>berita acara</b>. <b>Penghapusan aset</b> diusulkan dan disetujui orang yang berbeda, nilai buku dibekukan, laba-rugi pelepasan dihitung.', 'help/img/stock-opname.png', 'Stock opname dengan scan QR'],
                 ['Tidak jelas siapa mengubah apa', 'File dibagikan tanpa hak akses. Perubahan data tidak tercatat, sehingga sulit diaudit dan mudah disalahgunakan.',
-                    '<b>17 peran dan 36 izin</b> (tolak secara bawaan), <b>log audit</b> setiap perubahan, wajib ganti sandi, batas percobaan login, dan verifikasi dua langkah.', 'help/img/roles.png', 'Peran dan izin'],
+                    '<b>17 peran dan 41 izin</b> (tolak secara bawaan), <b>log audit</b> setiap perubahan, wajib ganti sandi, batas percobaan login, dan verifikasi dua langkah.', 'help/img/roles.png', 'Peran dan izin'],
             ];
         @endphp
         <div class="ln-psr">
@@ -189,6 +195,10 @@ window.addEventListener('DOMContentLoaded', function () {
                 ['landing/tur-lapor-hp.png', 'Lapor kerusakan', 'Pilih aset atau lokasi, tulis gejala, foto. Selesai.', 'phone'],
                 ['landing/tur-label.png', 'Cetak label QR', 'Langsung ke printer portable Bluetooth atau lembar A4.', 'wide'],
                 ['landing/dasbor-biaya.png', 'Biaya & dampak', 'Biaya per bulan, per kategori, dan hari-kamar yang hilang.', 'wide'],
+                ['help/img/struktur-lokasi-matriks.png', 'Matriks lokasi × jenis barang', 'Barang jenis apa ada di mana, per gedung, lantai, atau ruang.', 'wide'],
+                ['help/img/jadwal-pm.png', 'Jadwal PM & kalibrasi', 'WO otomatis sebelum jatuh tempo, kepatuhan PM, pengingat garansi.', 'wide'],
+                ['help/img/penyusutan.png', 'Penyusutan & nilai buku', 'Nilai buku per kategori, usulan jurnal, ekspor Excel.', 'wide'],
+                ['help/img/stock-opname.png', 'Stock opname', 'Hitung fisik per lokasi dengan scan QR, lalu berita acara.', 'wide'],
             ];
         @endphp
         <div class="ln-tour">
@@ -207,16 +217,17 @@ window.addEventListener('DOMContentLoaded', function () {
         <h2>Manfaat untuk setiap peran</h2>
         <div class="ln-grid ln-grid-4">
             <div class="ln-card"><h3>Pimpinan</h3><ul><li>Sorotan otomatis: aset berisiko, SLA, aset yang lebih murah diganti</li><li>Filter per gedung, rumah sakit, atau wilayah outlet</li><li>Cetak dasbor untuk rapat</li></ul></div>
-            <div class="ln-card"><h3>Engineering / IPSRS</h3><ul><li>Antrian kerja per prioritas dan target waktu</li><li>Riwayat lengkap tiap aset dari scan QR</li><li>Kerusakan berulang terlihat jelas</li></ul></div>
-            <div class="ln-card"><h3>Keuangan &amp; aset</h3><ul><li>Nilai aset dan biaya pemeliharaan per aset</li><li>Persetujuan biaya berjenjang sesuai batas</li><li>Mutasi aset tercatat dan bisa diaudit</li></ul></div>
+            <div class="ln-card"><h3>Engineering / IPSRS</h3><ul><li>Antrian kerja per prioritas dan target waktu</li><li>Riwayat lengkap tiap aset dari scan QR</li><li>Kerusakan berulang terlihat jelas</li><li>WO PM &amp; kalibrasi dibuat otomatis</li></ul></div>
+            <div class="ln-card"><h3>Keuangan &amp; aset</h3><ul><li>Nilai aset dan biaya pemeliharaan per aset</li><li>Persetujuan biaya berjenjang sesuai batas</li><li>Mutasi aset tercatat dan bisa diaudit</li><li>Penyusutan, stock opname &amp; penghapusan aset</li></ul></div>
             <div class="ln-card"><h3>Staf pelapor</h3><ul><li>Lapor dari HP dalam hitungan detik</li><li>Status laporan bisa dipantau</li><li>Tidak perlu pelatihan panjang</li></ul></div>
         </div>
         <h2 class="ln-mt">Satu aplikasi, beragam industri</h2>
         <div class="ln-grid ln-grid-3">
-            <div class="ln-card ln-ind"><h3>Hotel &amp; MICE</h3><p>Kamar per tipe, ruang meeting, kitchen, laundry, power house. Blokir kamar tidak terjual saat perbaikan.</p></div>
-            <div class="ln-card ln-ind"><h3>Rumah sakit</h3><p>Kamar rawat inap per kelas, IGD, ICU, NICU, bedah sentral, radiologi, hemodialisa. Alat medis, kalibrasi, gas medis.</p></div>
-            <div class="ln-card ln-ind"><h3>Apotek, klinik &amp; lab</h3><p>Puluhan outlet dengan isi standar per tipe, cold chain obat, POS kasir, alat klinik dan laboratorium.</p></div>
+            <div class="ln-card ln-ind"><h3>Hotel &amp; MICE</h3><p>Kamar per tipe, ruang meeting, kitchen, laundry, power house. Blokir kamar tidak terjual saat perbaikan.</p><p class="ln-small">Istilah: gedung › lantai › kamar · jenis kamar · blokir kamar</p></div>
+            <div class="ln-card ln-ind"><h3>Rumah sakit</h3><p>Kamar rawat inap per kelas, IGD, ICU, NICU, bedah sentral, radiologi, hemodialisa. Alat medis, kalibrasi, gas medis. Grup dengan beberapa PT pengelola RS.</p><p class="ln-small">Istilah: PT › RS › lantai › kamar · kelas perawatan · tutup kamar</p></div>
+            <div class="ln-card ln-ind"><h3>Apotek, klinik &amp; lab</h3><p>Puluhan outlet dengan isi standar per tipe, cold chain obat, POS kasir, alat klinik dan laboratorium.</p><p class="ln-small">Istilah: wilayah › rayon › outlet · format outlet · tutup outlet</p></div>
         </div>
+        <p class="ln-lead">Istilah di menu, layar, laporan, dan label QR mengikuti <b>jenis usaha</b> yang dipilih di profil perusahaan. Label outlet mencetak nama outlet, bukan "kamar". Setiap perusahaan atau grup hanya melihat datanya sendiri.</p>
     </div>
 </section>
 
@@ -231,10 +242,13 @@ window.addEventListener('DOMContentLoaded', function () {
                 <li>Praktik: lokasi, tipe kamar/ruang, template isi standar, impor master aset</li>
                 <li>Praktik lapangan: pendataan per kamar dengan Mobile Terminal &amp; printer portable</li>
                 <li>Cek kualitas data, selisih, dan aktivasi aset</li>
+                <li>Struktur lokasi &amp; matriks: barang jenis apa ada di mana</li>
             </ol></div>
             <div class="ln-card"><h3>Hari 2 · Operasi &amp; keputusan</h3><ol class="ln-agenda">
                 <li>Lapor kerusakan dari HP, triase, prioritas &amp; SLA</li>
                 <li>Work order: penugasan, persetujuan biaya, verifikasi, blokir kamar, mutasi aset</li>
+                <li>Jadwal PM, inspeksi &amp; kalibrasi; pengingat garansi dan kontrak</li>
+                <li>Penyusutan, stock opname &amp; penghapusan aset bersama keuangan dan auditor</li>
                 <li>Dasbor pimpinan &amp; laporan: membaca angka untuk keputusan perbaiki atau ganti</li>
                 <li>Rencana implementasi 8 minggu: organisasi, RACI, komunikasi, risiko, pengadaan</li>
                 <li>Rencana tindak lanjut di perusahaan peserta</li>

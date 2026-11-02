@@ -113,7 +113,7 @@ Halaman depan bisa diaktifkan tanpa mode tamu dengan `SIAGA_LANDING=true`.
 
 ## Uji otomatis
 
-`composer install` lalu `php artisan test` (database `asset_care_test`) — 32 skenario, termasuk istilah per jenis usaha, termasuk jadwal PM & pengingat garansi, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
+`composer install` lalu `php artisan test` (database `asset_care_test`) — 32 skenario, termasuk istilah per jenis usaha, jadwal PM & pengingat garansi, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
 Profil hotel (nama, warna, logo, zona waktu), kode properti terkunci, validasi warna, dan tidak ada sisa merek lama.
 
 ## Catatan teknis

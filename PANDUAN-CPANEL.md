@@ -191,6 +191,8 @@ Panduan rinci tiap layar ada di tombol **? Panduan** pojok kanan atas aplikasi.
    ```
    Skrip ini akan memasang mode maintenance, menjalankan migrasi, memperbarui data referensi, membangun ulang cache, lalu menonaktifkan maintenance. Akun dan data tidak berubah.
 
+**Situs demo yang sudah berjalan:** setelah `update`, jalankan juga `php artisan siaga:demo-data all --force`. Perusahaan yang sudah ada tidak digandakan; contoh stock opname, penghapusan aset, jadwal PM, dan badan usaha (Hermina) ditambahkan. Perusahaan yang belum ada dipasang.
+
 ## Memulihkan dari backup
 
 ```bash
@@ -270,7 +272,7 @@ Untuk calon peserta workshop: pasang di **database terpisah khusus demo**, lalu 
 bash deploy/deploy-cpanel.sh demo-site
 ```
 
-Perintah ini memasang tiga perusahaan demo terpisah (GPCH, Hermina Group dengan RS Kemayoran & Bekasi, Kimia Farma dengan jaringan apotek & klinik), masing-masing 1–3 menit. Setelah itu set `SIAGA_GUEST_MODE=true` di `.env` dan jalankan `php artisan config:cache`. Halaman depan (`/`) menampilkan landing page, pilihan data demo, dan tombol **Masuk sebagai tamu** (hanya melihat). Panduan bisa dibaca tanpa login di `/panduan`. **Jangan aktifkan mode tamu pada instalasi berisi data asli.**
+Perintah ini memasang tiga perusahaan demo terpisah, masing-masing 1–3 menit, dengan istilah sesuai jenis usahanya: GPCH (hotel: gedung › lantai › kamar), Hermina Group (rumah sakit: 2 PT contoh › RS Kemayoran & Bekasi › lantai › kamar), dan Kimia Farma (ritel: wilayah › rayon › outlet). Setiap sesi hanya melihat data satu perusahaan atau grup. Setelah itu set `SIAGA_GUEST_MODE=true` di `.env` dan jalankan `php artisan config:cache`. Halaman depan (`/`) menampilkan landing page, pilihan data demo, dan tombol **Masuk sebagai tamu** (hanya melihat). Panduan bisa dibaca tanpa login di `/panduan`. **Jangan aktifkan mode tamu pada instalasi berisi data asli.**
 
 **Hanya Grand Pasundan (GPCH):** `bash deploy/deploy-cpanel.sh demo-gpch` (setara `php artisan siaga:demo-data gpch --admin`). Hermina dan Kimia Farma tidak dipasang, dan akun Super Admin dipindah ke GPCH agar langsung melihat datanya. Perintah ini otomatis mengisi `.env` (`SIAGA_GUEST_MODE=true`, `ASSETCARE_PROPERTY_CODE=GPCH`) dan memperbarui cache konfigurasi, sehingga kotak **Coba SIAGA tanpa akun** dengan pilihan perusahaan dan tombol **Masuk sebagai tamu** langsung tampil di atas form login. Data demo yang sudah terpasang cukup jalankan ulang perintahnya (data tidak digandakan).
 
