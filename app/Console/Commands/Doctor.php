@@ -52,6 +52,12 @@ class Doctor extends Command
         $add('Super Admin tersedia', User::whereHas('roles', fn ($q) => $q->where('slug', 'super-admin'))->exists(), 'php artisan siaga:create-admin');
         $noRole = User::where('is_active', true)->whereDoesntHave('roles')->pluck('email');
         $add('Pengguna aktif punya peran', $noRole->isEmpty(), $noRole->join(', '));
+        $guest = \App\Support\GuestAccess::enabled();
+        $add('Mode tamu (SIAGA_GUEST_MODE)', true, ($guest ? 'aktif' : 'mati').(app()->configurationIsCached() ? ' · konfigurasi di-cache: setelah ubah .env jalankan php artisan config:cache' : ''));
+        if ($guest) {
+            $ds = \App\Support\GuestAccess::datasets();
+            $add('Data demo untuk tamu', $ds->isNotEmpty(), $ds->isNotEmpty() ? $ds->map(fn ($x) => $x['property']->code)->join(', ') : 'belum ada → php artisan siaga:demo-data gpch --admin');
+        }
         $add('Jadwal (cron) untuk SLA', true, '* * * * * php artisan schedule:run  (Laragon: jalankan "php artisan schedule:work")');
         $this->table(['Status', 'Pemeriksaan', 'Keterangan'], $rows);
 

@@ -71,6 +71,7 @@ class InstallDemoData extends Command
         }
 
         if (! $this->option('no-guest')) {
+            \App\Support\GuestAccess::repair();
             $this->setEnv('SIAGA_GUEST_MODE', 'true');
             $this->components->info('Mode tamu aktif: halaman depan (/) dan halaman login menampilkan tombol "Masuk sebagai tamu" dengan pilihan perusahaan demo.');
         }

@@ -31,14 +31,7 @@ class ReferenceSeeder extends Seeder
         app(CurrentProperty::class)->set($property);
 
         // izin & peran
-        foreach (PermissionCatalog::PERMISSIONS as $slug => [$name, $group]) {
-            Permission::updateOrCreate(['slug' => $slug], ['name' => $name, 'group' => $group]);
-        }
-        $allPerms = Permission::pluck('id', 'slug');
-        foreach (PermissionCatalog::ROLES as $slug => [$name, $desc, $perms]) {
-            $role = Role::updateOrCreate(['slug' => $slug], ['name' => $name, 'description' => $desc]);
-            $role->permissions()->sync($perms === ['*'] ? $allPerms->values() : $allPerms->only($perms)->values());
-        }
+        PermissionCatalog::sync();
 
         $departments = [
             'EXE' => 'Executive Office', 'FO' => 'Front Office', 'HK' => 'Housekeeping', 'FB' => 'Food & Beverage Service',

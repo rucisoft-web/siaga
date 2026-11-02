@@ -38,14 +38,50 @@ class GuestAccess
         return $u;
     }
 
+    /**
+     * Pastikan peran Tamu dan akun tamu ada untuk setiap perusahaan demo yang sudah terpasang
+     * (mis. data demo dipasang dengan versi lama atau lewat impor SQL). Hanya properti data demo resmi (DemoSets).
+     *
+     * @return int jumlah akun tamu yang dibuat/diaktifkan
+     */
+    public static function repair(): int
+    {
+        if (! Role::where('slug', 'guest')->exists()) {
+            PermissionCatalog::sync();
+        }
+        $n = 0;
+        foreach (DemoSets::SETS as $class) {
+            $p = Property::where('code', $class::CODE)->first();
+            if ($p && \App\Models\Location::withoutGlobalScopes()->where('property_id', $p->id)->exists()) {
+                static::ensure($p);
+                $n++;
+            }
+        }
+
+        return $n;
+    }
+
     /** @return Collection<int, array{property: Property, user: User}> data demo yang bisa dijelajahi tamu */
     public static function datasets(): Collection
     {
         $role = Role::where('slug', 'guest')->value('id');
-        if (! $role) {
-            return collect();
+        $list = $role ? static::guestUsers($role) : collect();
+        // mode tamu aktif tetapi akun tamu belum ada → perbaiki sekali, lalu baca ulang
+        if ($list->isEmpty() && static::enabled() && ! static::$repaired) {
+            static::$repaired = true;
+            if (static::repair() > 0) {
+                $role = Role::where('slug', 'guest')->value('id');
+                $list = $role ? static::guestUsers($role) : collect();
+            }
         }
 
+        return $list;
+    }
+
+    protected static bool $repaired = false;
+
+    protected static function guestUsers(int $role): Collection
+    {
         return User::withoutGlobalScopes()->where('is_active', true)->whereHas('roles', fn ($q) => $q->whereKey($role))
             ->get()->map(fn (User $u) => ['property' => Property::find($u->property_id), 'user' => $u])
             ->filter(fn ($x) => $x['property'] && $x['property']->is_active)->sortBy(fn ($x) => $x['property']->id)->values();

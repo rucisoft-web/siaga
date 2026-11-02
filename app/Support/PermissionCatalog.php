@@ -71,4 +71,17 @@ class PermissionCatalog
         'guest' => ['Tamu (demo)', 'Akun bersama untuk menjelajah data demo: hanya melihat, tidak bisa mengubah data', ['dashboard.view', 'report.view', 'asset.view', 'asset.view_financial', 'request.view_all', 'wo.view']],
         'auditor' => ['Auditor', 'Membaca data & jejak audit dalam lingkup yang ditetapkan', ['report.view', 'report.export', 'asset.view', 'asset.view_financial', 'wo.view', 'request.view_all', 'audit.view']],
     ];
+
+    /** Tambah/perbarui izin & peran sesuai katalog (aman diulang; dipakai seeder dan perbaikan mode tamu). */
+    public static function sync(): void
+    {
+        foreach (static::PERMISSIONS as $slug => [$name, $group]) {
+            \App\Models\Permission::updateOrCreate(['slug' => $slug], ['name' => $name, 'group' => $group]);
+        }
+        $all = \App\Models\Permission::pluck('id', 'slug');
+        foreach (static::ROLES as $slug => [$name, $desc, $perms]) {
+            $role = \App\Models\Role::updateOrCreate(['slug' => $slug], ['name' => $name, 'description' => $desc]);
+            $role->permissions()->sync($perms === ['*'] ? $all->values() : $all->only($perms)->values());
+        }
+    }
 }
