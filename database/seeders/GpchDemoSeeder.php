@@ -88,6 +88,7 @@ class GpchDemoSeeder extends Seeder
         $this->transfers();
         $this->controls();
         Carbon::setTestNow();
+        $this->groupDirector();
         GuestAccess::ensure($this->p);
         Auth::logout();
     }
@@ -108,6 +109,21 @@ class GpchDemoSeeder extends Seeder
     public function mail(string $local): string
     {
         return $local.'@'.strtolower($this->code()).'.demo';
+    }
+
+    /** Contoh direksi grup: peran global (property_id null) agar bisa melihat dasbor grup dan berpindah perusahaan. */
+    public function groupDirector(): User
+    {
+        $u = User::withoutGlobalScopes()->firstOrCreate(['email' => 'direksi@grup.demo'], [
+            'name' => 'Direksi Grup (demo)', 'job_title' => 'Direktur Operasional Grup (contoh)', 'password' => $this->password(),
+            'property_id' => $this->p->id, 'is_active' => true, 'must_change_password' => true,
+        ]);
+        $role = Role::where('slug', 'group-director')->value('id');
+        if ($role && ! $u->roles()->where('roles.id', $role)->wherePivotNull('property_id')->exists()) {
+            $u->roles()->attach($role, ['property_id' => null]);
+        }
+
+        return $u;
     }
 
     public function password(): string

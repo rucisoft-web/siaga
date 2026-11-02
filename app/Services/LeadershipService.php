@@ -77,6 +77,7 @@ class LeadershipService
             ->get(['id', 'asset_id', 'location_id', 'type', 'status', 'priority', 'received_at', 'due_at', 'restored_at', 'completed_at', 'hold_minutes', 'created_at']);
         $open = $this->q(WorkOrder::query())->whereIn('status', WorkOrder::OPEN)->get(['id', 'status', 'priority', 'created_at', 'due_at', 'restored_at']);
         $costs = WoCostLine::query()->join('work_orders as w', 'w.id', '=', 'wo_cost_lines.work_order_id')
+            ->where('w.property_id', app(\App\Support\CurrentProperty::class)->id())
             ->when($this->scope !== null, fn ($q) => $q->whereIn('w.location_id', $this->scope ?: [0]))
             ->where('wo_cost_lines.created_at', '>=', $from6)
             ->get(['wo_cost_lines.amount', 'wo_cost_lines.type', 'wo_cost_lines.created_at', 'wo_cost_lines.is_cash_out', 'w.asset_id', 'w.id as wo_id']);

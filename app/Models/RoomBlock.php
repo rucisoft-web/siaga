@@ -9,6 +9,12 @@ class RoomBlock extends Model
 {
     use Auditable;
 
+    protected static function booted(): void
+    {
+        // Tidak punya property_id sendiri: batasi lewat kamar/ruang agar tidak bocor antarperusahaan.
+        static::addGlobalScope('property', fn ($q) => $q->whereHas('room'));
+    }
+
     protected $guarded = ['id'];
 
     protected function casts(): array

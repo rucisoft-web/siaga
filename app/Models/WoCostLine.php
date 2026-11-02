@@ -23,6 +23,8 @@ class WoCostLine extends Model
 
     protected static function booted(): void
     {
+        // Baris biaya tidak punya property_id sendiri: batasi lewat WO induk agar tidak bocor antarperusahaan.
+        static::addGlobalScope('property', fn ($q) => $q->whereHas('workOrder'));
         static::saving(function (self $c) {
             if ($c->exists && $c->getOriginal('cost_status') === 'final' && $c->isDirty(['quantity', 'unit_cost', 'amount', 'type'])) {
                 throw ValidationException::withMessages(['amount' => 'Biaya final tidak dapat diubah. Gunakan transaksi koreksi.']);

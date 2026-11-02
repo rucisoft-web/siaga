@@ -25,7 +25,7 @@ class Branding
     {
         $userProperty = null;
         try {
-            $userProperty = auth()->hasUser() ? auth()->user()?->property_id : null;
+            $userProperty = auth()->hasUser() ? (app(CurrentProperty::class)->id() ?? auth()->user()?->property_id) : null;
         } catch (Throwable) {
         }
         if (static::$loaded && static::$loadedFor !== $userProperty) {
