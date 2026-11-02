@@ -22,11 +22,11 @@ class AssetLabel extends Model
 
     protected $hidden = ['token_ciphertext', 'token_hash'];
 
-    public const STATUSES = ['active' => 'Aktif', 'revoked' => 'Tidak berlaku'];
+    public const STATUSES = ['active' => 'Aktif', 'revoked' => 'Tidak berlaku', 'unassigned' => 'Stok kosong (belum terhubung)'];
 
     protected function casts(): array
     {
-        return ['activated_at' => 'datetime', 'revoked_at' => 'datetime'];
+        return ['activated_at' => 'datetime', 'revoked_at' => 'datetime', 'bound_at' => 'datetime'];
     }
 
     public function asset(): BelongsTo
@@ -105,6 +105,31 @@ class AssetLabel extends Model
             'activated_at' => now(),
             'active_target_key' => $asset ? 'a:'.$asset->id : 'g:'.$group->id,
         ]);
+    }
+
+    /** Label stok kosong: dicetak lebih dulu, dihubungkan ke aset saat ditempel di lapangan. */
+    public function isBlank(): bool
+    {
+        return $this->status === 'unassigned';
+    }
+
+    public static function issueBlank(int $propertyId): self
+    {
+        $token = self::newToken();
+        $code = \App\Models\Property::whereKey($propertyId)->value('code') ?? 'X';
+
+        return static::create([
+            'property_id' => $propertyId,
+            'stock_code' => sprintf('%s-QR-%06d', $code, \App\Support\Sequence::increment($propertyId, 'QRS')),
+            'token_hash' => self::hashToken($token),
+            'token_ciphertext' => Crypt::encryptString($token),
+            'status' => 'unassigned',
+        ]);
+    }
+
+    public function displayCode(): string
+    {
+        return $this->asset?->asset_code ?? $this->quantityGroup?->group_code ?? $this->stock_code ?? '#'.$this->id;
     }
 
     public function currentInstallationStatus(): string

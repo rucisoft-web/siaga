@@ -38,8 +38,13 @@ class QrResolver
 
             return $this->fromToken($m[1]);
         }
-        if (preg_match('/^[A-Z0-9]{2,10}-(AST|QTY)-\d{4,8}$/i', $input)) {
+        if (preg_match('/^[A-Z0-9]{2,10}-(AST|QTY|QR)-\d{4,8}$/i', $input)) {
             $code = strtoupper($input);
+            if (str_contains($code, '-QR-')) {
+                $l = AssetLabel::where('stock_code', $code)->first();
+
+                return $l ? $this->fromLabel($l) : ['type' => 'unknown', 'message' => 'Nomor label stok tidak ditemukan.'];
+            }
             if (str_contains($code, '-QTY-')) {
                 $g = AssetQuantityGroup::where('group_code', $code)->first();
 
@@ -61,6 +66,15 @@ class QrResolver
         $label = AssetLabel::findByToken($token);
         if (! $label) {
             return ['type' => 'unknown', 'message' => 'Label tidak dikenal.'];
+        }
+
+        return $this->fromLabel($label);
+    }
+
+    public function fromLabel(AssetLabel $label): array
+    {
+        if ($label->isBlank()) {
+            return ['type' => 'blank', 'label' => $label, 'message' => 'Label stok '.$label->stock_code.' belum terhubung ke aset. Hubungkan lewat menu Pendataan aset.'];
         }
         if ($label->status !== 'active') {
             return ['type' => 'revoked', 'label' => $label, 'message' => 'Label ini sudah tidak berlaku.'];

@@ -124,7 +124,9 @@ class LabelService
 
     public function createBatch(Collection $labels, string $profileKey, int $startCell, User $user, array $filters = [], string $purpose = 'new', ?string $reason = null, int $copies = 1): LabelPrintBatch
     {
-        if (! $user->hasPermission('label.print')) {
+        // petugas pendataan boleh mencetak label kamar yang sedang didata (printer portable)
+        $fieldPrint = isset($filters['pendataan']) && $user->hasPermission('survey.run');
+        if (! $user->hasPermission('label.print') && ! $fieldPrint) {
             throw WorkflowException::forbidden();
         }
         if ($labels->isEmpty()) {
@@ -151,8 +153,8 @@ class LabelService
                     LabelPrintItem::create([
                         'batch_id' => $batch->id, 'asset_label_id' => $l->id, 'asset_id' => $l->asset_id, 'quantity_group_id' => $l->quantity_group_id,
                         'location_id' => $loc?->id, 'location_snapshot' => $loc?->labelText(),
-                        'name_snapshot' => mb_substr($l->asset?->name ?? $l->quantityGroup?->name ?? '-', 0, 255),
-                        'code_snapshot' => $l->asset?->asset_code ?? $l->quantityGroup?->group_code,
+                        'name_snapshot' => mb_substr($l->asset?->name ?? $l->quantityGroup?->name ?? ($l->isBlank() ? 'Label aset' : '-'), 0, 255),
+                        'code_snapshot' => $l->displayCode(),
                         'template_version' => $batch->template_version,
                         'sheet_no' => intdiv($slot, $lay['per_sheet']) + 1, 'cell_no' => ($slot % $lay['per_sheet']) + 1,
                         'copy_no' => $c, 'reprint_reason' => $purpose === 'reprint' ? $reason : null, 'sequence' => ++$seq,
@@ -179,6 +181,19 @@ class LabelService
         return Pdf::loadView('labels.pdf', ['batch' => $batch, 'p' => $p, 'sheets' => $sheets, 'guides' => $guides])
             ->setPaper([0, 0, $p['page_w'] * 72 / 25.4, $p['page_h'] * 72 / 25.4])
             ->setOption(['dpi' => 300, 'isRemoteEnabled' => false, 'defaultFont' => 'DejaVu Sans']);
+    }
+
+    /** HTML siap cetak dari browser; ukuran halaman = ukuran kertas profil (roll: satu label per halaman). */
+    public function printHtml(LabelPrintBatch $batch, bool $auto = true): string
+    {
+        $batch->loadMissing('items.label');
+        $p = $batch->profile();
+        $items = $batch->items->map(fn ($i) => [
+            'item' => $i,
+            'qr' => 'data:image/png;base64,'.base64_encode($this->qrPng($i->label->url())),
+        ]);
+
+        return view('labels.pdf', ['batch' => $batch, 'p' => $p, 'sheets' => $items->groupBy(fn ($x) => $x['item']->sheet_no), 'guides' => false, 'browser' => true, 'auto' => $auto])->render();
     }
 
     public function markDownloaded(LabelPrintBatch $batch): void
@@ -219,6 +234,58 @@ class LabelService
             $this->syncInstallStatus($new);
 
             return $new;
+        });
+    }
+
+    /** Cetak stok label QR kosong (nomor HTL-QR-000001 …), dihubungkan ke aset saat ditempel. */
+    public function issueBlankBatch(int $count, string $profileKey, int $startCell, User $user): LabelPrintBatch
+    {
+        if (! $user->hasPermission('label.print')) {
+            throw WorkflowException::forbidden();
+        }
+        if ($count < 1 || $count > 2000) {
+            throw WorkflowException::invalid('Jumlah label stok 1–2000 per batch.');
+        }
+        $pid = $user->property_id ?? \App\Support\Branding::property()?->id;
+
+        return DB::transaction(function () use ($count, $profileKey, $startCell, $user, $pid) {
+            $labels = collect(range(1, $count))->map(fn () => AssetLabel::issueBlank($pid));
+
+            return $this->createBatch($labels, $profileKey, $startCell, $user, ['stok_kosong' => $count]);
+        });
+    }
+
+    /**
+     * Hubungkan label stok ke aset. Label lama aset yang belum pernah dicetak/dipasang otomatis dinonaktifkan;
+     * label lama yang sudah tercetak/terpasang tidak ditimpa (pakai rotasi bila memang diganti).
+     */
+    public function bindBlank(AssetLabel $blank, \App\Models\Asset $asset, User $user): AssetLabel
+    {
+        if (! $user->hasPermission('survey.run') && ! $user->hasPermission('label.install')) {
+            throw WorkflowException::forbidden();
+        }
+
+        return DB::transaction(function () use ($blank, $asset, $user) {
+            $blank = AssetLabel::withoutGlobalScopes()->whereKey($blank->id)->lockForUpdate()->first();
+            if (! $blank->isBlank()) {
+                throw WorkflowException::invalid('Label '.$blank->displayCode().' sudah terhubung ke aset lain.');
+            }
+            if ((int) $blank->property_id !== (int) $asset->property_id) {
+                throw WorkflowException::invalid('Label stok milik properti lain.');
+            }
+            $old = AssetLabel::where('active_target_key', 'a:'.$asset->id)->lockForUpdate()->first();
+            if ($old) {
+                $used = $old->printItems()->exists() || $old->installationEvents()->where('status', 'installed')->exists();
+                if ($used) {
+                    throw WorkflowException::invalid($asset->asset_code.' sudah punya label yang tercetak/terpasang. Pakai label itu, atau rotasi label bila memang diganti.');
+                }
+                $old->auditReason = 'Diganti label stok '.$blank->stock_code.' saat pendataan';
+                $old->update(['status' => 'revoked', 'revoked_at' => now(), 'revoke_reason' => 'Diganti label stok '.$blank->stock_code, 'revoked_by' => $user->id, 'active_target_key' => null]);
+            }
+            $blank->auditReason = 'Label stok dihubungkan ke '.$asset->asset_code;
+            $blank->update(['asset_id' => $asset->id, 'status' => 'active', 'activated_at' => now(), 'active_target_key' => 'a:'.$asset->id, 'bound_by' => $user->id, 'bound_at' => now()]);
+
+            return $blank;
         });
     }
 

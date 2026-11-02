@@ -1,9 +1,14 @@
--- SIAGA (Sistem Informasi Aset & Gangguan): struktur tabel + data referensi (izin, 15 peran, departemen, kategori, SLA, Super Admin).
+-- SIAGA (Sistem Informasi Aset & Gangguan): struktur tabel + data referensi (izin, 16 peran, departemen, kategori, SLA, Super Admin).
 -- Impor ke database kosong (phpMyAdmin › Import). Super Admin: admin@siaga.local / Siaga@2026 (wajib diganti saat login).
 -- Profil awal: "Hotel Contoh" kode HTL — ganti di Pengaturan › Profil hotel SEBELUM mendaftarkan aset pertama.
 -- Tanpa data contoh. Setelah impor jalankan: bash deploy/deploy-cpanel.sh update
 
 /*M!999999\- enable the sandbox mode */ 
+-- MariaDB dump 10.19  Distrib 10.11.14-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: siaga_dump
+-- ------------------------------------------------------
+-- Server version	10.11.14-MariaDB-0ubuntu0.24.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -15,6 +20,11 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `approval_limits`
+--
+
 DROP TABLE IF EXISTS `approval_limits`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -40,10 +50,19 @@ CREATE TABLE `approval_limits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `approval_limits`
+--
+
 LOCK TABLES `approval_limits` WRITE;
 /*!40000 ALTER TABLE `approval_limits` DISABLE KEYS */;
 /*!40000 ALTER TABLE `approval_limits` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_categories`
+--
+
 DROP TABLE IF EXISTS `asset_categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -65,60 +84,69 @@ CREATE TABLE `asset_categories` (
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_categories`
+--
+
 LOCK TABLES `asset_categories` WRITE;
 /*!40000 ALTER TABLE `asset_categories` DISABLE KEYS */;
 INSERT INTO `asset_categories` VALUES
-(1,1,'AC-SPLIT','AC split kamar','kamar','medium','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(2,1,'TV','Televisi','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(3,1,'MINIBAR','Minibar / kulkas kamar','kamar','low','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(4,1,'TEL','Telepon kamar','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(5,1,'BED','Tempat tidur','kamar','low','individual',365,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(6,1,'LAMP','Lampu meja / baca','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(7,1,'SAFE','Safe deposit box kamar','kamar','medium','individual',365,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(8,1,'DOORLOCK','Door lock elektronik','kamar','high','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(9,1,'FURN','Furniture kamar','kamar','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(10,1,'SANIT','Sanitary & perlengkapan mandi','kamar','medium','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(11,1,'LINEN','Linen & handuk','kamar','low','quantity',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(12,1,'PROJ','Projector','mice','medium','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(13,1,'SCREEN','Screen','mice','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(14,1,'SOUND','Sound system','mice','medium','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(15,1,'MIC','Microphone','mice','low','individual',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(16,1,'CHAIR-B','Kursi banquet','mice','low','quantity',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(17,1,'TABLE-B','Meja banquet','mice','low','quantity',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(18,1,'PART','Partisi ruang','mice','medium','individual',365,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(19,1,'PANEL-MICE','Panel listrik venue','mice','high','individual',180,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(20,1,'CHILL','Chiller kitchen','kitchen','high','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(21,1,'FREEZ','Freezer','kitchen','high','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(22,1,'STOVE','Kompor / burner','kitchen','high','individual',90,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(23,1,'OVEN','Oven','kitchen','medium','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(24,1,'MIXER','Mixer pastry','kitchen','medium','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(25,1,'EXHAUST','Exhaust hood','kitchen','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(26,1,'GREASE','Grease trap','kitchen','medium','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(27,1,'GAS','Instalasi gas','kitchen','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(28,1,'BOILER','Boiler','mep','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(29,1,'PUMP','Pompa','mep','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(30,1,'TANK','Tangki air','mep','medium','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(31,1,'GENSET','Genset','mep','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(32,1,'PANEL','Panel listrik','mep','critical','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(33,1,'LIFT','Lift','mep','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(34,1,'HVAC','HVAC sentral / AHU','mep','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(35,1,'POOL-EQ','Peralatan kolam renang','publik','medium','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(36,1,'GYM-EQ','Peralatan gym','publik','low','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(37,1,'APAR','APAR','keselamatan','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(38,1,'ALARM','Panel fire alarm','keselamatan','critical','individual',30,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(39,1,'DETECT','Detektor asap / panas','keselamatan','critical','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(40,1,'HYDRANT','Hydrant','keselamatan','critical','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(41,1,'EMLIGHT','Emergency light','keselamatan','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(42,1,'SERVER','Server','it','critical','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(43,1,'AP','Access point','it','medium','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(44,1,'CCTV','CCTV','it','high','individual',90,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(45,1,'SWITCH','Network switch','it','high','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(46,1,'PABX','PABX','it','high','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(47,1,'PC','PC / laptop','it','low','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(48,1,'PRINTER','Printer','it','low','individual',NULL,1,'2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(49,1,'ACCESS','Access control','it','high','individual',180,1,'2026-11-02 03:05:55','2026-11-02 03:05:55');
+(1,1,'AC-SPLIT','AC split kamar','kamar','medium','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(2,1,'TV','Televisi','kamar','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(3,1,'MINIBAR','Minibar / kulkas kamar','kamar','low','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(4,1,'TEL','Telepon kamar','kamar','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(5,1,'BED','Tempat tidur','kamar','low','individual',365,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(6,1,'LAMP','Lampu meja / baca','kamar','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(7,1,'SAFE','Safe deposit box kamar','kamar','medium','individual',365,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(8,1,'DOORLOCK','Door lock elektronik','kamar','high','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(9,1,'FURN','Furniture kamar','kamar','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(10,1,'SANIT','Sanitary & perlengkapan mandi','kamar','medium','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(11,1,'LINEN','Linen & handuk','kamar','low','quantity',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(12,1,'PROJ','Projector','mice','medium','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(13,1,'SCREEN','Screen','mice','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(14,1,'SOUND','Sound system','mice','medium','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(15,1,'MIC','Microphone','mice','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(16,1,'CHAIR-B','Kursi banquet','mice','low','quantity',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(17,1,'TABLE-B','Meja banquet','mice','low','quantity',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(18,1,'PART','Partisi ruang','mice','medium','individual',365,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(19,1,'PANEL-MICE','Panel listrik venue','mice','high','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(20,1,'CHILL','Chiller kitchen','kitchen','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(21,1,'FREEZ','Freezer','kitchen','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(22,1,'STOVE','Kompor / burner','kitchen','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(23,1,'OVEN','Oven','kitchen','medium','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(24,1,'MIXER','Mixer pastry','kitchen','medium','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(25,1,'EXHAUST','Exhaust hood','kitchen','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(26,1,'GREASE','Grease trap','kitchen','medium','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(27,1,'GAS','Instalasi gas','kitchen','critical','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(28,1,'BOILER','Boiler','mep','critical','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(29,1,'PUMP','Pompa','mep','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(30,1,'TANK','Tangki air','mep','medium','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(31,1,'GENSET','Genset','mep','critical','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(32,1,'PANEL','Panel listrik','mep','critical','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(33,1,'LIFT','Lift','mep','critical','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(34,1,'HVAC','HVAC sentral / AHU','mep','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(35,1,'POOL-EQ','Peralatan kolam renang','publik','medium','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(36,1,'GYM-EQ','Peralatan gym','publik','low','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(37,1,'APAR','APAR','keselamatan','critical','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(38,1,'ALARM','Panel fire alarm','keselamatan','critical','individual',30,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(39,1,'DETECT','Detektor asap / panas','keselamatan','critical','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(40,1,'HYDRANT','Hydrant','keselamatan','critical','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(41,1,'EMLIGHT','Emergency light','keselamatan','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(42,1,'SERVER','Server','it','critical','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(43,1,'AP','Access point','it','medium','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(44,1,'CCTV','CCTV','it','high','individual',90,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(45,1,'SWITCH','Network switch','it','high','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(46,1,'PABX','PABX','it','high','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(47,1,'PC','PC / laptop','it','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(48,1,'PRINTER','Printer','it','low','individual',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(49,1,'ACCESS','Access control','it','high','individual',180,1,'2026-11-02 03:49:43','2026-11-02 03:49:43');
 /*!40000 ALTER TABLE `asset_categories` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_components`
+--
+
 DROP TABLE IF EXISTS `asset_components`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -148,10 +176,19 @@ CREATE TABLE `asset_components` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_components`
+--
+
 LOCK TABLES `asset_components` WRITE;
 /*!40000 ALTER TABLE `asset_components` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_components` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_financials`
+--
+
 DROP TABLE IF EXISTS `asset_financials`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -173,10 +210,19 @@ CREATE TABLE `asset_financials` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_financials`
+--
+
 LOCK TABLES `asset_financials` WRITE;
 /*!40000 ALTER TABLE `asset_financials` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_financials` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_labels`
+--
+
 DROP TABLE IF EXISTS `asset_labels`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -185,34 +231,49 @@ CREATE TABLE `asset_labels` (
   `property_id` bigint(20) unsigned NOT NULL,
   `asset_id` bigint(20) unsigned DEFAULT NULL,
   `quantity_group_id` bigint(20) unsigned DEFAULT NULL,
+  `stock_code` varchar(30) DEFAULT NULL COMMENT 'nomor label stok kosong, mis. HTL-QR-000001',
   `token_hash` char(64) NOT NULL,
   `token_ciphertext` text NOT NULL COMMENT 'terenkripsi APP_KEY, untuk cetak ulang',
   `status` varchar(12) NOT NULL DEFAULT 'active',
-  `activated_at` timestamp NOT NULL,
+  `activated_at` timestamp NULL DEFAULT NULL,
   `revoked_at` timestamp NULL DEFAULT NULL,
   `revoke_reason` varchar(255) DEFAULT NULL,
   `revoked_by` bigint(20) unsigned DEFAULT NULL,
+  `bound_by` bigint(20) unsigned DEFAULT NULL,
+  `bound_at` timestamp NULL DEFAULT NULL,
   `active_target_key` varchar(40) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `asset_labels_token_hash_unique` (`token_hash`),
   UNIQUE KEY `asset_labels_active_target_key_unique` (`active_target_key`),
+  UNIQUE KEY `asset_labels_stock_code_unique` (`stock_code`),
   KEY `asset_labels_property_id_foreign` (`property_id`),
   KEY `asset_labels_asset_id_foreign` (`asset_id`),
   KEY `asset_labels_quantity_group_id_foreign` (`quantity_group_id`),
   KEY `asset_labels_revoked_by_foreign` (`revoked_by`),
+  KEY `asset_labels_bound_by_foreign` (`bound_by`),
   CONSTRAINT `asset_labels_asset_id_foreign` FOREIGN KEY (`asset_id`) REFERENCES `assets` (`id`),
+  CONSTRAINT `asset_labels_bound_by_foreign` FOREIGN KEY (`bound_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `asset_labels_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`id`),
   CONSTRAINT `asset_labels_quantity_group_id_foreign` FOREIGN KEY (`quantity_group_id`) REFERENCES `asset_quantity_groups` (`id`),
   CONSTRAINT `asset_labels_revoked_by_foreign` FOREIGN KEY (`revoked_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_labels`
+--
+
 LOCK TABLES `asset_labels` WRITE;
 /*!40000 ALTER TABLE `asset_labels` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_labels` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_quantity_groups`
+--
+
 DROP TABLE IF EXISTS `asset_quantity_groups`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -242,10 +303,19 @@ CREATE TABLE `asset_quantity_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_quantity_groups`
+--
+
 LOCK TABLES `asset_quantity_groups` WRITE;
 /*!40000 ALTER TABLE `asset_quantity_groups` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_quantity_groups` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_status_events`
+--
+
 DROP TABLE IF EXISTS `asset_status_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -270,10 +340,19 @@ CREATE TABLE `asset_status_events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_status_events`
+--
+
 LOCK TABLES `asset_status_events` WRITE;
 /*!40000 ALTER TABLE `asset_status_events` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_status_events` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_transfer_items`
+--
+
 DROP TABLE IF EXISTS `asset_transfer_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -298,10 +377,19 @@ CREATE TABLE `asset_transfer_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_transfer_items`
+--
+
 LOCK TABLES `asset_transfer_items` WRITE;
 /*!40000 ALTER TABLE `asset_transfer_items` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_transfer_items` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `asset_transfers`
+--
+
 DROP TABLE IF EXISTS `asset_transfers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -346,10 +434,19 @@ CREATE TABLE `asset_transfers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `asset_transfers`
+--
+
 LOCK TABLES `asset_transfers` WRITE;
 /*!40000 ALTER TABLE `asset_transfers` DISABLE KEYS */;
 /*!40000 ALTER TABLE `asset_transfers` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `assets`
+--
+
 DROP TABLE IF EXISTS `assets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -425,10 +522,19 @@ CREATE TABLE `assets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `assets`
+--
+
 LOCK TABLES `assets` WRITE;
 /*!40000 ALTER TABLE `assets` DISABLE KEYS */;
 /*!40000 ALTER TABLE `assets` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `attachments`
+--
+
 DROP TABLE IF EXISTS `attachments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -454,10 +560,19 @@ CREATE TABLE `attachments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `attachments`
+--
+
 LOCK TABLES `attachments` WRITE;
 /*!40000 ALTER TABLE `attachments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `attachments` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `audit_logs`
+--
+
 DROP TABLE IF EXISTS `audit_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -486,10 +601,19 @@ CREATE TABLE `audit_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `audit_logs`
+--
+
 LOCK TABLES `audit_logs` WRITE;
 /*!40000 ALTER TABLE `audit_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `audit_logs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `cache`
+--
+
 DROP TABLE IF EXISTS `cache`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -502,10 +626,19 @@ CREATE TABLE `cache` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `cache`
+--
+
 LOCK TABLES `cache` WRITE;
 /*!40000 ALTER TABLE `cache` DISABLE KEYS */;
 /*!40000 ALTER TABLE `cache` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_locks`
+--
+
 DROP TABLE IF EXISTS `cache_locks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -518,10 +651,19 @@ CREATE TABLE `cache_locks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `cache_locks`
+--
+
 LOCK TABLES `cache_locks` WRITE;
 /*!40000 ALTER TABLE `cache_locks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `cache_locks` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `client_events`
+--
+
 DROP TABLE IF EXISTS `client_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -541,10 +683,19 @@ CREATE TABLE `client_events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `client_events`
+--
+
 LOCK TABLES `client_events` WRITE;
 /*!40000 ALTER TABLE `client_events` DISABLE KEYS */;
 /*!40000 ALTER TABLE `client_events` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `comments`
+--
+
 DROP TABLE IF EXISTS `comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -563,10 +714,19 @@ CREATE TABLE `comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `comments`
+--
+
 LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `departments`
+--
+
 DROP TABLE IF EXISTS `departments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -585,23 +745,32 @@ CREATE TABLE `departments` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `departments`
+--
+
 LOCK TABLES `departments` WRITE;
 /*!40000 ALTER TABLE `departments` DISABLE KEYS */;
 INSERT INTO `departments` VALUES
-(1,1,'EXE','Executive Office',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(2,1,'FO','Front Office',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(3,1,'HK','Housekeeping',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(4,1,'FB','Food & Beverage Service',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(5,1,'KIT','Kitchen & Pastry',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(6,1,'ENG','Engineering',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(7,1,'SM','Sales & Marketing',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(8,1,'ACC','Accounting & Finance',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(9,1,'HR','Human Resources',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(10,1,'PUR','Purchasing',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(11,1,'EDP','EDP / IT',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(12,1,'SEC','Security',NULL,1,'2026-11-02 03:05:54','2026-11-02 03:05:54');
+(1,1,'EXE','Executive Office',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(2,1,'FO','Front Office',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(3,1,'HK','Housekeeping',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(4,1,'FB','Food & Beverage Service',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(5,1,'KIT','Kitchen & Pastry',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(6,1,'ENG','Engineering',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(7,1,'SM','Sales & Marketing',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(8,1,'ACC','Accounting & Finance',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(9,1,'HR','Human Resources',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(10,1,'PUR','Purchasing',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(11,1,'EDP','EDP / IT',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(12,1,'SEC','Security',NULL,1,'2026-11-02 03:49:43','2026-11-02 03:49:43');
 /*!40000 ALTER TABLE `departments` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `failed_jobs`
+--
+
 DROP TABLE IF EXISTS `failed_jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -619,10 +788,19 @@ CREATE TABLE `failed_jobs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `failed_jobs`
+--
+
 LOCK TABLES `failed_jobs` WRITE;
 /*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `generation_batches`
+--
+
 DROP TABLE IF EXISTS `generation_batches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -655,10 +833,19 @@ CREATE TABLE `generation_batches` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `generation_batches`
+--
+
 LOCK TABLES `generation_batches` WRITE;
 /*!40000 ALTER TABLE `generation_batches` DISABLE KEYS */;
 /*!40000 ALTER TABLE `generation_batches` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `generation_results`
+--
+
 DROP TABLE IF EXISTS `generation_results`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -682,10 +869,19 @@ CREATE TABLE `generation_results` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `generation_results`
+--
+
 LOCK TABLES `generation_results` WRITE;
 /*!40000 ALTER TABLE `generation_results` DISABLE KEYS */;
 /*!40000 ALTER TABLE `generation_results` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `installation_events`
+--
+
 DROP TABLE IF EXISTS `installation_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -719,10 +915,19 @@ CREATE TABLE `installation_events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `installation_events`
+--
+
 LOCK TABLES `installation_events` WRITE;
 /*!40000 ALTER TABLE `installation_events` DISABLE KEYS */;
 /*!40000 ALTER TABLE `installation_events` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `job_batches`
+--
+
 DROP TABLE IF EXISTS `job_batches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -741,10 +946,19 @@ CREATE TABLE `job_batches` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `job_batches`
+--
+
 LOCK TABLES `job_batches` WRITE;
 /*!40000 ALTER TABLE `job_batches` DISABLE KEYS */;
 /*!40000 ALTER TABLE `job_batches` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `jobs`
+--
+
 DROP TABLE IF EXISTS `jobs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -761,10 +975,19 @@ CREATE TABLE `jobs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `jobs`
+--
+
 LOCK TABLES `jobs` WRITE;
 /*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `label_print_batches`
+--
+
 DROP TABLE IF EXISTS `label_print_batches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -800,10 +1023,19 @@ CREATE TABLE `label_print_batches` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `label_print_batches`
+--
+
 LOCK TABLES `label_print_batches` WRITE;
 /*!40000 ALTER TABLE `label_print_batches` DISABLE KEYS */;
 /*!40000 ALTER TABLE `label_print_batches` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `label_print_items`
+--
+
 DROP TABLE IF EXISTS `label_print_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -839,10 +1071,19 @@ CREATE TABLE `label_print_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `label_print_items`
+--
+
 LOCK TABLES `label_print_items` WRITE;
 /*!40000 ALTER TABLE `label_print_items` DISABLE KEYS */;
 /*!40000 ALTER TABLE `label_print_items` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `locations`
+--
+
 DROP TABLE IF EXISTS `locations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -874,10 +1115,19 @@ CREATE TABLE `locations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `locations`
+--
+
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `migrations`
+--
+
 DROP TABLE IF EXISTS `migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -886,8 +1136,12 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `migrations`
+--
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
@@ -899,9 +1153,15 @@ INSERT INTO `migrations` VALUES
 (5,'2026_10_21_000002_create_asset_tables',1),
 (6,'2026_10_21_000003_create_label_and_room_template_tables',1),
 (7,'2026_10_21_000004_create_maintenance_tables',1),
-(8,'2026_11_02_000005_add_branding_to_properties',1);
+(8,'2026_11_02_000005_add_branding_to_properties',1),
+(9,'2026_11_02_000006_create_survey_tables',1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `notification_logs`
+--
+
 DROP TABLE IF EXISTS `notification_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -919,10 +1179,19 @@ CREATE TABLE `notification_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `notification_logs`
+--
+
 LOCK TABLES `notification_logs` WRITE;
 /*!40000 ALTER TABLE `notification_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `notification_logs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `notifications`
+--
+
 DROP TABLE IF EXISTS `notifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -940,10 +1209,19 @@ CREATE TABLE `notifications` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `notifications`
+--
+
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `password_reset_tokens`
+--
+
 DROP TABLE IF EXISTS `password_reset_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -955,10 +1233,19 @@ CREATE TABLE `password_reset_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `password_reset_tokens`
+--
+
 LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `permission_role`
+--
+
 DROP TABLE IF EXISTS `permission_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -972,6 +1259,10 @@ CREATE TABLE `permission_role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `permission_role`
+--
+
 LOCK TABLES `permission_role` WRITE;
 /*!40000 ALTER TABLE `permission_role` DISABLE KEYS */;
 INSERT INTO `permission_role` VALUES
@@ -980,25 +1271,25 @@ INSERT INTO `permission_role` VALUES
 (1,3),
 (1,4),
 (1,5),
-(1,10),
 (1,11),
+(1,12),
 (2,1),
 (2,2),
 (2,3),
 (2,4),
 (2,5),
 (2,7),
-(2,10),
 (2,11),
-(2,15),
+(2,12),
+(2,16),
 (3,1),
 (3,2),
 (3,3),
 (3,4),
 (3,5),
-(3,10),
 (3,11),
-(3,15),
+(3,12),
+(3,16),
 (4,1),
 (4,2),
 (4,3),
@@ -1014,119 +1305,132 @@ INSERT INTO `permission_role` VALUES
 (4,13),
 (4,14),
 (4,15),
+(4,16),
 (5,1),
 (5,5),
-(5,10),
+(5,11),
 (6,1),
 (6,5),
-(6,10),
+(6,8),
+(6,11),
 (7,1),
-(7,10),
+(7,11),
 (8,1),
 (8,2),
 (8,3),
 (8,4),
-(8,11),
-(8,15),
+(8,12),
+(8,16),
 (9,1),
-(9,11),
+(9,12),
 (10,1),
 (10,5),
-(10,10),
+(10,11),
 (11,1),
 (11,4),
 (12,1),
-(12,10),
+(12,11),
 (13,1),
-(13,10),
+(13,11),
 (14,1),
-(14,10),
+(14,11),
 (15,1),
 (15,5),
 (15,6),
-(15,10),
+(15,8),
+(15,11),
 (16,1),
 (16,5),
-(16,7),
-(16,10),
+(16,8),
+(16,11),
 (17,1),
-(17,4),
+(17,5),
 (17,7),
 (17,11),
 (18,1),
-(18,5),
-(18,6),
-(18,10),
+(18,4),
+(18,7),
+(18,12),
 (19,1),
-(19,4),
 (19,5),
 (19,6),
-(19,7),
-(19,8),
-(19,9),
-(19,10),
-(19,12),
-(19,13),
-(19,14),
+(19,11),
 (20,1),
-(20,2),
-(20,3),
 (20,4),
 (20,5),
+(20,6),
+(20,7),
+(20,8),
+(20,9),
+(20,10),
 (20,11),
+(20,13),
+(20,14),
 (20,15),
 (21,1),
+(21,2),
+(21,3),
+(21,4),
 (21,5),
+(21,12),
+(21,16),
 (22,1),
-(22,2),
-(22,3),
-(22,4),
 (22,5),
-(22,6),
-(22,7),
-(22,9),
-(22,11),
-(22,12),
-(22,13),
-(22,15),
 (23,1),
+(23,2),
+(23,3),
+(23,4),
 (23,5),
+(23,6),
+(23,7),
+(23,10),
+(23,12),
+(23,13),
+(23,14),
+(23,16),
 (24,1),
 (24,5),
 (25,1),
 (25,5),
-(25,6),
 (26,1),
 (26,5),
+(26,6),
 (27,1),
-(27,4),
 (27,5),
-(27,11),
 (28,1),
 (28,4),
 (28,5),
+(28,12),
 (29,1),
-(29,11),
+(29,4),
+(29,5),
 (30,1),
-(30,9),
+(30,12),
 (31,1),
 (31,10),
-(31,13),
-(31,14),
 (32,1),
+(32,11),
 (32,14),
+(32,15),
 (33,1),
-(33,14),
+(33,15),
 (34,1),
-(34,14),
+(34,15),
 (35,1),
-(35,2),
-(35,3),
-(35,4),
-(35,14),
-(35,15);
+(35,15),
+(36,1),
+(36,2),
+(36,3),
+(36,4),
+(36,15),
+(36,16);
 /*!40000 ALTER TABLE `permission_role` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions`
+--
+
 DROP TABLE IF EXISTS `permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1139,49 +1443,59 @@ CREATE TABLE `permissions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `permissions_slug_unique` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions`
+--
 
 LOCK TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
 INSERT INTO `permissions` VALUES
-(1,'dashboard.view','Beranda manajerial (KPI, risiko, biaya)','Umum','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(2,'report.view','Melihat laporan','Umum','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(3,'report.export','Ekspor laporan (CSV)','Umum','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(4,'asset.view','Melihat register & kartu aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(5,'asset.edit','Membuat & mengubah data aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(6,'asset.verify','Verifikasi fisik aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(7,'asset.activate','Mengaktifkan / menghentikan aset (siklus hidup)','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(8,'asset.view_financial','Melihat harga & nilai aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(9,'asset.edit_financial','Mengubah data finansial aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(10,'template.manage','Menyusun template aset tipe kamar','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(11,'template.publish','Memeriksa & menerbitkan template','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(12,'generation.run','Pembuatan aset massal untuk kamar','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(13,'label.print','Membuat batch & cetak label QR','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(14,'label.rotate','Rotasi token label (nonaktifkan label lama)','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(15,'label.install','Konfirmasi pemasangan label','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(16,'transfer.request','Mengajukan mutasi aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(17,'transfer.approve','Menyetujui mutasi aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(18,'transfer.receive','Mengirim / menerima mutasi aset','Aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(19,'request.create','Membuat laporan kerusakan','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(20,'request.view_all','Melihat semua laporan (lintas departemen)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(21,'request.triage','Triase laporan & menetapkan prioritas','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(22,'wo.view','Melihat work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(23,'wo.create','Membuat work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(24,'wo.assign','Menugaskan & menjadwalkan work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(25,'wo.execute','Mengerjakan work order (teknisi)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(26,'wo.verify','Memverifikasi hasil pekerjaan','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(27,'wo.approve','Menyetujui biaya / lingkup work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(28,'wo.close','Menutup & membuka ulang work order','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(29,'wo.cost_finalize','Finalisasi biaya (Finance)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(30,'room.block_confirm','Konfirmasi blokir kamar (Front Office)','Pemeliharaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(31,'reference.manage','Lokasi, kategori, departemen, tipe kamar, vendor','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(32,'settings.manage','SLA & batas persetujuan','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(33,'user.manage','Pengguna & penugasan peran','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(34,'role.manage','Peran & izin','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(35,'audit.view','Log audit','Pengaturan','2026-11-02 03:05:54','2026-11-02 03:05:54');
+(1,'dashboard.view','Beranda manajerial (KPI, risiko, biaya)','Umum','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(2,'report.view','Melihat laporan','Umum','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(3,'report.export','Ekspor laporan (CSV)','Umum','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(4,'asset.view','Melihat register & kartu aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(5,'asset.edit','Membuat & mengubah data aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(6,'asset.verify','Verifikasi fisik aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(7,'asset.activate','Mengaktifkan / menghentikan aset (siklus hidup)','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(8,'asset.view_financial','Melihat harga & nilai aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(9,'asset.edit_financial','Mengubah data finansial aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(10,'template.manage','Menyusun template aset tipe kamar','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(11,'template.publish','Memeriksa & menerbitkan template','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(12,'generation.run','Pembuatan aset massal untuk kamar','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(13,'label.print','Membuat batch & cetak label QR','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(14,'label.rotate','Rotasi token label (nonaktifkan label lama)','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(15,'label.install','Konfirmasi pemasangan label','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(16,'survey.run','Pendataan aset lapangan (checklist kamar, tempel & hubungkan label)','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(17,'transfer.request','Mengajukan mutasi aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(18,'transfer.approve','Menyetujui mutasi aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(19,'transfer.receive','Mengirim / menerima mutasi aset','Aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(20,'request.create','Membuat laporan kerusakan','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(21,'request.view_all','Melihat semua laporan (lintas departemen)','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(22,'request.triage','Triase laporan & menetapkan prioritas','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(23,'wo.view','Melihat work order','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(24,'wo.create','Membuat work order','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(25,'wo.assign','Menugaskan & menjadwalkan work order','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(26,'wo.execute','Mengerjakan work order (teknisi)','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(27,'wo.verify','Memverifikasi hasil pekerjaan','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(28,'wo.approve','Menyetujui biaya / lingkup work order','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(29,'wo.close','Menutup & membuka ulang work order','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(30,'wo.cost_finalize','Finalisasi biaya (Finance)','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(31,'room.block_confirm','Konfirmasi blokir kamar (Front Office)','Pemeliharaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(32,'reference.manage','Lokasi, kategori, departemen, tipe kamar, vendor','Pengaturan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(33,'settings.manage','SLA & batas persetujuan','Pengaturan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(34,'user.manage','Pengguna & penugasan peran','Pengaturan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(35,'role.manage','Peran & izin','Pengaturan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(36,'audit.view','Log audit','Pengaturan','2026-11-02 03:49:43','2026-11-02 03:49:43');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `properties`
+--
+
 DROP TABLE IF EXISTS `properties`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1212,12 +1526,21 @@ CREATE TABLE `properties` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `properties`
+--
+
 LOCK TABLES `properties` WRITE;
 /*!40000 ALTER TABLE `properties` DISABLE KEYS */;
 INSERT INTO `properties` VALUES
-(1,'HTL','Hotel Contoh',NULL,'Asia/Jakarta',NULL,NULL,NULL,NULL,NULL,NULL,'SIAGA',NULL,NULL,NULL,'#1F3A5F','#C8102E','IDR',1,'2026-11-02 03:05:54','2026-11-02 03:05:54');
+(1,'HTL','Hotel Contoh',NULL,'Asia/Jakarta',NULL,NULL,NULL,NULL,NULL,NULL,'SIAGA',NULL,NULL,NULL,'#1F3A5F','#C8102E','IDR',1,'2026-11-02 03:49:43','2026-11-02 03:49:43');
 /*!40000 ALTER TABLE `properties` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `quantity_movements`
+--
+
 DROP TABLE IF EXISTS `quantity_movements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1238,10 +1561,19 @@ CREATE TABLE `quantity_movements` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `quantity_movements`
+--
+
 LOCK TABLES `quantity_movements` WRITE;
 /*!40000 ALTER TABLE `quantity_movements` DISABLE KEYS */;
 /*!40000 ALTER TABLE `quantity_movements` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `request_links`
+--
+
 DROP TABLE IF EXISTS `request_links`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1262,10 +1594,19 @@ CREATE TABLE `request_links` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `request_links`
+--
+
 LOCK TABLES `request_links` WRITE;
 /*!40000 ALTER TABLE `request_links` DISABLE KEYS */;
 /*!40000 ALTER TABLE `request_links` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `role_user`
+--
+
 DROP TABLE IF EXISTS `role_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1284,12 +1625,21 @@ CREATE TABLE `role_user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `role_user`
+--
+
 LOCK TABLES `role_user` WRITE;
 /*!40000 ALTER TABLE `role_user` DISABLE KEYS */;
 INSERT INTO `role_user` VALUES
 (1,1,1,NULL);
 /*!40000 ALTER TABLE `role_user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `roles`
+--
+
 DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1302,29 +1652,39 @@ CREATE TABLE `roles` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `roles_slug_unique` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles`
+--
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
 INSERT INTO `roles` VALUES
-(1,'super-admin','Super Admin','Konsultan / vendor aplikasi — semua izin','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(2,'owner','Owner','Melihat seluruh kinerja & biaya; memutuskan investasi/penghapusan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(3,'owner-rep','Owner Representative','Memantau risiko aset & anggaran; mengkaji prioritas & usulan penggantian','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(4,'gm','General Manager','Mengawasi operasi, backlog, downtime, SLA & persetujuan sesuai batas nilai','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(5,'chief-engineering','Chief Engineering','Triase, prioritas, penjadwalan teknisi & verifikasi pekerjaan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(6,'technician','Teknisi','Melihat tugas & aset relevan; mencatat diagnosis, waktu, material & bukti','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(7,'hod','HOD','Melapor, melihat laporan departemennya, mengonfirmasi layanan & kondisi aset','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(8,'reporter','Pelapor (staf)','Membuat laporan kerusakan & melihat laporan sendiri','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(9,'front-office','Front Office','Melapor & mengonfirmasi blokir kamar terkait perbaikan','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(10,'asset-controller','Asset Controller','Memelihara register, label & inventarisasi; mengusulkan mutasi & koreksi','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(11,'finance','Finance / Chief Accountant','Data finansial, validasi biaya, anggaran & rekonsiliasi','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(12,'storekeeper','Storekeeper','Mengelola stok engineering (rilis B)','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(13,'purchasing','Purchasing','Vendor & referensi pembelian','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(14,'it-admin','IT Administrator','Konfigurasi teknis & akun; tidak otomatis berwenang menyetujui biaya','2026-11-02 03:05:54','2026-11-02 03:05:54'),
-(15,'auditor','Auditor','Membaca data & jejak audit dalam lingkup yang ditetapkan','2026-11-02 03:05:54','2026-11-02 03:05:54');
+(1,'super-admin','Super Admin','Konsultan / vendor aplikasi — semua izin','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(2,'owner','Owner','Melihat seluruh kinerja & biaya; memutuskan investasi/penghapusan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(3,'owner-rep','Owner Representative','Memantau risiko aset & anggaran; mengkaji prioritas & usulan penggantian','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(4,'gm','General Manager','Mengawasi operasi, backlog, downtime, SLA & persetujuan sesuai batas nilai','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(5,'chief-engineering','Chief Engineering','Triase, prioritas, penjadwalan teknisi & verifikasi pekerjaan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(6,'technician','Teknisi','Melihat tugas & aset relevan; mencatat diagnosis, waktu, material & bukti','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(7,'hod','HOD','Melapor, melihat laporan departemennya, mengonfirmasi layanan & kondisi aset','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(8,'surveyor','Petugas Pendataan','Keliling kamar/area: tempel label QR, cek isi kamar, catat kondisi & foto','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(9,'reporter','Pelapor (staf)','Membuat laporan kerusakan & melihat laporan sendiri','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(10,'front-office','Front Office','Melapor & mengonfirmasi blokir kamar terkait perbaikan','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(11,'asset-controller','Asset Controller','Memelihara register, label & inventarisasi; mengusulkan mutasi & koreksi','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(12,'finance','Finance / Chief Accountant','Data finansial, validasi biaya, anggaran & rekonsiliasi','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(13,'storekeeper','Storekeeper','Mengelola stok engineering (rilis B)','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(14,'purchasing','Purchasing','Vendor & referensi pembelian','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(15,'it-admin','IT Administrator','Konfigurasi teknis & akun; tidak otomatis berwenang menyetujui biaya','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(16,'auditor','Auditor','Membaca data & jejak audit dalam lingkup yang ditetapkan','2026-11-02 03:49:43','2026-11-02 03:49:43');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `room_asset_slots`
+--
+
 DROP TABLE IF EXISTS `room_asset_slots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1355,10 +1715,19 @@ CREATE TABLE `room_asset_slots` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `room_asset_slots`
+--
+
 LOCK TABLES `room_asset_slots` WRITE;
 /*!40000 ALTER TABLE `room_asset_slots` DISABLE KEYS */;
 /*!40000 ALTER TABLE `room_asset_slots` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `room_asset_templates`
+--
+
 DROP TABLE IF EXISTS `room_asset_templates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1388,10 +1757,19 @@ CREATE TABLE `room_asset_templates` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `room_asset_templates`
+--
+
 LOCK TABLES `room_asset_templates` WRITE;
 /*!40000 ALTER TABLE `room_asset_templates` DISABLE KEYS */;
 /*!40000 ALTER TABLE `room_asset_templates` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `room_blocks`
+--
+
 DROP TABLE IF EXISTS `room_blocks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1420,10 +1798,19 @@ CREATE TABLE `room_blocks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `room_blocks`
+--
+
 LOCK TABLES `room_blocks` WRITE;
 /*!40000 ALTER TABLE `room_blocks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `room_blocks` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `room_exceptions`
+--
+
 DROP TABLE IF EXISTS `room_exceptions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1453,10 +1840,59 @@ CREATE TABLE `room_exceptions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `room_exceptions`
+--
+
 LOCK TABLES `room_exceptions` WRITE;
 /*!40000 ALTER TABLE `room_exceptions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `room_exceptions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `room_surveys`
+--
+
+DROP TABLE IF EXISTS `room_surveys`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `room_surveys` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `property_id` bigint(20) unsigned NOT NULL,
+  `location_id` bigint(20) unsigned NOT NULL,
+  `status` varchar(12) NOT NULL DEFAULT 'in_progress',
+  `surveyor_id` bigint(20) unsigned DEFAULT NULL,
+  `started_at` timestamp NULL DEFAULT NULL,
+  `finished_at` timestamp NULL DEFAULT NULL,
+  `found_count` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `missing_count` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `extra_count` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `note` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `room_surveys_location_id_unique` (`location_id`),
+  KEY `room_surveys_surveyor_id_foreign` (`surveyor_id`),
+  KEY `room_surveys_property_id_status_index` (`property_id`,`status`),
+  CONSTRAINT `room_surveys_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
+  CONSTRAINT `room_surveys_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`id`),
+  CONSTRAINT `room_surveys_surveyor_id_foreign` FOREIGN KEY (`surveyor_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `room_surveys`
+--
+
+LOCK TABLES `room_surveys` WRITE;
+/*!40000 ALTER TABLE `room_surveys` DISABLE KEYS */;
+/*!40000 ALTER TABLE `room_surveys` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `room_template_items`
+--
+
 DROP TABLE IF EXISTS `room_template_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1487,10 +1923,19 @@ CREATE TABLE `room_template_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `room_template_items`
+--
+
 LOCK TABLES `room_template_items` WRITE;
 /*!40000 ALTER TABLE `room_template_items` DISABLE KEYS */;
 /*!40000 ALTER TABLE `room_template_items` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `room_types`
+--
+
 DROP TABLE IF EXISTS `room_types`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1509,10 +1954,19 @@ CREATE TABLE `room_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `room_types`
+--
+
 LOCK TABLES `room_types` WRITE;
 /*!40000 ALTER TABLE `room_types` DISABLE KEYS */;
 /*!40000 ALTER TABLE `room_types` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `scan_logs`
+--
+
 DROP TABLE IF EXISTS `scan_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1535,10 +1989,19 @@ CREATE TABLE `scan_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `scan_logs`
+--
+
 LOCK TABLES `scan_logs` WRITE;
 /*!40000 ALTER TABLE `scan_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `scan_logs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `sequences`
+--
+
 DROP TABLE IF EXISTS `sequences`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1556,10 +2019,19 @@ CREATE TABLE `sequences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `sequences`
+--
+
 LOCK TABLES `sequences` WRITE;
 /*!40000 ALTER TABLE `sequences` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sequences` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `service_requests`
+--
+
 DROP TABLE IF EXISTS `service_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1617,10 +2089,19 @@ CREATE TABLE `service_requests` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `service_requests`
+--
+
 LOCK TABLES `service_requests` WRITE;
 /*!40000 ALTER TABLE `service_requests` DISABLE KEYS */;
 /*!40000 ALTER TABLE `service_requests` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `sessions`
+--
+
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1637,10 +2118,19 @@ CREATE TABLE `sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `sessions`
+--
+
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `sla_policies`
+--
+
 DROP TABLE IF EXISTS `sla_policies`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1661,15 +2151,24 @@ CREATE TABLE `sla_policies` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `sla_policies`
+--
+
 LOCK TABLES `sla_policies` WRITE;
 /*!40000 ALTER TABLE `sla_policies` DISABLE KEYS */;
 INSERT INTO `sla_policies` VALUES
-(1,1,'P1','P1 Darurat','Bahaya listrik, dugaan kebocoran gas, kegagalan utilitas kritis',5,NULL,'24h','2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(2,1,'P2','P2 Mendesak','Kamar tidak dapat dijual, chiller gagal, gangguan acara aktif',15,120,'24h','2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(3,1,'P3','P3 Normal','Kerusakan dengan layanan alternatif yang aman',120,1440,'business','2026-11-02 03:05:55','2026-11-02 03:05:55'),
-(4,1,'P4','P4 Terencana','Kosmetik atau penyempurnaan tanpa gangguan layanan',540,10080,'business','2026-11-02 03:05:55','2026-11-02 03:05:55');
+(1,1,'P1','P1 Darurat','Bahaya listrik, dugaan kebocoran gas, kegagalan utilitas kritis',5,NULL,'24h','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(2,1,'P2','P2 Mendesak','Kamar tidak dapat dijual, chiller gagal, gangguan acara aktif',15,120,'24h','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(3,1,'P3','P3 Normal','Kerusakan dengan layanan alternatif yang aman',120,1440,'business','2026-11-02 03:49:43','2026-11-02 03:49:43'),
+(4,1,'P4','P4 Terencana','Kosmetik atau penyempurnaan tanpa gangguan layanan',540,10080,'business','2026-11-02 03:49:43','2026-11-02 03:49:43');
 /*!40000 ALTER TABLE `sla_policies` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `slot_assignments`
+--
+
 DROP TABLE IF EXISTS `slot_assignments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1702,10 +2201,19 @@ CREATE TABLE `slot_assignments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `slot_assignments`
+--
+
 LOCK TABLES `slot_assignments` WRITE;
 /*!40000 ALTER TABLE `slot_assignments` DISABLE KEYS */;
 /*!40000 ALTER TABLE `slot_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `status_events`
+--
+
 DROP TABLE IF EXISTS `status_events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1727,10 +2235,19 @@ CREATE TABLE `status_events` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `status_events`
+--
+
 LOCK TABLES `status_events` WRITE;
 /*!40000 ALTER TABLE `status_events` DISABLE KEYS */;
 /*!40000 ALTER TABLE `status_events` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1763,12 +2280,21 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `users`
+--
+
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,1,NULL,'Super Admin','Super Admin (pengelola aplikasi)','admin@siaga.local',NULL,NULL,'$2y$12$h8z0rLtQlu73BLoAQYmxAuxh9BG/bimxkv9qGTwl2NXf4Xdyab2oK',NULL,'2026-11-02 03:05:55','2026-11-02 03:05:55',1,1,NULL,NULL,NULL,NULL,NULL);
+(1,1,NULL,'Super Admin','Super Admin','admin@siaga.local',NULL,'2026-11-02 03:49:43','$2y$12$oS3xDJn4pqperIsF4nrJYe2z5TIBUFnbYBwEFYXtAu7wIgBlYnBpS',NULL,'2026-11-02 03:49:44','2026-11-02 03:49:44',1,1,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `vendors`
+--
+
 DROP TABLE IF EXISTS `vendors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1793,10 +2319,19 @@ CREATE TABLE `vendors` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `vendors`
+--
+
 LOCK TABLES `vendors` WRITE;
 /*!40000 ALTER TABLE `vendors` DISABLE KEYS */;
 /*!40000 ALTER TABLE `vendors` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `wo_cost_lines`
+--
+
 DROP TABLE IF EXISTS `wo_cost_lines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1833,10 +2368,19 @@ CREATE TABLE `wo_cost_lines` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `wo_cost_lines`
+--
+
 LOCK TABLES `wo_cost_lines` WRITE;
 /*!40000 ALTER TABLE `wo_cost_lines` DISABLE KEYS */;
 /*!40000 ALTER TABLE `wo_cost_lines` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `wo_time_logs`
+--
+
 DROP TABLE IF EXISTS `wo_time_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1859,10 +2403,19 @@ CREATE TABLE `wo_time_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `wo_time_logs`
+--
+
 LOCK TABLES `wo_time_logs` WRITE;
 /*!40000 ALTER TABLE `wo_time_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `wo_time_logs` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `work_orders`
+--
+
 DROP TABLE IF EXISTS `work_orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -1952,6 +2505,10 @@ CREATE TABLE `work_orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `work_orders`
+--
+
 LOCK TABLES `work_orders` WRITE;
 /*!40000 ALTER TABLE `work_orders` DISABLE KEYS */;
 /*!40000 ALTER TABLE `work_orders` ENABLE KEYS */;
@@ -1966,3 +2523,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+-- Dump completed

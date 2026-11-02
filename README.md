@@ -17,7 +17,7 @@ Instalasi: **PANDUAN-LARAGON.md** (komputer Windows) atau **PANDUAN-CPANEL.md** 
 | Logo (terang & gelap), warna utama & aksen, nama aplikasi, tagline, alamat, kelas, jumlah kamar | Pengaturan › Profil hotel | 6 palet cepat; tanpa logo → logo teks bergaris otomatis |
 | Gedung, lantai, kamar, area, tipe kamar | Pengaturan › Lokasi & kamar, Tipe kamar | |
 | Departemen, kategori aset, vendor, SLA P1–P4, batas persetujuan | Menu Pengaturan | Data awal berisi 12 departemen & ~50 kategori aset hotel umum |
-| Pengguna & peran | Pengaturan › Pengguna, Peran | 15 peran bawaan (GM, Chief Engineering, Teknisi, FO, HOD, Finance, dll.) |
+| Pengguna & peran | Pengaturan › Pengguna, Peran | 16 peran bawaan (termasuk Petugas Pendataan) (GM, Chief Engineering, Teknisi, FO, HOD, Finance, dll.) |
 
 Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di label.
 
@@ -27,7 +27,11 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 |---|---|---|
 | Lokasi & referensi | Pengaturan, Lokasi & kamar | Gedung › lantai › kamar/ruang, tipe kamar, kategori, departemen, vendor, SLA P1–P4, batas persetujuan |
 | Register aset | Aset › Register aset | Kode permanen `{KODE}-AST-000001`, kartu aset, verifikasi fisik, aktivasi, komponen, riwayat status, dokumen privat, kelompok jumlah |
-| Label QR | Pengendalian Aset | Token acak (hanya hash tersimpan), PDF ukuran aktual (A4 50×30, A4 75×50, roll), cetak ulang beralasan, rotasi token, konfirmasi pemasangan, Scan QR (kamera / foto / ketik kode) |
+| Impor master aset | Pengendalian Aset › Impor master aset | Workbook Excel (format GPCH) → tipe kamar, template isi kamar, ruang meeting, area umum + item estimasi, nomor kamar; uji coba dulu, aman diulang. CLI: `php artisan siaga:import-master file.xlsx` |
+| Pendataan aset awal | Pengendalian Aset › Pendataan aset | Checklist per kamar untuk Mobile Terminal/HP: cetak label kamar langsung ke printer label Bluetooth, tempel & pindai (scanner bawaan/kamera), kondisi A–E, foto, item hitungan (linen, titik lampu), tidak ada / aset tambahan, selesai kamar; progres per lantai & per petugas |
+| Stok label QR kosong | Pengendalian Aset › Stok label QR kosong | Label bernomor `{KODE}-QR-000001` tanpa nama aset, dihubungkan ke aset saat ditempel |
+| Panduan per layar | Tombol **? Panduan** pojok kanan atas, menu Panduan | Penjelasan rinci dan tangkapan layar untuk setiap layar; bisa dicetak / disimpan PDF |
+| Label QR | Pengendalian Aset | Token acak (hanya hash tersimpan), PDF ukuran aktual (A4 50×30, A4 75×50, roll 40×30/50×30/58×40/75×50) dan cetak langsung dari browser, cetak ulang beralasan, rotasi token, konfirmasi pemasangan, Scan QR (kamera / foto / ketik kode) |
 | Laporan kerusakan | Pemeliharaan › Laporan kerusakan | Form cepat dari scan QR, saran prioritas, anti-tiket ganda, triase, gabung/tautkan |
 | Work order | Pemeliharaan › Work order | Draft → persetujuan → tugas → dikerjakan → selesai → verifikasi → tutup; batas persetujuan, pembuat ≠ penyetuju, izin kerja, garansi, jam kerja, biaya, foto bukti |
 | SLA & notifikasi | Lonceng notifikasi | Respons & pemulihan, kalender 24 jam / jam kerja, peringatan 80% & terlewat |
@@ -35,7 +39,7 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 | Mutasi aset | Aset › Mutasi aset | Ajukan → setujui → kirim → terima → selesai |
 | Blokir kamar | Pemeliharaan › Blokir kamar | Usulan Engineering, konfirmasi/lepas oleh Front Office |
 | Laporan & KPI | Laporan & KPI | Backlog, kepatuhan SLA, MTTR, kegagalan berulang, downtime, biaya, ekspor CSV |
-| Keamanan | Pengaturan | 15 peran & 35 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
+| Keamanan | Pengaturan | 16 peran & 36 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
 
 Belum termasuk (rilis berikutnya): preventive maintenance terjadwal, suku cadang & stok, stock opname, disposal,
 anggaran, API, mode offline penuh, integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A**.

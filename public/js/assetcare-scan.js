@@ -94,7 +94,20 @@ document.addEventListener('alpine:init', () => {
             this.last = text; this.lastAt = now; this.busy = true;
             if (navigator.vibrate) navigator.vibrate(60);
             try { await this.$wire.call(this.method, text, channel); }
-            finally { this.busy = false; }
+            finally { this.busy = false; this.refocus(); }
+        },
+        // Mobile Terminal (scanner bawaan = keyboard wedge): kolom kode selalu siap menerima hasil scan
+        refocus() {
+            const el = this.$refs.manual;
+            if (!el || el.dataset.wedge === undefined) return;
+            setTimeout(() => {
+                const a = document.activeElement;
+                if (!a || a === document.body || a === el) el.focus({ preventScroll: true });
+            }, 150);
+        },
+        typeMode() {
+            const el = this.$refs.manual;
+            el.setAttribute('inputmode', 'text'); el.blur(); setTimeout(() => el.focus(), 50);
         },
         destroy() { this.stop(); },
     }));

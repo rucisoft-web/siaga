@@ -17,6 +17,7 @@ Route::get('/q/{token}', [QrController::class, 'show'])->where('token', '[A-Za-z
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/labels/{batch}/pdf', [LabelPdfController::class, 'show'])->name('labels.pdf');
+    Route::get('/labels/{batch}/print', [LabelPdfController::class, 'print'])->name('labels.print');
     Route::get('/attachments/{attachment}', [AttachmentController::class, 'show'])->name('attachments.show');
     Route::get('/reports/{report}/export', [ReportExportController::class, 'export'])->name('reports.export');
 });

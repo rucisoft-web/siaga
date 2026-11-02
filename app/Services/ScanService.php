@@ -17,7 +17,7 @@ class ScanService
     {
         $r = $this->resolver->resolve($input);
         $result = match ($r['type']) {
-            'asset' => 'ok', 'group' => 'group', 'revoked' => 'revoked', 'foreign' => 'foreign', default => 'unknown',
+            'asset' => 'ok', 'group' => 'group', 'revoked' => 'revoked', 'blank' => 'blank', 'foreign' => 'foreign', default => 'unknown',
         };
         $canAsset = $user?->hasPermission('asset.view') || $user?->hasPermission('request.create');
         if (in_array($r['type'], ['asset', 'group'], true) && ! $canAsset) {
@@ -35,6 +35,7 @@ class ScanService
             $r['type'] === 'asset' => ['url' => \App\Filament\Resources\ServiceRequests\ServiceRequestResource::getUrl('create', ['asset' => $r['asset']->id]), 'message' => null, 'level' => 'success'],
             $r['type'] === 'group' => ['url' => AssetQuantityGroupResource::getUrl('view', ['record' => $r['group']]), 'message' => null, 'level' => 'success'],
             // label dicabut: pesan umum, tanpa membocorkan aset baru
+            $r['type'] === 'blank' => ['url' => null, 'message' => $r['message'], 'level' => 'warning'],
             $r['type'] === 'revoked' => ['url' => null, 'message' => 'Label ini sudah tidak berlaku. Laporkan ke Engineering agar label diganti.', 'level' => 'danger'],
             default => ['url' => null, 'message' => $r['message'] ?? 'Label tidak dikenal.', 'level' => 'danger'],
         };

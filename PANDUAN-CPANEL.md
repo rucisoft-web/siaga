@@ -164,6 +164,23 @@ Setiap label QR berisi alamat `ASSETCARE_QR_BASE_URL/q/...`. **Setelah label dic
 
 ---
 
+## Pendataan aset awal (petugas lapangan)
+
+Urutan kerja yang disarankan sebelum petugas keliling:
+
+1. **Impor master aset** (Pengendalian Aset › Impor master aset): unggah workbook master aset, tekan **Uji coba**, periksa angka, lalu **Impor**. Tambahkan sheet **Daftar Kamar** (Nomor kamar · Jenis kamar · Gedung · Lantai) agar kamar ikut dibuat.
+2. Periksa dan **terbitkan** template di **Template aset kamar**.
+3. **Generate aset kamar** per lantai atau per tipe.
+4. Buat akun petugas dengan peran **Petugas Pendataan**. Siapkan **Stok label QR kosong** untuk aset di luar template.
+5. Petugas membuka **Pendataan aset** di Mobile Terminal/HP, lalu per kamar: cetak label → tempel → pindai → catat kondisi/foto → Selesai kamar.
+
+**Mobile Terminal dan printer portable**
+- Mobile Terminal Android dengan scanner bawaan: atur scanner ke mode *keyboard / keystroke output* dengan akhiran **Enter** (di aplikasi pengaturan scanner perangkat). Di layar Pendataan, kolom kode selalu siap menerima hasil scan tanpa memunculkan keyboard.
+- Printer label Bluetooth: pasang aplikasi *print service* dari merek printer (mis. Zebra Printer Setup/Print Service, Brother Print Service Plugin), pasangkan printer lewat Bluetooth, lalu dari layar Pendataan ketuk **Buka & cetak**. Pilih printer, ukuran kertas sama dengan roll label, skala 100%.
+- Aplikasi harus dibuka lewat **HTTPS** agar kamera HP bisa dipakai (pada Laragon tanpa HTTPS gunakan tombol **Foto label** atau scanner bawaan).
+
+Panduan rinci tiap layar ada di tombol **? Panduan** pojok kanan atas aplikasi.
+
 ## Memperbarui ke rilis baru
 
 1. Backup terlebih dahulu: `bash deploy/backup-db.sh`.

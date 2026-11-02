@@ -72,6 +72,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([Beranda::class])
             ->widgets([])
             ->renderHook(PanelsRenderHook::TOPBAR_START, fn () => Blade::render('<x-ac.property-badge />'))
+            ->renderHook(PanelsRenderHook::USER_MENU_BEFORE, fn () => Blade::render('<x-ac.help-button />'))
             ->renderHook(PanelsRenderHook::FOOTER, fn () => Blade::render('<x-ac.footer />'))
             ->renderHook(PanelsRenderHook::BODY_END, fn () => Blade::render('<x-ac.login-ornament /><x-ac.bottom-nav />'))
             ->renderHook(PanelsRenderHook::HEAD_END, fn () => new HtmlString('<meta name="theme-color" content="'.e(Branding::primary()).'"><style>'.Branding::cssVars().'</style>'))

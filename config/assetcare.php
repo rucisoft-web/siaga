@@ -61,11 +61,23 @@ return [
             'label_w' => 50, 'label_h' => 30, 'cols' => 1, 'rows' => 1,
             'margin_top' => 0, 'margin_left' => 0, 'gap_x' => 0, 'gap_y' => 0, 'qr_mm' => 23,
         ],
+        'roll-40x30' => [
+            'name' => 'Printer label roll · 40 × 30 mm', 'type' => 'roll', 'page_w' => 40, 'page_h' => 30,
+            'label_w' => 40, 'label_h' => 30, 'cols' => 1, 'rows' => 1,
+            'margin_top' => 0, 'margin_left' => 0, 'gap_x' => 0, 'gap_y' => 0, 'qr_mm' => 22,
+        ],
+        'roll-58x40' => [
+            'name' => 'Printer label roll · 58 × 40 mm', 'type' => 'roll', 'page_w' => 58, 'page_h' => 40,
+            'label_w' => 58, 'label_h' => 40, 'cols' => 1, 'rows' => 1,
+            'margin_top' => 0, 'margin_left' => 0, 'gap_x' => 0, 'gap_y' => 0, 'qr_mm' => 25,
+        ],
         'roll-75x50' => [
             'name' => 'Printer label roll · 75 × 50 mm', 'type' => 'roll', 'page_w' => 75, 'page_h' => 50,
             'label_w' => 75, 'label_h' => 50, 'cols' => 1, 'rows' => 1,
             'margin_top' => 0, 'margin_left' => 0, 'gap_x' => 0, 'gap_y' => 0, 'qr_mm' => 25,
         ],
     ],
+    // ukuran label default untuk printer portable petugas pendataan (bisa diganti di layar Pendataan)
+    'survey_print_profile' => env('ASSETCARE_SURVEY_PRINT_PROFILE', 'roll-50x30'),
     'label_template_version' => 'LBL-1.0',
 ];

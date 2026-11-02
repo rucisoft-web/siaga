@@ -12,7 +12,15 @@
 <meta charset="utf-8">
 <title>{{ $batch->number }}</title>
 <style>
-    @page { margin: 0; }
+    @page { margin: 0; @if (!empty($browser)) size: {{ $p['page_w'] }}mm {{ $p['page_h'] }}mm; @endif }
+    @if (!empty($browser))
+    body { font-family: Arial, "DejaVu Sans", sans-serif; }
+    .code { white-space: nowrap; letter-spacing: -.15pt; font-size: {{ $big ? 9.5 : 6.2 }}pt; }
+    .bar { font: 14px/1.4 Arial, sans-serif; padding: 12px 16px; background: #1F2937; color: #fff; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: auto; }
+    .bar button { font-size: 15px; padding: 8px 14px; border: 0; background: #fff; color: #111; font-weight: bold; }
+    @media screen { body { background: #e7e5e4; } .sheet { background: #fff; margin: 12px; outline: 1px solid #a8a29e; zoom: 1.8; } }
+    @media print { .bar { display: none; } html, body { width: {{ $p['page_w'] }}mm; } }
+    @endif
     * { box-sizing: border-box; }
     body { margin: 0; font-family: "DejaVu Sans", sans-serif; color: #1c1917; }
     .sheet { position: relative; width: {{ $p['page_w'] }}mm; height: {{ $p['page_h'] }}mm; page-break-after: always; overflow: hidden; }
@@ -30,6 +38,13 @@
 </style>
 </head>
 <body>
+@if (!empty($browser))
+    <div class="bar">
+        <button type="button" onclick="window.print()">Cetak {{ $batch->label_count }} label</button>
+        <span>{{ $batch->number }} · {{ $p['name'] }}. Pilih printer label Bluetooth, skala 100%, ukuran kertas {{ $p['page_w'] }} × {{ $p['page_h'] }} mm.</span>
+        <button type="button" onclick="history.length > 1 ? history.back() : window.close()">Kembali</button>
+    </div>
+@endif
 @foreach ($sheets as $sheetNo => $cells)
     <div class="sheet">
         @foreach ($cells as $c)
@@ -55,5 +70,8 @@
         @endforeach
     </div>
 @endforeach
+@if (!empty($browser) && !empty($auto))
+<script>window.addEventListener('load', function () { setTimeout(function () { window.print(); }, 400); });</script>
+@endif
 </body>
 </html>
