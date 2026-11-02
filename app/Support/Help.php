@@ -15,7 +15,7 @@ class Help
     public const GROUPS = [
         'Mulai' => ['implementasi', 'beranda', 'dasbor-pimpinan', 'scan-qr', 'profil'],
         'Pendataan aset awal' => ['impor-master', 'pendataan', 'stok-label'],
-        'Aset & label' => ['assets', 'asset-quantity-groups', 'room-asset-templates', 'generate-assets', 'generation-batches', 'cetak-label', 'label-print-batches', 'konfirmasi-pemasangan', 'asset-transfers'],
+        'Aset & label' => ['assets', 'struktur-lokasi', 'asset-quantity-groups', 'room-asset-templates', 'generate-assets', 'generation-batches', 'cetak-label', 'label-print-batches', 'konfirmasi-pemasangan', 'asset-transfers'],
         'Gangguan & pekerjaan' => ['service-requests', 'work-orders', 'room-blocks', 'laporan'],
         'Data referensi' => ['locations', 'room-types', 'asset-categories', 'departments', 'vendors', 'sla-policies', 'approval-limits'],
         'Pengaturan & keamanan' => ['profil-hotel', 'users', 'roles', 'audit-logs'],
