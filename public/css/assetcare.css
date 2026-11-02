@@ -592,22 +592,6 @@ a { text-underline-offset: 3px; }
 .sl-mx td a:hover { outline: 2px solid var(--a); outline-offset: -2px; }
 .sl-mx-sum { font-weight: 700; background: var(--k-latar, transparent); padding: 0 .4rem !important; }
 .sl-mx tfoot th, .sl-mx tfoot td { position: sticky; bottom: 0; background: var(--k-kartu); }
-.ac-psw { position: relative; }
-.ac-psw summary { cursor: pointer; list-style: none; }
-.ac-psw summary::-webkit-details-marker { display: none; }
-.ac-psw-menu { position: absolute; top: calc(100% + 6px); left: .5rem; z-index: 60; min-width: 300px; background: var(--k-kartu); color: var(--k-tinta); border: 1px solid var(--k-garis-tegas); box-shadow: 0 10px 30px rgba(0,0,0,.18); padding: .5rem; border-radius: 8px; }
-.ac-psw-menu p { margin: .2rem .4rem .4rem; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--k-tinta-2); }
-.fi-topbar .ac-psw-menu button, .ac-psw-menu button { display: block; width: 100%; text-align: left; padding: .5rem .6rem; border: 0; background: transparent; color: var(--k-tinta) !important; border-radius: 6px; cursor: pointer; font-size: .85rem; }
-.ac-psw-menu button:hover { background: color-mix(in srgb, var(--p) 8%, transparent); }
-.ac-psw-menu button.on { background: color-mix(in srgb, var(--a) 18%, transparent); }
-.fi-topbar .ac-psw-menu button b, .ac-psw-menu button b { font-family: var(--mono); margin-right: .4rem; }
-.ac-psw-menu a { display: block; margin-top: .3rem; padding: .5rem .6rem; border-top: 1px solid var(--k-garis); color: var(--p); font-weight: 600; font-size: .85rem; text-decoration: none; }
-.dg-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: .6rem; }
-.dg-tbl td small { color: var(--k-tinta-2); }
-.dg-ok { color: #14532d; font-weight: 700; } .dg-warn { color: #92400e; font-weight: 700; } .dg-bad { color: #B42318; font-weight: 700; }
-.dg-sw button { border: 0; background: none; padding: 0; color: var(--p); cursor: pointer; text-align: left; font-size: .84rem; }
-.dg-sw button b { font-family: var(--mono); margin-right: .3rem; }
-.dg-sw button:hover { text-decoration: underline; }
 
 /* Jadwal PM */
 .pm-type { font-size: .7rem; padding: .05rem .4rem; border-radius: 4px; margin-left: .3rem; background: color-mix(in srgb, var(--p) 10%, transparent); color: var(--p); font-weight: 600; }

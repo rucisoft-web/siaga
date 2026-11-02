@@ -73,7 +73,7 @@ class UserResource extends Resource
             ]),
             Section::make('Peran')->schema([
                 CheckboxList::make('roles')->hiddenLabel()->relationship('roles', 'name')->columns(3)
-                    ->options(fn () => Role::orderBy('name')->get()->reject(fn ($r) => in_array($r->slug, ['super-admin', 'group-director'], true) && ! auth()->user()->isSuperAdmin())->pluck('name', 'id'))
+                    ->options(fn () => Role::orderBy('name')->get()->reject(fn ($r) => $r->slug === 'super-admin' && ! auth()->user()->isSuperAdmin())->pluck('name', 'id'))
                     ->descriptions(fn () => Role::pluck('description', 'id')->filter()->all())
                     ->helperText('Hak akses = gabungan izin dari semua peran. Pisahkan peran pemohon & penyetuju bila memungkinkan.'),
             ]),

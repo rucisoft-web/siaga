@@ -46,8 +46,7 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 | Stock opname | Pengendalian Aset › Stock opname | Sesi per cakupan lokasi, hitung per ruang dengan scan QR, ditemukan / pindah lokasi / tidak ditemukan / temuan tak terdaftar, tutup & terapkan ke register, berita acara |
 | Penghapusan aset | Pengendalian Aset › Penghapusan aset | Usul → setuju/tolak (pemisahan tugas) → selesai; jual, musnah, hibah, tukar tambah, hilang; nilai buku dibekukan, laba (rugi) pelepasan, usulan jurnal, berita acara |
 | Jadwal PM & kalibrasi | Pemeliharaan › Jadwal PM & kalibrasi | PM, inspeksi, kalibrasi per aset atau per kategori di lokasi; WO dibuat otomatis tiap pagi (H-n), kepatuhan PM, pengingat garansi aset & kontrak vendor (H-30, H-7) |
-| Dasbor grup | Umum › Dasbor grup | Konsolidasi semua perusahaan dalam satu instalasi untuk peran Direksi grup; pindah perusahaan aktif dari topbar (tercatat di log audit) |
-| Keamanan | Pengaturan | 18 peran & 42 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
+| Keamanan | Pengaturan | 17 peran & 41 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
 
 Belum termasuk (rilis berikutnya, lihat rencana korporasi): konsolidasi grup lintas perusahaan, preventive maintenance terjadwal,
 suku cadang & stok, anggaran, API & integrasi ERP, SSO, mode offline penuh, integrasi PMS. Indikator yang bergantung pada modul ini tampil **N/A**.
@@ -113,7 +112,7 @@ Halaman depan bisa diaktifkan tanpa mode tamu dengan `SIAGA_LANDING=true`.
 
 ## Uji otomatis
 
-`composer install` lalu `php artisan test` (database `asset_care_test`) — 32 skenario, termasuk jadwal PM & pengingat garansi, dasbor grup & pindah perusahaan, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
+`composer install` lalu `php artisan test` (database `asset_care_test`) — 31 skenario, termasuk jadwal PM & pengingat garansi, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
 Profil hotel (nama, warna, logo, zona waktu), kode properti terkunci, validasi warna, dan tidak ada sisa merek lama.
 
 ## Catatan teknis

@@ -26,7 +26,6 @@ class PermissionCatalog
         'label.print' => ['Membuat batch & cetak label QR', 'Aset'],
         'label.rotate' => ['Rotasi token label (nonaktifkan label lama)', 'Aset'],
         'label.install' => ['Konfirmasi pemasangan label', 'Aset'],
-        'group.view' => ['Melihat konsolidasi grup & berpindah perusahaan', 'Umum'],
         'pm.manage' => ['Mengelola jadwal PM, inspeksi & kalibrasi', 'Pemeliharaan'],
         'stocktake.count' => ['Stock opname: mencatat hasil hitung fisik', 'Aset'],
         'stocktake.manage' => ['Stock opname: membuat, menutup & menerapkan hasil', 'Aset'],
@@ -60,7 +59,6 @@ class PermissionCatalog
     /** slug => [nama, deskripsi, izin[]] ('*' = semua izin) */
     public const ROLES = [
         'super-admin' => ['Super Admin', 'Konsultan / vendor aplikasi — semua izin', ['*']],
-        'group-director' => ['Direksi grup', 'Melihat konsolidasi seluruh perusahaan dalam grup dan berpindah perusahaan (peran global)', ['group.view', 'dashboard.view', 'report.view', 'report.export', 'asset.view', 'asset.view_financial', 'wo.view', 'request.view_all', 'audit.view']],
         'owner' => ['Owner', 'Melihat seluruh kinerja & biaya; memutuskan investasi/penghapusan', ['dashboard.view', 'report.view', 'report.export', 'asset.view', 'asset.view_financial', 'wo.view', 'request.view_all', 'audit.view', 'disposal.approve']],
         'owner-rep' => ['Owner Representative', 'Memantau risiko aset & anggaran; mengkaji prioritas & usulan penggantian', ['dashboard.view', 'report.view', 'report.export', 'asset.view', 'asset.view_financial', 'wo.view', 'request.view_all', 'audit.view']],
         'gm' => ['General Manager', 'Mengawasi operasi, backlog, downtime, SLA & persetujuan sesuai batas nilai', ['dashboard.view', 'report.view', 'report.export', 'asset.view', 'asset.view_financial', 'request.create', 'request.view_all', 'wo.view', 'wo.approve', 'wo.close', 'transfer.approve', 'template.publish', 'audit.view', 'disposal.approve', 'disposal.request']],

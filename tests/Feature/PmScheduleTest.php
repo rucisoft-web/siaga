@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Pages\DasborGrup;
 use App\Filament\Pages\JadwalPm;
 use App\Models\Asset;
 use App\Models\PmSchedule;
-use App\Models\Property;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Vendor;
@@ -16,7 +14,7 @@ use App\Support\CurrentProperty;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class PmScheduleGroupTest extends TestCase
+class PmScheduleTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -79,23 +77,5 @@ class PmScheduleGroupTest extends TestCase
         $first = app(PmService::class)->remind();
         $this->assertGreaterThanOrEqual(1, $first);
         $this->assertSame(0, app(PmService::class)->remind(), 'pengingat tidak dikirim dua kali');
-    }
-
-    public function test_group_director_sees_all_companies_and_can_switch(): void
-    {
-        $other = Property::create(['code' => 'ANAK', 'name' => 'Anak Usaha', 'is_active' => true]);
-        $dir = $this->user('group-director', null);
-        $local = $this->user('gm');
-
-        $this->assertTrue(CurrentProperty::canSwitch($dir));
-        $this->assertFalse(CurrentProperty::canSwitch($local));
-
-        $this->actingAs($local)->get(DasborGrup::getUrl())->assertForbidden();
-        $this->actingAs($dir)->get(DasborGrup::getUrl())->assertOk()->assertSee('ANAK')->assertSee('Anak Usaha');
-
-        $this->actingAs($dir)->post(route('property.switch'), ['property_id' => $other->id, 'back' => '/admin'])->assertRedirect('/admin');
-        $this->assertSame($other->id, session('active_property_id'));
-        // pengguna lokal tidak bisa memaksa pindah
-        $this->actingAs($local)->post(route('property.switch'), ['property_id' => $other->id])->assertForbidden();
     }
 }
