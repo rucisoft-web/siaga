@@ -44,11 +44,11 @@ class InstallHotel extends Command
     {
         $this->components->info('Instalasi Hotel Asset Care');
 
-        $hotel = $this->option('hotel') ?: text('Nama hotel', placeholder: 'mis. Hotel Melati Bandung', default: (string) config('assetcare.hotel_name'), required: true);
+        $hotel = $this->option('hotel') ?: text('Nama hotel', placeholder: 'mis. Hotel Melati Bandung', required: true);
         $suggest = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', implode('', array_map(fn ($w) => $w[0] ?? '', preg_split('/\s+/', trim($hotel))))), 0, 4)) ?: 'HTL';
         $code = strtoupper((string) ($this->option('code') ?: text('Kode properti (prefiks kode aset, mis. '.$suggest.'-AST-000001)', default: strlen($suggest) >= 2 ? $suggest : 'HTL', required: true)));
         $tz = $this->option('timezone') ?: select('Zona waktu', ['Asia/Jakarta' => 'WIB', 'Asia/Makassar' => 'WITA', 'Asia/Jayapura' => 'WIT'], default: 'Asia/Jakarta');
-        $email = $this->option('admin-email') ?: text('Email Super Admin', default: ReferenceSeeder::ADMIN_EMAIL, required: true);
+        $email = $this->option('admin-email') ?: text('Email Super Admin', placeholder: 'mis. it@namahotel.com', required: true);
         $pass = $this->option('admin-password') ?: password('Kata sandi Super Admin (min. 10 karakter, huruf & angka)', required: true);
         $demo = $this->option('demo') || ($this->input->isInteractive() && confirm('Isi data contoh untuk mencoba (kamar 301–310, aset, akun jabatan)?', default: true));
         $fresh = (bool) $this->option('fresh');
