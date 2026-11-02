@@ -131,6 +131,20 @@ class MasterImportService
         return ['summary' => $this->report, 'warnings' => array_values(array_unique($this->warnings)), 'dry_run' => $dryRun];
     }
 
+    /**
+     * Tambah kamar dari daftar (Nomor kamar, Jenis kamar, Gedung, Lantai) tanpa workbook — dipakai data demo.
+     * @param array<int, array{nomor kamar:string, jenis kamar:string, gedung:string, lantai:string}> $rows
+     */
+    public function addRooms(array $rows): int
+    {
+        $this->pid = (int) app(CurrentProperty::class)->id();
+        $this->report = array_fill_keys(array_keys(self::LABELS), 0);
+        $types = RoomType::all()->keyBy('name')->all();
+        $this->rooms(['rows' => $rows], $types);
+
+        return $this->report['kamar'];
+    }
+
     // ------------------------------------------------------------------ tipe kamar & template
 
     /** @return array<string, RoomType> nama jenis kamar => tipe */

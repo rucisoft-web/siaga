@@ -18,13 +18,26 @@ class Branding
 
     protected static bool $loaded = false;
 
+    /** properti milik pengguna yang sedang login (null = tamu/belum login) saat cache dibuat */
+    protected static ?int $loadedFor = null;
+
     public static function property(): ?Property
     {
+        $userProperty = null;
+        try {
+            $userProperty = auth()->hasUser() ? auth()->user()?->property_id : null;
+        } catch (Throwable) {
+        }
+        if (static::$loaded && static::$loadedFor !== $userProperty) {
+            static::$loaded = false;
+        }
         if (! static::$loaded) {
             static::$loaded = true;
+            static::$loadedFor = $userProperty;
             try {
                 if (Schema::hasTable('properties') && Schema::hasColumn('properties', 'primary_color')) {
-                    static::$property = Property::where('code', config('assetcare.property_code'))->first()
+                    static::$property = ($userProperty ? Property::find($userProperty) : null)
+                        ?? Property::where('code', config('assetcare.property_code'))->first()
                         ?? Property::orderBy('id')->first();
                 }
             } catch (Throwable) {

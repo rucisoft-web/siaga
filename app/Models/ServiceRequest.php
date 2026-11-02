@@ -32,7 +32,7 @@ class ServiceRequest extends Model
     public const CATEGORIES = [
         'listrik' => 'Listrik', 'air' => 'Air / plumbing / kebocoran', 'ac' => 'AC / HVAC', 'elektronik' => 'Elektronik (TV, telepon)',
         'furniture' => 'Furniture / bed', 'bangunan' => 'Bangunan / cat / plafon', 'kitchen' => 'Peralatan kitchen', 'mice' => 'Peralatan MICE',
-        'keselamatan' => 'Keselamatan (APAR, alarm, detektor)', 'it' => 'IT & keamanan', 'lift' => 'Lift', 'lainnya' => 'Lainnya',
+        'keselamatan' => 'Keselamatan (APAR, alarm, detektor)', 'it' => 'IT & keamanan', 'lift' => 'Lift', 'alat_medis' => 'Alat medis / elektromedis', 'lainnya' => 'Lainnya',
     ];
 
     public const IMPACTS = [

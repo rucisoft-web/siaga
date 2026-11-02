@@ -14,6 +14,12 @@ class EnsurePasswordChanged
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
+        // akun tamu dipakai bersama: tidak boleh mengganti sandi / MFA / profil
+        if ($user?->hasRole('guest') && $request->routeIs('filament.admin.auth.profile', 'filament.admin.auth.multi-factor-authentication.*')) {
+            Notification::make()->title('Akun tamu tidak dapat mengubah profil')->body('Mode tamu hanya untuk melihat data demo.')->warning()->send();
+
+            return redirect('/admin');
+        }
         if ($user?->must_change_password && ! $request->routeIs('filament.admin.auth.profile', 'filament.admin.auth.logout', 'filament.admin.auth.multi-factor-authentication.*')) {
             Notification::make()->title('Silakan ganti kata sandi Anda terlebih dahulu')
                 ->body('Kata sandi minimal 10 karakter, mengandung huruf dan angka.')->warning()->send();

@@ -19,6 +19,8 @@ return [
     'notify_mail' => (bool) env('ASSETCARE_NOTIFY_MAIL', false),
     'seed_demo' => (bool) env('ASSETCARE_SEED_DEMO', false),
     // Domain email akun contoh (data demo). Ganti ke domain hotel bila ingin.
+    // Mode tamu (landing page + tombol "Masuk sebagai tamu", hanya melihat). Khusus situs demo/workshop; JANGAN aktif di data asli.
+    'guest_mode' => (bool) env('SIAGA_GUEST_MODE', false),
     'demo_email_domain' => env('ASSETCARE_DEMO_EMAIL_DOMAIN', 'hotel.test'),
 
     // Domain resolver label QR. Pakai domain milik hotel agar label tetap berlaku saat hosting pindah.

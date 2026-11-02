@@ -68,6 +68,7 @@ class PermissionCatalog
         'storekeeper' => ['Storekeeper', 'Mengelola stok engineering (rilis B)', ['asset.view', 'wo.view', 'request.create']],
         'purchasing' => ['Purchasing', 'Vendor & referensi pembelian', ['asset.view', 'wo.view', 'request.create', 'reference.manage']],
         'it-admin' => ['IT Administrator', 'Konfigurasi teknis & akun; tidak otomatis berwenang menyetujui biaya', ['asset.view', 'request.create', 'user.manage', 'role.manage', 'reference.manage', 'settings.manage', 'audit.view']],
+        'guest' => ['Tamu (demo)', 'Akun bersama untuk menjelajah data demo: hanya melihat, tidak bisa mengubah data', ['dashboard.view', 'report.view', 'asset.view', 'request.view_all', 'wo.view']],
         'auditor' => ['Auditor', 'Membaca data & jejak audit dalam lingkup yang ditetapkan', ['report.view', 'report.export', 'asset.view', 'asset.view_financial', 'wo.view', 'request.view_all', 'audit.view']],
     ];
 }

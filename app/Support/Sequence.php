@@ -45,6 +45,10 @@ class Sequence
     {
         $year = (int) now()->timezone(Fmt::tz())->year;
 
-        return sprintf('%s-%d-%05d', $prefix, $year, self::increment($propertyId, $prefix, $year));
+        // properti pertama: SR-2026-00001; properti lain (mis. data demo kedua): GPCH-SR-2026-00001 agar nomor tetap unik
+        $first = (int) Property::orderBy('id')->value('id');
+        $code = $propertyId !== $first ? Property::whereKey($propertyId)->value('code') : null;
+
+        return ($code ? $code.'-' : '').sprintf('%s-%d-%05d', $prefix, $year, self::increment($propertyId, $prefix, $year));
     }
 }
