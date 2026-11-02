@@ -93,7 +93,7 @@ class ServiceRequestResource extends Resource
         return $schema->columns(1)->components([
             Hidden::make('client_event_uuid')->default(fn () => (string) Str::uuid()),
             Section::make('Apa yang rusak?')->columns(2)->schema([
-                F::asset('asset_id', 'Aset (scan QR atau cari kode / nama / kamar)')->columnSpanFull()->live()
+                F::asset('asset_id', istilah('Aset (scan QR atau cari kode / nama / kamar)'))->columnSpanFull()->live()
                     ->default(fn () => request()->integer('asset') ?: null)
                     ->afterStateUpdated(function ($state, Set $set) {
                         if ($state && ($a = Asset::find($state))) {
@@ -118,7 +118,7 @@ class ServiceRequestResource extends Resource
                     ->placeholder('Contoh: AC tidak dingin, ada suara keras, air menetes dari unit indoor.'),
             ]),
             Section::make('Dampak')->columns(2)->schema([
-                Select::make('impact')->label('Dampak operasional')->options(ServiceRequest::IMPACTS)->native(false)->live(),
+                Select::make('impact')->label('Dampak operasional')->options(ServiceRequest::impacts())->native(false)->live(),
                 Toggle::make('is_safety')->label('Ada bahaya keselamatan (listrik terbuka, kebocoran gas, alarm)')->live(),
                 Placeholder::make('suggested')->label('Prioritas yang disarankan')
                     ->content(function (Get $get) {
@@ -127,7 +127,7 @@ class ServiceRequestResource extends Resource
                         return new HtmlString('<span class="ac-prio ac-'.$p.'">'.e(ServiceRequest::PRIORITIES[$p]).'</span>'
                             .($p === 'P1' ? '<div class="ac-scan-msg err" style="margin-top:.5rem">Darurat: amankan area & <b>telepon Engineering/Security segera</b>. Aplikasi bukan satu-satunya kanal untuk keadaan darurat.</div>' : ''));
                     }),
-                Toggle::make('room_block_proposed')->label('Usulkan kamar tidak dijual sementara')->helperText('Keputusan tetap oleh Front Office.'),
+                Toggle::make('room_block_proposed')->label(istilah('Usulkan kamar tidak dijual sementara'))->helperText(istilah('Keputusan tetap oleh Front Office.')),
                 TextInput::make('reporter_contact')->label('Kontak pelapor')->default(fn () => auth()->user()?->phone),
             ]),
             Section::make('Foto (opsional)')->schema([

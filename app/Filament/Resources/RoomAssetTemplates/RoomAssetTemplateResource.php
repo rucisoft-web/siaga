@@ -29,6 +29,21 @@ use Illuminate\Support\Str;
 /** Template aset per tipe kamar (bagian 24). Published = terkunci; revisi = versi baru. */
 class RoomAssetTemplateResource extends Resource
 {
+    public static function getModelLabel(): string
+    {
+        return istilah(parent::getModelLabel());
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return istilah(parent::getPluralModelLabel());
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return istilah(parent::getNavigationLabel());
+    }
+
     use HasPermissions;
 
     protected static ?string $model = RoomAssetTemplate::class;
@@ -66,7 +81,7 @@ class RoomAssetTemplateResource extends Resource
                 TextInput::make('code')->label('Kode')->required()->maxLength(30)->placeholder('TPL-DLX')
                     ->disabled(fn ($record) => (bool) $record),
                 TextInput::make('name')->label('Nama')->required()->columnSpan(2),
-                Select::make('room_type_id')->label('Tipe kamar')->required()->native(false)->options(fn () => RoomType::orderBy('name')->pluck('name', 'id')),
+                Select::make('room_type_id')->label(istilah('Tipe kamar'))->required()->native(false)->options(fn () => RoomType::orderBy('name')->pluck('name', 'id')),
                 Textarea::make('notes')->label('Catatan revisi')->columnSpanFull()->rows(2),
             ]),
             Section::make('Daftar item standar')->schema([
@@ -100,7 +115,7 @@ class RoomAssetTemplateResource extends Resource
                 TextColumn::make('code')->label('Kode')->weight('bold')->searchable()->sortable(),
                 TextColumn::make('version')->label('Versi')->prefix('v'),
                 TextColumn::make('name')->label('Nama')->searchable(),
-                TextColumn::make('roomType.name')->label('Tipe kamar'),
+                TextColumn::make('roomType.name')->label(istilah('Tipe kamar')),
                 F::statusColumn('status', RoomAssetTemplate::STATUSES, ['draft' => 'warning', 'published' => 'success', 'archived' => 'gray']),
                 TextColumn::make('items_count')->counts('items')->label('Item'),
                 TextColumn::make('preparer.name')->label('Penyusun')->toggleable(),
@@ -149,9 +164,9 @@ class RoomAssetTemplateResource extends Resource
                     }
                     $rows = app(RoomTemplateService::class)->diff($prev, $record->load('items'))->map(fn ($r) => '<tr><td>'.e($r['item_key']).'</td><td>'.e($r['old']).'</td><td>'.e($r['new']).'</td><td><b>'.e($r['change']).'</b></td></tr>')->join('');
 
-                    return new HtmlString('<div class="arah"><p class="arah-muted">v'.$prev->version.' → v'.$record->version.'. Selisih tidak mengubah aset aktual; kamar yang sudah memakai versi lama tetap tercatat.</p><table class="arah-table"><thead><tr><th>Item</th><th>Lama</th><th>Baru</th><th>Perubahan</th></tr></thead><tbody>'.$rows.'</tbody></table></div>');
+                    return new HtmlString('<div class="arah"><p class="arah-muted">v'.$prev->version.' → v'.$record->version.istilah('. Selisih tidak mengubah aset aktual; kamar yang sudah memakai versi lama tetap tercatat.</p><table class="arah-table"><thead><tr><th>Item</th><th>Lama</th><th>Baru</th><th>Perubahan</th></tr></thead><tbody>').$rows.'</tbody></table></div>');
                 }),
-            Action::make('terapkan')->label('Terapkan ke kamar')->icon('heroicon-o-squares-plus')
+            Action::make('terapkan')->label(istilah('Terapkan ke kamar'))->icon('heroicon-o-squares-plus')
                 ->visible(fn (RoomAssetTemplate $record) => $record->status === 'published' && $u()->hasPermission('generation.run'))
                 ->url(fn (RoomAssetTemplate $record) => GenerateAssets::getUrl(['template' => $record->id])),
         ];

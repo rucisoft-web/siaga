@@ -21,7 +21,7 @@ class StatusHistoryRelationManager extends RelationManager
         $labels = WorkOrder::STATUSES + ServiceRequest::STATUSES;
         $actions = WorkOrderService::ACTION_LABELS + [
             'create' => 'Dibuat', 'acknowledge' => 'Diakui', 'triage' => 'Triase', 'link' => 'Ditautkan ke WO', 'reject' => 'Ditolak',
-            'mark_duplicate' => 'Ditandai duplikat', 'sync_wo' => 'Mengikuti WO', 'finalize_cost' => 'Biaya final', 'room_block' => 'Usulan blokir kamar',
+            'mark_duplicate' => 'Ditandai duplikat', 'sync_wo' => 'Mengikuti WO', 'finalize_cost' => 'Biaya final', 'room_block' => istilah('Usulan blokir kamar'),
         ];
 
         return $table

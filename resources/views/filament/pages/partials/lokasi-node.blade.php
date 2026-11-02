@@ -2,7 +2,7 @@
     $n = $nodes[$id];
     $has = count($n['children']) > 0;
     $open = $depth < 1 || in_array($id, $openIds, true);
-    $icon = ['building' => '🏢', 'zone' => '🧭', 'floor' => '▤', 'room' => '🛏', 'venue' => '🎤', 'area' => '◫', 'point' => '•'][$n['type']] ?? '•';
+    $icon = ['company' => '🏛', 'building' => '🏢', 'zone' => '🧭', 'floor' => '▤', 'room' => ['retail' => '🏪', 'general' => '🚪'][\App\Support\Terms::type()] ?? '🛏', 'venue' => '🎤', 'area' => '◫', 'point' => '•'][$n['type']] ?? '•';
     $row = '<span class="sl-ic" aria-hidden="true">'.$icon.'</span>'
         .'<a class="sl-name" href="?pilih='.$id.'" wire:navigate>'.e($n['name']).'</a>'
         .'<span class="sl-type">'.e($types[$n['type']] ?? $n['type']).'</span>'

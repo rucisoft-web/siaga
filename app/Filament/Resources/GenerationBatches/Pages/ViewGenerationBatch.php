@@ -25,9 +25,9 @@ class ViewGenerationBatch extends ViewRecord
         $b = $this->record;
 
         return [
-            Action::make('retry')->label('Proses ulang kamar yang gagal')->icon('heroicon-o-arrow-path')->color('warning')
+            Action::make('retry')->label(istilah('Proses ulang kamar yang gagal'))->icon('heroicon-o-arrow-path')->color('warning')
                 ->visible(fn () => in_array($b->status, ['partial', 'failed', 'committing'], true))
-                ->requiresConfirmation()->modalDescription('Hanya kamar yang belum berhasil yang diproses. Kamar berstatus konflik tetap ditolak sampai dibuat preview baru.')
+                ->requiresConfirmation()->modalDescription(istilah('Hanya kamar yang belum berhasil yang diproses. Kamar berstatus konflik tetap ditolak sampai dibuat preview baru.'))
                 ->action(fn () => $this->run(fn () => app(RoomTemplateService::class)->commit($b, $b->match_decisions ?? [], auth()->user()), 'Batch diproses ulang')),
             Action::make('cetak')->label('Cetak label batch')->icon('heroicon-o-qr-code')
                 ->visible(fn () => $b->created_assets > 0)->url(fn () => CetakLabel::getUrl(['batch' => $b->id])),

@@ -161,7 +161,7 @@ class StrukturLokasi extends Page
             'typeOptions' => Asset::query()->whereNotIn('lifecycle_status', ['disposed', 'lost'])->when($this->kategori, fn ($q) => $q->where('category_id', $this->kategori))
                 ->distinct()->pluck('name')->map(fn ($n) => static::typeName($n))->unique()->sort(SORT_NATURAL | SORT_FLAG_CASE)->values(),
             'whereList' => $filtered ? collect($nodes)->filter(fn ($n) => $n['own'] > 0)->sortByDesc('own')->take(12)->values() : collect(),
-            'financial' => $financial, 'types' => Location::TYPES,
+            'financial' => $financial, 'types' => Location::typeLabels(),
             'total' => ['loc' => count($nodes), 'n' => array_sum(array_map(fn ($r) => $nodes[$r]['n'], $roots)),
                 'risk' => array_sum(array_map(fn ($r) => $nodes[$r]['risk'], $roots)), 'wo' => array_sum(array_map(fn ($r) => $nodes[$r]['wo'], $roots))],
             'assetsUrl' => fn (int $loc) => AssetResource::getUrl('index').'?'.http_build_query(array_filter(['filters' => array_filter(['location_id' => ['value' => $loc], 'category_id' => $this->kategori ? ['value' => $this->kategori] : null]), 'search' => $this->jenis ?: null])),
@@ -176,7 +176,9 @@ class StrukturLokasi extends Page
      */
     protected function matrix(array $nodes, array $roots): array
     {
-        $depthWanted = ['gedung' => 0, 'lantai' => 1, 'ruang' => 9][$this->baris] ?? 1;
+        // grup dengan beberapa badan usaha: PT berada di tingkat teratas, gedung satu tingkat di bawahnya
+        $off = collect($roots)->contains(fn ($r) => ($nodes[$r]['type'] ?? null) === 'company') ? 1 : 0;
+        $depthWanted = ['pt' => 0, 'gedung' => $off, 'lantai' => $off + 1, 'ruang' => 9][$this->baris] ?? $off + 1;
         $rowOf = [];
         $rows = [];
         $walk = function (int $id, int $depth, ?int $row) use (&$walk, &$rowOf, &$rows, $nodes, $depthWanted) {

@@ -12,12 +12,12 @@
             @if ($assetIds !== '')
                 <div class="ac-scan-msg">Mencetak aset terpilih ({{ count(array_filter(explode(',', $assetIds))) }}). <a href="#" wire:click.prevent="resetFilters">Pakai filter lokasi</a></div>
             @else
-                <label class="arah-muted">Lantai / gedung</label>
+                <label class="arah-muted">{{ istilah('Lantai / gedung') }}</label>
                 <select class="ac-input" wire:model.live="floorId">
                     <option value="">— semua —</option>
                     @foreach ($this->floors as $f)<option value="{{ $f->id }}">{{ $f->full_path }}</option>@endforeach
                 </select>
-                <label class="arah-muted" style="display:block; margin-top:.5rem">Kamar / ruang tertentu (boleh banyak)</label>
+                <label class="arah-muted" style="display:block; margin-top:.5rem">{{ istilah('Kamar / ruang tertentu (boleh banyak)') }}</label>
                 <select class="ac-input" multiple size="5" wire:model.live="roomIds">
                     @foreach ($this->rooms as $r)<option value="{{ $r->id }}">{{ $r->labelText() }} — {{ $r->full_path }}</option>@endforeach
                 </select>

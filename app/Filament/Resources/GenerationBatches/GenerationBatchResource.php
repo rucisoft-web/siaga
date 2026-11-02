@@ -44,7 +44,7 @@ class GenerationBatchResource extends Resource
             Section::make()->columns(4)->schema([
                 TextEntry::make('status')->badge()->formatStateUsing(fn ($state) => GenerationBatch::STATUSES[$state] ?? $state)->color(fn ($state) => self::COLORS[$state] ?? 'gray'),
                 TextEntry::make('template.code')->label('Template')->formatStateUsing(fn ($state, $record) => $state.' v'.$record->template_version),
-                TextEntry::make('room_ids')->label('Kamar')->state(fn ($record) => count($record->room_ids ?? [])),
+                TextEntry::make('room_ids')->label(istilah('Kamar'))->state(fn ($record) => count($record->room_ids ?? [])),
                 TextEntry::make('created_assets')->label('Kandidat dibuat'),
                 TextEntry::make('matched_assets')->label('Aset lama dicocokkan'),
                 TextEntry::make('creator.name')->label('Operator'),
@@ -61,7 +61,7 @@ class GenerationBatchResource extends Resource
                 TextColumn::make('number')->label('Nomor')->weight('bold')->searchable(),
                 F::statusColumn('status', GenerationBatch::STATUSES, self::COLORS),
                 TextColumn::make('template.code')->label('Template')->formatStateUsing(fn ($state, $record) => $state.' v'.$record->template_version),
-                TextColumn::make('rooms')->label('Kamar')->state(fn ($record) => count($record->room_ids ?? [])),
+                TextColumn::make('rooms')->label(istilah('Kamar'))->state(fn ($record) => count($record->room_ids ?? [])),
                 TextColumn::make('created_assets')->label('Dibuat'),
                 TextColumn::make('matched_assets')->label('Dicocokkan'),
                 TextColumn::make('creator.name')->label('Operator'),

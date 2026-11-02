@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\RoomType;
+use App\Models\Location;
 
 /**
  * DATA DEMO "Hermina Group" — SATU perusahaan dengan DUA lokasi rumah sakit: RS Hermina Kemayoran & RS Hermina Bekasi.
@@ -36,15 +37,15 @@ class HerminaDemoSeeder extends ProjectedDemoSeeder
     public static function about(): array
     {
         return [
-            'title' => 'Hermina Group', 'sector' => 'Rumah sakit · 2 lokasi (Jakarta & Bekasi)',
-            'summary' => 'RS Hermina Kemayoran & RS Hermina Bekasi (kelas B): kamar rawat inap VVIP–kelas 3 & isolasi, IGD, ICU, NICU, bedah sentral, radiologi, hemodialisa, rehabilitasi robotik. Alat medis, kalibrasi, cold chain farmasi, gas medis.',
+            'title' => 'Hermina Group', 'sector' => 'Rumah sakit · 2 badan usaha, 2 RS (Jakarta & Bekasi)',
+            'summary' => 'Contoh grup dengan beberapa badan usaha: PT wilayah Jakarta mengelola RS Hermina Kemayoran, PT wilayah Bekasi mengelola RS Hermina Bekasi (kelas B): kamar rawat inap VVIP–kelas 3 & isolasi, IGD, ICU, NICU, bedah sentral, radiologi, hemodialisa, rehabilitasi robotik. Alat medis, kalibrasi, cold chain farmasi, gas medis.',
             'source' => 'Laporan Tahunan 2025 Hermina (alamat, kelas, akreditasi, layanan unggulan). Jumlah TT, isi kamar, alat medis & riwayat perbaikan = proyeksi.',
         ];
     }
 
     protected function propertyInfo(): array
     {
-        return ['name' => 'Hermina Group (demo)', 'city' => 'Jakarta & Bekasi', 'star_rating' => null, 'room_count' => count($this->roomList()), 'primary_color' => '#00775A', 'accent_color' => '#E3A008'];
+        return ['business_type' => 'hospital', 'name' => 'Hermina Group (demo)', 'city' => 'Jakarta & Bekasi', 'star_rating' => null, 'room_count' => count($this->roomList()), 'primary_color' => '#00775A', 'accent_color' => '#E3A008'];
     }
 
     protected function departments(): ?array
@@ -148,9 +149,31 @@ class HerminaDemoSeeder extends ProjectedDemoSeeder
 
     protected function afterImport(): void
     {
+        $this->legalEntities();
         foreach (['VVIP' => '1 TT + ruang keluarga', 'VIP' => '1 TT', 'Kelas 1' => '2 TT', 'Kelas 2' => '3 TT', 'Kelas 3' => '6 TT', 'Isolasi' => '1 TT, tekanan negatif'] as $n => $bed) {
             RoomType::where('name', $n)->update(['bed_config' => $bed]);
         }
+    }
+
+    /**
+     * Satu grup bisa terdiri dari beberapa badan usaha (PT) yang mengelola RS di daerah berbeda.
+     * Nama PT = CONTOH, bukan nama badan hukum sebenarnya.
+     */
+    protected function entities(): array
+    {
+        return [
+            ['PT-JKT', 'PT RS Hermina Wilayah Jakarta (contoh)', [self::KMY]],
+            ['PT-BKS', 'PT RS Hermina Wilayah Bekasi (contoh)', [self::BKS]],
+        ];
+    }
+
+    public function legalEntities(): void
+    {
+        foreach ($this->entities() as [$code, $name, $buildings]) {
+            $pt = Location::firstOrCreate(['property_id' => $this->p->id, 'code' => $code], ['name' => $name, 'location_type' => 'company', 'is_active' => true]);
+            Location::whereIn('name', $buildings)->whereNull('parent_id')->get()->each(fn ($b) => $b->update(['parent_id' => $pt->id, 'location_type' => 'building']));
+        }
+        // ruang/area yang tidak berada di bawah gedung RS (mis. gudang pusat) tetap di tingkat teratas
     }
 
     protected function roomItems(): array

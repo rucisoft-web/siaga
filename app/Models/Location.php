@@ -16,7 +16,7 @@ class Location extends Model
     protected $guarded = ['id'];
 
     public const TYPES = [
-        'building' => 'Gedung', 'zone' => 'Zona', 'floor' => 'Lantai', 'room' => 'Kamar',
+        'company' => 'Badan usaha (PT)', 'building' => 'Gedung', 'zone' => 'Zona', 'floor' => 'Lantai', 'room' => 'Kamar',
         'venue' => 'Venue / ruang rapat', 'area' => 'Area / ruang', 'point' => 'Titik pemasangan',
     ];
 
@@ -25,6 +25,12 @@ class Location extends Model
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    /** Label jenis lokasi memakai istilah jenis usaha (kamar / outlet / ruang). */
+    public static function typeLabels(): array
+    {
+        return array_map(fn ($v) => istilah($v), self::TYPES);
     }
 
     protected static function booted(): void
@@ -47,7 +53,7 @@ class Location extends Model
             $l->full_path = $l->computePath();
         });
         static::saved(function (Location $l) {
-            if ($l->wasChanged(['name', 'parent_id'])) {
+            if ($l->wasChanged(['name', 'parent_id', 'full_path', 'sort_key'])) {
                 $l->children()->get()->each->save(); // perbarui path anak
             }
         });
@@ -131,7 +137,12 @@ class Location extends Model
     /** Teks lokasi pada label (snapshot saat cetak). */
     public function labelText(): string
     {
-        return $this->location_type === 'room' ? 'Kamar '.($this->room_ref ?: $this->name) : $this->name;
+        if ($this->location_type !== 'room') {
+            return $this->name;
+        }
+
+        // hotel & rumah sakit: "Kamar 305"; ritel/umum: nama outlet/ruang apa adanya (bukan "Kamar BK101")
+        return in_array(\App\Support\Terms::type(), ['hotel', 'hospital'], true) ? 'Kamar '.($this->room_ref ?: $this->name) : $this->name;
     }
 
     /** @return array<int,string> */

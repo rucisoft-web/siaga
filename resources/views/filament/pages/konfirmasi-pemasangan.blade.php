@@ -7,7 +7,7 @@
 <div class="arah">
     <div class="arah-grid arah-grid-2">
         <div class="arah-card">
-            <h3 style="margin:0 0 .5rem">1 · Pilih kamar / ruang</h3>
+            <h3 style="margin:0 0 .5rem">{{ istilah('1 · Pilih kamar / ruang') }}</h3>
             <select class="ac-input" wire:model.live="roomId">
                 <option value="">— pilih —</option>
                 @foreach ($this->rooms as $r)<option value="{{ $r->id }}">{{ $r->labelText() }} — {{ $r->full_path }}</option>@endforeach
@@ -23,7 +23,7 @@
         <div class="arah-card">
             <h3 style="margin:0 0 .5rem">Label yang seharusnya ada @if($this->room)<span class="arah-muted">· {{ $installed }}/{{ $expected->count() }} terpasang</span>@endif</h3>
             @if (! $this->room)
-                <div class="arah-empty">Pilih kamar untuk melihat daftar label.</div>
+                <div class="arah-empty">{{ istilah('Pilih kamar untuk melihat daftar label.') }}</div>
             @elseif ($expected->isEmpty())
                 <div class="arah-empty">Belum ada label aktif untuk ruang ini.</div>
             @else

@@ -248,7 +248,7 @@ class MasterImportService
 
     protected function building(string $name): Location
     {
-        $b = Location::whereIn('location_type', ['building', 'zone'])->whereNull('parent_id')->where('name', $name)->first();
+        $b = Location::whereIn('location_type', ['building', 'zone'])->where('name', $name)->first();
         if ($b) {
             return $b;
         }

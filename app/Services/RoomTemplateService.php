@@ -194,15 +194,15 @@ class RoomTemplateService
     {
         $room = Location::whereKey($roomId)->lockForUpdate()->first(); // mengunci kamar: batch bersamaan antre di sini
         if (! $room) {
-            return ['status' => 'failed', 'message' => 'Kamar tidak ditemukan.'];
+            return ['status' => 'failed', 'message' => istilah('Kamar tidak ditemukan.')];
         }
         $fresh = $this->previewRoom($template, $room, $allowTypeMismatch);
         if (! $fresh['allowed']) {
-            return ['status' => 'skipped', 'message' => 'Tipe kamar berbeda dari template; perlu pengecualian yang disetujui.'];
+            return ['status' => 'skipped', 'message' => istilah('Tipe kamar berbeda dari template; perlu pengecualian yang disetujui.')];
         }
         $snap = $batch->preview_snapshot[$roomId]['signature'] ?? $batch->preview_snapshot[(string) $roomId]['signature'] ?? null;
         if ($snap !== $fresh['signature']) {
-            return ['status' => 'conflict', 'message' => 'Keadaan slot/pemetaan kamar berubah sejak preview. Buat preview baru.', 'detail' => $fresh['counts']];
+            return ['status' => 'conflict', 'message' => istilah('Keadaan slot/pemetaan kamar berubah sejak preview. Buat preview baru.'), 'detail' => $fresh['counts']];
         }
 
         $created = $matched = $skipped = 0;
@@ -242,7 +242,7 @@ class RoomTemplateService
             $matchId = $decisions[$decisionKey] ?? null;
             if ($matchId && in_array((int) $matchId, array_column($r['candidates'], 'id'), true)) {
                 if (in_array((int) $matchId, $usedMatch, true)) {
-                    throw WorkflowException::invalid('Satu aset lama dipilih untuk dua slot pada kamar '.($room->room_ref ?: $room->name).'.');
+                    throw WorkflowException::invalid(istilah('Satu aset lama dipilih untuk dua slot pada kamar ').($room->room_ref ?: $room->name).'.');
                 }
                 $usedMatch[] = (int) $matchId;
                 $asset = Asset::whereKey($matchId)->lockForUpdate()->first();

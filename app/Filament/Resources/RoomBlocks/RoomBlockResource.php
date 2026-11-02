@@ -15,6 +15,21 @@ use Filament\Tables\Table;
 /** Usulan blokir kamar dari Engineering; keputusan & status PMS tetap di Front Office. */
 class RoomBlockResource extends Resource
 {
+    public static function getModelLabel(): string
+    {
+        return istilah(parent::getModelLabel());
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return istilah(parent::getPluralModelLabel());
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return istilah(parent::getNavigationLabel());
+    }
+
     use HasPermissions;
 
     protected static ?string $model = RoomBlock::class;
@@ -55,7 +70,7 @@ class RoomBlockResource extends Resource
 
         return $table
             ->columns([
-                TextColumn::make('room.full_path')->label('Kamar')->weight('bold')->wrap(),
+                TextColumn::make('room.full_path')->label(istilah('Kamar'))->weight('bold')->wrap(),
                 F::statusColumn('status', RoomBlock::STATUSES, self::COLORS),
                 TextColumn::make('reason')->label('Alasan')->wrap(),
                 TextColumn::make('workOrder.number')->label('WO')->url(fn ($record) => $record->workOrder ? WorkOrderResource::getUrl('view', ['record' => $record->workOrder]) : null),
@@ -66,7 +81,7 @@ class RoomBlockResource extends Resource
             ])
             ->recordActions([
                 Action::make('konfirmasi')->label('Konfirmasi blokir')->color('danger')->visible(fn (RoomBlock $record) => $record->status === 'proposed' && $fo())
-                    ->requiresConfirmation()->modalDescription('Front Office memblokir kamar di PMS secara manual; aplikasi hanya mencatat.')
+                    ->requiresConfirmation()->modalDescription(istilah('Front Office memblokir kamar di PMS secara manual; aplikasi hanya mencatat.'))
                     ->action(fn (RoomBlock $record) => F::attempt(fn () => $record->update(['status' => 'confirmed', 'started_at' => now(), 'fo_confirmed_by' => auth()->id(), 'fo_confirmed_at' => now()]), 'Blokir dikonfirmasi')),
                 Action::make('tolak')->label('Tolak')->visible(fn (RoomBlock $record) => $record->status === 'proposed' && $fo())
                     ->schema([Textarea::make('note')->label('Alasan')->required()])
@@ -75,7 +90,7 @@ class RoomBlockResource extends Resource
                         F::attempt(fn () => $record->update(['status' => 'rejected', 'fo_confirmed_by' => auth()->id(), 'fo_confirmed_at' => now()]), 'Usulan ditolak');
                     }),
                 Action::make('lepas')->label('Lepas blokir')->color('success')->visible(fn (RoomBlock $record) => $record->status === 'confirmed' && $fo())
-                    ->requiresConfirmation()->action(fn (RoomBlock $record) => F::attempt(fn () => $record->update(['status' => 'released', 'ended_at' => now()]), 'Kamar dapat dijual kembali')),
+                    ->requiresConfirmation()->action(fn (RoomBlock $record) => F::attempt(fn () => $record->update(['status' => 'released', 'ended_at' => now()]), istilah('Kamar dapat dijual kembali'))),
             ])
             ->defaultSort('created_at', 'desc');
     }

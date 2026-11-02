@@ -90,7 +90,7 @@
                     <li><span>Mutasi <a href="{{ \App\Filament\Resources\AssetTransfers\AssetTransferResource::getUrl('view', ['record' => $m]) }}">{{ $m->number }}</a> {{ \Illuminate\Support\Str::limit($m->reason, 40) }}</span><span class="arah-badge arah-kuning">diajukan</span></li>
                 @endforeach
                 @foreach ($t['room_blocks'] as $b)
-                    <li><span>Blokir kamar {{ $b->room?->room_ref ?: $b->room?->name }} — {{ $b->workOrder?->number }}</span><a href="{{ \App\Filament\Resources\RoomBlocks\RoomBlockResource::getUrl('index') }}">konfirmasi FO</a></li>
+                    <li><span>{{ istilah('Blokir kamar') }} {{ $b->room?->room_ref ?: $b->room?->name }} — {{ $b->workOrder?->number }}</span><a href="{{ \App\Filament\Resources\RoomBlocks\RoomBlockResource::getUrl('index') }}">konfirmasi FO</a></li>
                 @endforeach
             </ul>
         </div>

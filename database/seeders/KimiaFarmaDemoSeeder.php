@@ -49,7 +49,7 @@ class KimiaFarmaDemoSeeder extends ProjectedDemoSeeder
 
     protected function propertyInfo(): array
     {
-        return ['name' => 'Kimia Farma – Area Bandung Raya (demo)', 'city' => 'Bandung Raya', 'star_rating' => null, 'room_count' => count($this->roomList()), 'primary_color' => '#0B5394', 'accent_color' => '#F28C28'];
+        return ['business_type' => 'retail', 'name' => 'Kimia Farma – Area Bandung Raya (demo)', 'city' => 'Bandung Raya', 'star_rating' => null, 'room_count' => count($this->roomList()), 'primary_color' => '#0B5394', 'accent_color' => '#F28C28'];
     }
 
     protected function departments(): ?array
@@ -229,13 +229,13 @@ class KimiaFarmaDemoSeeder extends ProjectedDemoSeeder
         foreach ($this->roomList() as $r) {
             $pre = substr($r['no'], 0, 2);
             $place = $names[$pre][$seen[$pre] = ($seen[$pre] ?? -1) + 1] ?? $r['no'];
-            Location::where('room_ref', $r['no'])->update(['name' => sprintf($label[$r['type']], $place).' (contoh)']);
+            Location::where('room_ref', $r['no'])->get()->each->update(['name' => sprintf($label[$r['type']], $place).' (contoh)']);
         }
         $rayon = [self::KOTA => [1 => 'Rayon Bandung Utara & Tengah', 2 => 'Rayon Bandung Selatan & Timur Kota'], self::TIMUR => [1 => 'Rayon Timur', 2 => 'Rayon Selatan (Kab. Bandung)'], self::BARAT => [1 => 'Rayon Cimahi & KBB']];
         foreach ($rayon as $bld => $fls) {
             $b = Location::where('name', $bld)->whereNull('parent_id')->first();
             foreach ($fls as $fl => $name) {
-                Location::where('parent_id', $b?->id)->where('location_type', 'floor')->where('floor_label', (string) $fl)->update(['name' => $name]);
+                Location::where('parent_id', $b?->id)->where('location_type', 'floor')->where('floor_label', (string) $fl)->get()->each->update(['name' => $name]);
             }
         }
         foreach (['Apotek 24 Jam' => 'Outlet 24 jam + genset', 'Apotek Reguler' => 'Outlet reguler', 'Apotek + Klinik Pratama' => 'Apotek + 2 ruang praktik', 'Laboratorium Klinik' => 'Lab + sampling'] as $n => $cfg) {

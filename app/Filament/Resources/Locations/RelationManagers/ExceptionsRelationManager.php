@@ -19,6 +19,11 @@ use Illuminate\Database\Eloquent\Model;
 /** Pengecualian kamar: jumlah berbeda, tambahan, tidak tersedia, substitusi — alasan & pemeriksa tercatat. */
 class ExceptionsRelationManager extends RelationManager
 {
+    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    {
+        return istilah(parent::getTitle($ownerRecord, $pageClass));
+    }
+
     protected static string $relationship = 'exceptions';
 
     protected static ?string $title = 'Pengecualian kamar';

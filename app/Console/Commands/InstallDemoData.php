@@ -50,6 +50,9 @@ class InstallDemoData extends Command
                 $seeder = (new $class)->setContainer(app())->setCommand($this);
                 $seeder->controls($p);
                 $seeder->pmDemo($p);
+                if (method_exists($seeder, 'legalEntities')) {
+                    $seeder->legalEntities();
+                }
                 \Illuminate\Support\Facades\Auth::logout();
                 \Illuminate\Support\Carbon::setTestNow();
 

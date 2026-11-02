@@ -16,6 +16,21 @@ use Illuminate\Validation\Rules\Unique;
 
 class RoomTypeResource extends Resource
 {
+    public static function getModelLabel(): string
+    {
+        return istilah(parent::getModelLabel());
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return istilah(parent::getPluralModelLabel());
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return istilah(parent::getNavigationLabel());
+    }
+
     use HasPermissions;
 
     protected static ?string $model = RoomType::class;
@@ -51,7 +66,7 @@ class RoomTypeResource extends Resource
             TextColumn::make('code')->label('Kode')->searchable()->sortable(),
             TextColumn::make('name')->label('Nama')->searchable(),
             TextColumn::make('bed_config')->label('Bed'),
-            TextColumn::make('rooms_count')->label('Kamar')->counts('rooms'),
+            TextColumn::make('rooms_count')->label(istilah('Kamar'))->counts('rooms'),
             TextColumn::make('templates_count')->label('Template')->counts('templates'),
             IconColumn::make('is_active')->label('Aktif')->boolean(),
         ])->recordActions([EditAction::make()]);

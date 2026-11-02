@@ -17,6 +17,16 @@ use Illuminate\Support\Str;
  */
 class GenerateAssets extends Page
 {
+    public static function getNavigationLabel(): string
+    {
+        return istilah(parent::getNavigationLabel());
+    }
+
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return istilah((string) parent::getTitle());
+    }
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-squares-plus';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Pengendalian Aset';
@@ -103,7 +113,7 @@ class GenerateAssets extends Page
     public function runPreview(): void
     {
         if (! $this->template || ! $this->roomIds) {
-            \Filament\Notifications\Notification::make()->title('Pilih template dan minimal satu kamar')->warning()->send();
+            \Filament\Notifications\Notification::make()->title(istilah('Pilih template dan minimal satu kamar'))->warning()->send();
 
             return;
         }

@@ -28,7 +28,7 @@
             @if ($tampilan === 'matriks')
             <label>Baris
                 <select name="baris" onchange="this.form.submit()">
-                    @foreach (['gedung' => 'Gedung / wilayah', 'lantai' => 'Lantai & area', 'ruang' => 'Kamar / ruang'] as $k => $v)<option value="{{ $k }}" @selected($baris === $k)>{{ $v }}</option>@endforeach
+                    @foreach (array_merge(collect($roots)->contains(fn ($r) => $nodes[$r]['type'] === 'company') ? ['pt' => 'Badan usaha (PT)'] : [], ['gedung' => 'Gedung / wilayah', 'lantai' => istilah('Lantai & area'), 'ruang' => istilah('Kamar / ruang')]) as $k => $v)<option value="{{ $k }}" @selected($baris === $k)>{{ $v }}</option>@endforeach
                 </select>
             </label>
             @endif
@@ -76,7 +76,7 @@
         <div class="sl-grid">
             <section class="sl-tree-card">
                 <div class="sl-tools">
-                    <input type="search" id="sl-q" placeholder="Cari lokasi, mis. 203, Lantai 2, Kitchen…" class="sl-q" autocomplete="off">
+                    <input type="search" id="sl-q" placeholder="{{ istilah('Cari lokasi, mis. 203, Lantai 2, Kitchen…') }}" class="sl-q" autocomplete="off">
                     <button type="button" class="sl-btn" onclick="document.querySelectorAll('.sl-tree details').forEach(d => d.open = true)">Buka semua</button>
                     <button type="button" class="sl-btn" onclick="document.querySelectorAll('.sl-tree details').forEach(d => d.open = false)">Tutup semua</button>
                 </div>
@@ -127,7 +127,7 @@
                     @endif
                 @else
                     <h2 class="sl-dh">Pilih lokasi</h2>
-                    <p class="sl-empty">Klik nama gedung, lantai, kamar, atau ruang di pohon untuk melihat ringkasan dan daftar asetnya. Angka di setiap baris sudah termasuk sub-lokasinya.</p>
+                    <p class="sl-empty">{{ istilah('Klik nama gedung, lantai, kamar, atau ruang di pohon untuk melihat ringkasan dan daftar asetnya. Angka di setiap baris sudah termasuk sub-lokasinya.') }}</p>
                     <ul class="sl-legend">
                         <li><span class="sl-grade g-A">A</span>–<span class="sl-grade g-B">B</span> baik / ringan</li>
                         <li><span class="sl-grade g-C">C</span> perlu perbaikan</li>

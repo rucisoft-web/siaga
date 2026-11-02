@@ -289,7 +289,7 @@ class SurveyService
             ->groupBy('location_id')->get()->keyBy('location_id');
 
         $floors = $rooms->filter(fn ($r) => $counts->has($r->id) || $surveys->has($r->id))
-            ->groupBy(fn ($r) => $r->parent?->full_path ?: $r->parent?->name ?: 'Tanpa lantai')
+            ->groupBy(fn ($r) => $r->parent?->full_path ?: $r->parent?->name ?: istilah('Tanpa lantai'))
             ->map(function ($rs, $floor) use ($surveys, $counts) {
                 $c = $rs->map(fn ($r) => $counts->get($r->id));
 

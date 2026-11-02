@@ -40,6 +40,11 @@ class ServiceRequest extends Model
         'layanan_alternatif' => 'Masih ada layanan alternatif', 'kosmetik' => 'Kosmetik / penyempurnaan',
     ];
 
+    public static function impacts(): array
+    {
+        return array_map(fn ($v) => istilah($v), self::IMPACTS);
+    }
+
     public const PRIORITIES = ['P1' => 'P1 Darurat', 'P2' => 'P2 Mendesak', 'P3' => 'P3 Normal', 'P4' => 'P4 Terencana'];
 
     public const PRIORITY_COLORS = ['P1' => 'danger', 'P2' => 'warning', 'P3' => 'info', 'P4' => 'gray'];

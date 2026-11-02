@@ -46,6 +46,16 @@ class ProfilHotel extends Page
         'royal' => ['Biru & kuning', '#1D4E89', '#F2B705'],
     ];
 
+    public static function getNavigationLabel(): string
+    {
+        return istilah('Profil hotel');
+    }
+
+    public function getTitle(): string
+    {
+        return istilah('Profil hotel');
+    }
+
     public static function canAccess(): bool
     {
         return (bool) auth()->user()?->hasPermission('settings.manage');
@@ -59,7 +69,7 @@ class ProfilHotel extends Page
     public function mount(): void
     {
         $this->form->fill($this->property()->only([
-            'name', 'legal_name', 'code', 'address', 'city', 'phone', 'email', 'star_rating', 'room_count',
+            'name', 'legal_name', 'business_type', 'code', 'address', 'city', 'phone', 'email', 'star_rating', 'room_count',
             'app_name', 'tagline', 'logo_path', 'logo_dark_path', 'primary_color', 'accent_color', 'timezone',
         ]));
     }
@@ -69,9 +79,11 @@ class ProfilHotel extends Page
         $hasAssets = fn () => Asset::withoutGlobalScopes()->where('property_id', $this->property()->id)->exists();
 
         return $schema->statePath('data')->components([
-            Section::make('Identitas hotel')->columns(2)->schema([
-                TextInput::make('name')->label('Nama hotel')->required()->maxLength(120),
+            Section::make(istilah('Identitas hotel'))->columns(2)->schema([
+                TextInput::make('name')->label(istilah('Nama hotel'))->required()->maxLength(120),
                 TextInput::make('legal_name')->label('Nama badan usaha (PT/CV)')->maxLength(150),
+                Select::make('business_type')->label('Jenis usaha')->options(\App\Support\Terms::TYPES)->required()->native(false)->live()
+                    ->helperText('Menentukan istilah di layar, laporan & label: kamar (hotel/RS), outlet (ritel), ruang (umum).'),
                 TextInput::make('code')->label('Kode properti')->required()->maxLength(8)
                     ->regex('/^[A-Z0-9]{2,8}$/')->validationMessages(['regex' => 'Huruf kapital/angka, 2–8 karakter.'])
                     ->helperText(fn () => $hasAssets()
@@ -81,10 +93,10 @@ class ProfilHotel extends Page
                 Select::make('star_rating')->label('Kelas')->options([
                     '1' => 'Bintang 1', '2' => 'Bintang 2', '3' => 'Bintang 3', '4' => 'Bintang 4', '5' => 'Bintang 5',
                     'melati' => 'Melati', 'resort' => 'Resort / villa', 'lain' => 'Lainnya',
-                ]),
+                ])->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => ($get('business_type') ?? 'hotel') === 'hotel'),
                 TextInput::make('address')->label('Alamat')->columnSpanFull()->maxLength(255),
                 TextInput::make('city')->label('Kota')->maxLength(80),
-                TextInput::make('room_count')->label('Jumlah kamar')->numeric()->minValue(0)->maxValue(10000),
+                TextInput::make('room_count')->label(istilah('Jumlah kamar'))->numeric()->minValue(0)->maxValue(10000),
                 TextInput::make('phone')->label('Telepon')->maxLength(40),
                 TextInput::make('email')->label('Email engineering / umum')->email()->maxLength(255),
                 Select::make('timezone')->label('Zona waktu')->required()->options([
@@ -126,7 +138,7 @@ class ProfilHotel extends Page
         $p->fill($data)->save();
         Branding::flush();
 
-        Notification::make()->success()->title('Profil hotel disimpan')->body('Muat ulang halaman untuk melihat logo & warna baru.')->send();
+        Notification::make()->success()->title(istilah('Profil hotel disimpan'))->body('Muat ulang halaman untuk melihat logo & warna baru.')->send();
         $this->redirect(static::getUrl());
     }
 }

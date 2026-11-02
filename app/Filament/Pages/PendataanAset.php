@@ -253,7 +253,7 @@ class PendataanAset extends Page
     public function scan(string $text, string $channel = 'scanner'): void
     {
         if (! $this->room) {
-            $this->push('warning', 'Pilih kamar/ruang dulu.');
+            $this->push('warning', istilah('Pilih kamar/ruang dulu.'));
 
             return;
         }

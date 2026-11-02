@@ -17,6 +17,9 @@ Pohon lokasi aset: gedung › lantai › kamar / ruang / area, lengkap dengan ju
 - **WO**: work order yang masih terbuka di lokasi tersebut.
 - **Rp … jt**: jumlah harga perolehan; hanya tampil untuk peran yang boleh melihat data keuangan.
 
+## Grup dengan beberapa badan usaha
+Bila satu grup memiliki beberapa PT yang mengelola cabang di daerah berbeda, buat lokasi berjenis **Badan usaha (PT)** di tingkat teratas (Data referensi › Lokasi), lalu jadikan gedung / RS / wilayah sebagai sub-lokasinya. Pohon menjadi PT › gedung › lantai › kamar/ruang. Di matriks tersedia baris **Badan usaha (PT)**, dan filter lokasi di Penyusutan, Stock opname, serta Dasbor pimpinan bisa dipakai per PT.
+
 ## Tips
 - Lokasi tanpa aset biasanya belum didata. Cek progresnya di **Pendataan aset › Progres**.
 - Lantai atau gedung dengan banyak aset berisiko adalah kandidat program perbaikan / penggantian per area.

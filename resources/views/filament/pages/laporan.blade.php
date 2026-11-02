@@ -18,7 +18,7 @@
         <div class="arah-stat"><span class="label">Respons sesuai SLA</span><span class="value">{{ Fmt::pct($kpi['sla_response']['value']) }}</span><span class="sub">{{ $kpi['sla_response']['note'] }}</span></div>
         <div class="arah-stat"><span class="label">MTTR bruto / bersih</span><span class="value">{{ $kpi['mttr']['value'] === null ? 'N/A' : Fmt::minutes($kpi['mttr']['value']) }}</span><span class="sub">{{ $kpi['mttr']['value'] === null ? $kpi['mttr']['note'] : 'bersih '.Fmt::minutes($kpi['mttr']['net']).' · '.$kpi['mttr']['note'] }}</span></div>
         <div class="arah-stat"><span class="label">Kegagalan berulang</span><span class="value">{{ $kpi['repeat_failures'] }}</span><span class="sub">aset & mode sama ≤ {{ config('assetcare.repeat_failure_days') }} hari</span></div>
-        <div class="arah-stat"><span class="label">Downtime aset</span><span class="value">{{ Fmt::num($kpi['downtime_hours'], 1) }} jam</span><span class="sub">{{ Fmt::num($kpi['room_days'], 1) }} hari-kamar terblokir</span></div>
+        <div class="arah-stat"><span class="label">Downtime aset</span><span class="value">{{ Fmt::num($kpi['downtime_hours'], 1) }} jam</span><span class="sub">{{ Fmt::num($kpi['room_days'], 1) }} {{ istilah('hari-kamar terblokir') }}</span></div>
     </div>
     <div class="arah-grid arah-grid-4" style="margin-top:1rem">
         <div class="arah-stat"><span class="label">Backlog terbuka</span><span class="value">{{ $kpi['open_wo'] }}</span>

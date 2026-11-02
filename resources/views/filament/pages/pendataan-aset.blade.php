@@ -7,7 +7,7 @@
 <div class="arah sv">
     <div class="sv-tabs">
         @if ($this->canRun)
-            <button type="button" class="{{ $tab === 'kamar' ? 'on' : '' }}" wire:click="$set('tab','kamar')">Kamar & ruang</button>
+            <button type="button" class="{{ $tab === 'kamar' ? 'on' : '' }}" wire:click="$set('tab','kamar')">{{ istilah('Kamar & ruang') }}</button>
         @endif
         <button type="button" class="{{ $tab === 'progres' ? 'on' : '' }}" wire:click="$set('tab','progres')">Progres</button>
     </div>
@@ -16,12 +16,12 @@
     @if ($tab === 'progres')
         @php $pg = $this->progress; @endphp
         <div class="arah-card">
-            <h3>Progres per lantai / zona</h3>
+            <h3>{{ istilah('Progres per lantai / zona') }}</h3>
             @if ($pg['floors']->isEmpty())
-                <div class="arah-empty">Belum ada kamar berisi aset. Generate aset kamar dari template lebih dulu.</div>
+                <div class="arah-empty">{{ istilah('Belum ada kamar berisi aset. Generate aset kamar dari template lebih dulu.') }}</div>
             @else
                 <div class="arah-scroll"><table class="arah-table">
-                    <thead><tr><th>Lantai / zona</th><th class="num">Ruang</th><th class="num">Selesai</th><th class="num">Proses</th><th class="num">Item</th><th class="num">Ada</th><th class="num">Tidak ada</th><th style="min-width:120px">Progres</th></tr></thead>
+                    <thead><tr><th>{{ istilah('Lantai / zona') }}</th><th class="num">Ruang</th><th class="num">Selesai</th><th class="num">Proses</th><th class="num">Item</th><th class="num">Ada</th><th class="num">Tidak ada</th><th style="min-width:120px">Progres</th></tr></thead>
                     <tbody>
                     @foreach ($pg['floors'] as $f)
                         @php $pct = $f['rooms'] ? round($f['done'] / $f['rooms'] * 100) : 0; @endphp
@@ -35,10 +35,10 @@
         <div class="arah-card" style="margin-top:1rem">
             <h3>Per petugas</h3>
             @if ($pg['people']->isEmpty())
-                <div class="arah-empty">Belum ada kamar yang selesai didata.</div>
+                <div class="arah-empty">{{ istilah('Belum ada kamar yang selesai didata.') }}</div>
             @else
                 <div class="arah-scroll"><table class="arah-table">
-                    <thead><tr><th>Petugas</th><th class="num">Kamar selesai</th><th class="num">Hari ini</th><th class="num">Tidak ada</th><th class="num">Tambahan</th><th>Terakhir</th></tr></thead>
+                    <thead><tr><th>Petugas</th><th class="num">{{ istilah('Kamar selesai') }}</th><th class="num">Hari ini</th><th class="num">Tidak ada</th><th class="num">Tambahan</th><th>Terakhir</th></tr></thead>
                     <tbody>
                     @foreach ($pg['people'] as $p)
                         <tr><td><b>{{ $p['name'] }}</b></td><td class="num">{{ $p['rooms'] }}</td><td class="num">{{ $p['today'] }}</td><td class="num">{{ $p['missing'] }}</td><td class="num">{{ $p['extra'] }}</td><td>{{ \App\Support\Fmt::dt($p['last'], 'd/m H:i') }}</td></tr>
@@ -51,11 +51,11 @@
     {{-- ===================== DAFTAR KAMAR ===================== --}}
     @elseif (! $this->room)
         <div class="arah-card">
-            <h3>Pilih kamar / ruang</h3>
+            <h3>{{ istilah('Pilih kamar / ruang') }}</h3>
             <div class="sv-filters">
-                <input class="ac-input" type="search" inputmode="numeric" placeholder="Nomor kamar / nama ruang" wire:model.live.debounce.300ms="search">
+                <input class="ac-input" type="search" inputmode="numeric" placeholder="{{ istilah('Nomor kamar / nama ruang') }}" wire:model.live.debounce.300ms="search">
                 <select class="ac-input" wire:model.live="floorId">
-                    <option value="">Semua lantai / zona</option>
+                    <option value="">{{ istilah('Semua lantai / zona') }}</option>
                     @foreach ($this->floors as $f)<option value="{{ $f->id }}">{{ $f->full_path ?: $f->name }}</option>@endforeach
                 </select>
                 <select class="ac-input" wire:model.live="filter">
@@ -69,7 +69,7 @@
                     @php $st = $x->survey?->status; @endphp
                     <button type="button" class="sv-room {{ $st === 'done' ? 'done' : ($st ? 'prog' : '') }}" wire:click="openRoom({{ $x->room->id }})" wire:key="r-{{ $x->room->id }}">
                         <span class="no">{{ $x->room->room_ref ?: $x->room->code }}</span>
-                        <span class="nm">{{ $x->room->location_type === 'room' ? ($x->room->roomType?->name ?? 'Kamar') : $x->room->name }}</span>
+                        <span class="nm">{{ $x->room->location_type === 'room' ? ($x->room->roomType?->name ?? istilah('Kamar')) : $x->room->name }}</span>
                         <span class="ct">{{ $x->checked }}/{{ $x->total }} item</span>
                         <span class="st">{{ $st === 'done' ? 'Selesai' : ($st ? 'Proses' : ($x->total ? 'Belum' : 'Kosong')) }}</span>
                     </button>
@@ -100,17 +100,17 @@
 
         @if ($survey?->status === 'done')
             <div class="ac-scan-msg ok" style="margin-bottom:1rem">
-                Kamar ini sudah selesai didata {{ \App\Support\Fmt::dt($survey->finished_at, 'd/m H:i') }} oleh {{ $survey->surveyor?->name }}
+                {{ istilah('Kamar ini sudah selesai didata') }} {{ \App\Support\Fmt::dt($survey->finished_at, 'd/m H:i') }} oleh {{ $survey->surveyor?->name }}
                 ({{ $survey->found_count }} ada · {{ $survey->missing_count }} tidak ada · {{ $survey->extra_count }} tambahan).
                 <div class="ac-actions">
-                    @if ($this->nextRoom)<button type="button" class="arah-btn arah-btn-primary" wire:click="goNext">Kamar berikutnya: {{ $this->nextRoom->labelText() }} ›</button>@endif
+                    @if ($this->nextRoom)<button type="button" class="arah-btn arah-btn-primary" wire:click="goNext">{{ istilah('Kamar berikutnya:') }} {{ $this->nextRoom->labelText() }} ›</button>@endif
                     <button type="button" class="arah-btn" wire:click="reopenRoom">Buka lagi</button>
                 </div>
             </div>
         @endif
 
         <div class="arah-card sv-print">
-            <h3>1 · Cetak label kamar ini</h3>
+            <h3>{{ istilah('1 · Cetak label kamar ini') }}</h3>
             <div class="sv-print-row">
                 <select class="ac-input" wire:model.live="printProfile" aria-label="Ukuran label">
                     @foreach ($this->printProfiles as $k => $n)<option value="{{ $k }}">{{ $n }}</option>@endforeach
@@ -140,9 +140,9 @@
         </div>
 
         <div class="arah-card" style="margin-top:1rem">
-            <h3>3 · Isi kamar ({{ $items->count() }} item)</h3>
+            <h3>{{ istilah('3 · Isi kamar (') }}{{ $items->count() }} item)</h3>
             @if ($items->isEmpty())
-                <div class="arah-empty">Belum ada aset tercatat di ruang ini. Tambahkan lewat <b>Aset tambahan</b> di bawah, atau generate dari template tipe kamar.</div>
+                <div class="arah-empty">Belum ada aset tercatat di ruang ini. Tambahkan lewat <b>Aset tambahan</b> {{ istilah('di bawah, atau generate dari template tipe kamar.') }}</div>
             @endif
             <div class="sv-items">
                 @foreach ($items as $a)
@@ -179,7 +179,7 @@
                                 </details>
                                 <div class="ac-actions">
                                     <button type="button" class="arah-btn arah-btn-primary" wire:click="saveItem" @disabled(! $cond)>Simpan · Ada</button>
-                                    <button type="button" class="arah-btn" wire:click="markMissing({{ $a->id }})" wire:confirm="Tandai {{ $a->name }} TIDAK ADA di kamar ini?">Tidak ada</button>
+                                    <button type="button" class="arah-btn" wire:click="markMissing({{ $a->id }})" wire:confirm="Tandai {{ $a->name }} TIDAK ADA di {{ istilah('kamar') }} ini?">Tidak ada</button>
                                     <button type="button" class="arah-btn" wire:click="printRoom({{ $a->id }})">Cetak ulang label</button>
                                 </div>
                             </div>
@@ -235,7 +235,7 @@
 
         @if ($survey?->status !== 'done')
             <div class="sv-finish">
-                <button type="button" class="arah-btn arah-btn-primary" wire:click="finishRoom">4 · Selesai kamar ini</button>
+                <button type="button" class="arah-btn arah-btn-primary" wire:click="finishRoom">{{ istilah('4 · Selesai kamar ini') }}</button>
                 @if ($this->nextRoom)<button type="button" class="arah-btn" wire:click="goNext">Lewati › {{ $this->nextRoom->labelText() }}</button>@endif
             </div>
         @endif

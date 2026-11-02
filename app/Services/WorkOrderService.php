@@ -246,7 +246,7 @@ class WorkOrderService
             throw WorkflowException::invalid('Konfirmasi status operasional aset setelah pekerjaan.');
         }
         if ($wo->room_access_needed && ! array_key_exists('fo_confirmed', $d)) {
-            throw WorkflowException::invalid('Kamar terdampak: catat konfirmasi Front Office.');
+            throw WorkflowException::invalid(istilah('Kamar terdampak: catat konfirmasi Front Office.'));
         }
         if ($wo->asset && $status && $wo->asset->operational_status !== $status) {
             $this->setAssetStatus($wo->asset, $status, 'Verifikasi '.$wo->number, $wo);
@@ -353,11 +353,11 @@ class WorkOrderService
     {
         $room = $wo->location?->isRoom() ? $wo->location : $wo->asset?->location;
         if (! $room || ! $room->isRoom()) {
-            throw WorkflowException::invalid('Work order tidak terkait kamar.');
+            throw WorkflowException::invalid(istilah('Work order tidak terkait kamar.'));
         }
         $block = RoomBlock::create(['room_id' => $room->id, 'work_order_id' => $wo->id, 'status' => 'proposed', 'reason' => $reason, 'proposed_by' => $u->id]);
         $wo->update(['room_access_needed' => true]);
-        $this->notify->send($this->notify->usersWith('room.block_confirm'), 'Usulan blokir kamar '.($room->room_ref ?: $room->name), $wo->number.': '.$reason.' — mohon konfirmasi Front Office (status PMS tidak diubah otomatis).', null, 'roomblock-'.$block->id, 'warning');
+        $this->notify->send($this->notify->usersWith('room.block_confirm'), istilah('Usulan blokir kamar ').($room->room_ref ?: $room->name), $wo->number.': '.$reason.istilah(' — mohon konfirmasi Front Office (status PMS tidak diubah otomatis).'), null, 'roomblock-'.$block->id, 'warning');
 
         return $block;
     }

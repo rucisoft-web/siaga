@@ -124,7 +124,7 @@ class ViewWorkOrder extends ViewRecord
                     ->required()->visible((bool) $wo->asset?->warrantyActive())->default($wo->warranty_decision),
             ],
             'start' => $wo->asset ? [Toggle::make('set_under_repair')->label('Ubah status aset menjadi "Dalam perbaikan"')->default(true)] : [],
-            'hold' => [$reason('Alasan ditunda (mis. menunggu suku cadang / vendor / akses kamar)')],
+            'hold' => [$reason(istilah('Alasan ditunda (mis. menunggu suku cadang / vendor / akses kamar)'))],
             'complete' => [
                 TextInput::make('failure_mode')->label('Mode kerusakan')->default($wo->failure_mode)->datalist(['Tidak dingin', 'Bocor', 'Mati total', 'Korsleting', 'Bunyi abnormal', 'Aus / rusak fisik', 'Setelan / kalibrasi']),
                 Textarea::make('diagnosis')->label('Diagnosis')->required()->rows(2)->default($wo->diagnosis),
@@ -144,7 +144,7 @@ class ViewWorkOrder extends ViewRecord
             'verify' => [
                 Select::make('asset_status_after')->label('Status operasional aset sekarang')->options(Asset::OPERATIONAL)->native(false)
                     ->required((bool) $wo->asset_id)->visible((bool) $wo->asset_id)->default('serviceable'),
-                Toggle::make('fo_confirmed')->label('Front Office mengonfirmasi kamar siap dijual kembali')->visible((bool) $wo->room_access_needed),
+                Toggle::make('fo_confirmed')->label(istilah('Front Office mengonfirmasi kamar siap dijual kembali'))->visible((bool) $wo->room_access_needed),
                 $reason('Catatan verifikasi', false),
             ],
             'reject_back' => [$reason('Apa yang belum memenuhi?')],
@@ -178,10 +178,10 @@ class ViewWorkOrder extends ViewRecord
         };
 
         $more = collect(array_keys(WorkOrderService::ACTIONS))->diff($primary)->map($make)->values()->all();
-        $more[] = Action::make('blokir')->label('Usulkan blokir kamar (FO)')->icon('heroicon-o-no-symbol')
+        $more[] = Action::make('blokir')->label(istilah('Usulkan blokir kamar (FO)'))->icon('heroicon-o-no-symbol')
             ->visible(fn () => $wo->isOpen() && $u->hasAnyPermission(['wo.assign', 'wo.execute']) && ($wo->location?->isRoom() || $wo->asset?->location?->isRoom()))
             ->schema([Textarea::make('reason')->label('Alasan')->required()])
-            ->action(fn (array $data) => $this->run(fn () => $svc->proposeRoomBlock($wo, $data['reason'], $u), 'Usulan dikirim ke Front Office'));
+            ->action(fn (array $data) => $this->run(fn () => $svc->proposeRoomBlock($wo, $data['reason'], $u), istilah('Usulan dikirim ke Front Office')));
         $more[] = Action::make('final')->label('Finalkan biaya (Finance)')->icon('heroicon-o-banknotes')
             ->visible(fn () => $u->hasPermission('wo.cost_finalize') && $wo->cost_status !== 'final' && in_array($wo->status, ['verified', 'closed'], true))
             ->requiresConfirmation()->modalDescription('Baris biaya sementara menjadi final. Koreksi sesudahnya memakai baris reversal.')

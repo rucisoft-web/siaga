@@ -8,7 +8,7 @@
 <div class="arah">
     <ol class="ac-steps">
         <li class="ac-step {{ $tpl ? 'done' : 'on' }}">1. Template</li>
-        <li class="ac-step {{ $roomIds ? 'done' : ($tpl ? 'on' : '') }}">2. Kamar</li>
+        <li class="ac-step {{ $roomIds ? 'done' : ($tpl ? 'on' : '') }}">{{ istilah('2. Kamar') }}</li>
         <li class="ac-step {{ $preview ? 'done' : ($roomIds ? 'on' : '') }}">3. Preview & pencocokan</li>
         <li class="ac-step {{ $batchId ? 'done' : ($preview ? 'on' : '') }}">4. Buat kandidat</li>
         <li class="ac-step {{ $batchId ? 'on' : '' }}">5. Cetak label & verifikasi</li>
@@ -32,14 +32,14 @@
                     @endforeach
                     </tbody>
                 </table>
-                <p class="arah-muted" style="margin-top:.4rem">{{ $tpl->unitCount() }} unit individual per kamar. Seri, nilai, garansi, kondisi & foto <b>tidak</b> disalin — diisi saat verifikasi fisik.</p>
+                <p class="arah-muted" style="margin-top:.4rem">{{ $tpl->unitCount() }} {{ istilah('unit individual per kamar. Seri, nilai, garansi, kondisi & foto') }} <b>tidak</b> disalin — diisi saat verifikasi fisik.</p>
             @endif
         </div>
         <div class="arah-card">
-            <h3 style="margin:0 0 .6rem">2 · Kamar ({{ count($roomIds) }} dipilih)</h3>
+            <h3 style="margin:0 0 .6rem">{{ istilah('2 · Kamar (') }}{{ count($roomIds) }} dipilih)</h3>
             <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center">
                 <select class="ac-input" style="max-width:16rem" wire:model.live="floorId">
-                    <option value="">Semua lantai / area</option>
+                    <option value="">{{ istilah('Semua lantai / area') }}</option>
                     @foreach ($this->floors as $f)<option value="{{ $f->id }}">{{ $f->full_path }}</option>@endforeach
                 </select>
                 <button type="button" class="arah-btn" wire:click="selectSameType">Pilih tipe sama</button>
@@ -53,10 +53,10 @@
                         <span>{{ $r->room_ref ?: $r->name }} <span class="arah-muted">{{ $r->roomType?->code }}</span></span>
                     </label>
                 @empty
-                    <div class="arah-empty">Belum ada kamar. Tambahkan di Lokasi.</div>
+                    <div class="arah-empty">{{ istilah('Belum ada kamar. Tambahkan di Lokasi.') }}</div>
                 @endforelse
             </div>
-            <label style="display:flex; gap:.4rem; margin-top:.6rem; font-size:.85rem"><input type="checkbox" wire:model.live="allowMismatch"> Izinkan kamar berbeda tipe (pengecualian disetujui)</label>
+            <label style="display:flex; gap:.4rem; margin-top:.6rem; font-size:.85rem"><input type="checkbox" wire:model.live="allowMismatch"> {{ istilah('Izinkan kamar berbeda tipe (pengecualian disetujui)') }}</label>
             <div class="ac-actions"><button type="button" class="arah-btn arah-btn-primary" wire:click="runPreview" wire:loading.attr="disabled">Lihat preview</button></div>
         </div>
     </div>
@@ -65,7 +65,7 @@
         <div class="arah-card" style="margin-top:1rem">
             <h3 style="margin:0 0 .6rem">3 · Preview — belum ada data yang dibuat</h3>
             <div class="arah-grid arah-grid-5">
-                <div class="arah-stat"><span class="label">Kamar</span><span class="value">{{ $totals['rooms'] }}</span><span class="sub">{{ $totals['blocked'] }} terhalang tipe</span></div>
+                <div class="arah-stat"><span class="label">{{ istilah('Kamar') }}</span><span class="value">{{ $totals['rooms'] }}</span><span class="sub">{{ $totals['blocked'] }} terhalang tipe</span></div>
                 <div class="arah-stat"><span class="label">Unit standar</span><span class="value">{{ $totals['standard'] }}</span></div>
                 <div class="arah-stat"><span class="label">Sudah terpetakan</span><span class="value">{{ $totals['mapped'] }}</span></div>
                 <div class="arah-stat"><span class="label">Kandidat cocok</span><span class="value">{{ $totals['candidate'] }}</span></div>
@@ -75,7 +75,7 @@
                 @foreach ($preview as $room)
                     <details {{ $loop->first || $room['counts']['candidate'] ? 'open' : '' }} style="margin-bottom:.6rem">
                         <summary style="cursor:pointer"><b>{{ $room['room_ref'] }}</b> <span class="arah-muted">{{ $room['room'] }}</span>
-                            @unless ($room['allowed'])<span class="arah-badge arah-merah">tipe kamar berbeda — dilewati</span>@endunless
+                            @unless ($room['allowed'])<span class="arah-badge arah-merah">{{ istilah('tipe kamar berbeda — dilewati') }}</span>@endunless
                             <span class="arah-muted">· {{ $room['counts']['create'] }} dibuat · {{ $room['counts']['candidate'] }} kandidat · {{ $room['counts']['mapped'] }} terpetakan</span></summary>
                         <table class="arah-table" style="margin-top:.3rem">
                             <thead><tr><th>Item</th><th>Posisi</th><th>Keadaan</th><th>Aset / keputusan</th><th>Catatan</th></tr></thead>
@@ -110,9 +110,9 @@
                 <div class="ac-actions">
                     <button type="button" class="arah-btn arah-btn-primary" wire:click="commit" wire:loading.attr="disabled"
                         wire:confirm="Buat {{ $totals['create'] }} kandidat aset (draft, belum terverifikasi) dan cocokkan aset lama yang dipilih?">4 · Buat kandidat aset</button>
-                    <span class="arah-muted" wire:loading wire:target="commit">memproses per kamar…</span>
+                    <span class="arah-muted" wire:loading wire:target="commit">{{ istilah('memproses per kamar…') }}</span>
                 </div>
-                <p class="arah-muted">Diproses per kamar secara atomik. Bila slot kamar berubah sejak preview, kamar itu ditandai konflik dan tidak diubah. Mengirim ulang tidak membuat aset ganda.</p>
+                <p class="arah-muted">{{ istilah('Diproses per kamar secara atomik. Bila slot kamar berubah sejak preview, kamar itu ditandai konflik dan tidak diubah. Mengirim ulang tidak membuat aset ganda.') }}</p>
             @endunless
         </div>
     @endif
@@ -120,10 +120,10 @@
     @if ($b = $this->batch)
         <div class="arah-card" style="margin-top:1rem">
             <h3 style="margin:0 0 .6rem">Hasil batch {{ $b->number }} · {{ GenerationBatch::STATUSES[$b->status] }}</h3>
-            <p>{{ $b->created_assets }} kandidat dibuat · {{ $b->matched_assets }} aset lama dicocokkan · {{ $b->results->where('status', '!=', 'ok')->count() }} kamar perlu perhatian.</p>
+            <p>{{ $b->created_assets }} kandidat dibuat · {{ $b->matched_assets }} aset lama dicocokkan · {{ $b->results->where('status', '!=', 'ok')->count() }} {{ istilah('kamar perlu perhatian.') }}</p>
             <div class="ac-actions">
                 <a class="arah-btn arah-btn-primary" href="{{ \App\Filament\Pages\CetakLabel::getUrl(['batch' => $b->id]) }}">5 · Cetak label batch ini</a>
-                <a class="arah-btn" href="{{ $batchUrl }}">Detail & retry kamar gagal</a>
+                <a class="arah-btn" href="{{ $batchUrl }}">{{ istilah('Detail & retry kamar gagal') }}</a>
                 <a class="arah-btn" href="{{ \App\Filament\Resources\Assets\AssetResource::getUrl('index', ['tab' => 'draft']) }}">Daftar kandidat draft</a>
             </div>
         </div>

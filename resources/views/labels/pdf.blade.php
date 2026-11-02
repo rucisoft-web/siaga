@@ -32,7 +32,7 @@
     .brand { font-size: {{ $big ? 6.5 : 5 }}pt; color: {{ $brandColor }}; font-weight: bold; letter-spacing: .2pt; text-transform: uppercase; }
     .code { font-size: {{ $big ? 9.5 : 7 }}pt; font-weight: bold; margin-top: .6mm; }
     .name { font-size: {{ $big ? 7.5 : 5.6 }}pt; margin-top: .6mm; line-height: 1.15; max-height: {{ $big ? 9 : 5.2 }}mm; overflow: hidden; }
-    .loc { font-size: {{ $big ? 7 : 5.4 }}pt; margin-top: .6mm; font-weight: bold; color: #44403c; }
+    .loc { font-size: {{ $big ? 7 : 5.4 }}pt; margin-top: .6mm; font-weight: bold; color: #44403c; line-height: 1.1; max-height: {{ $big ? 6.4 : 4.4 }}mm; overflow: hidden; }
     .foot { position: absolute; bottom: 0; left: 0; font-size: {{ $big ? 5.5 : 4.2 }}pt; color: #57534e; }
     .copy { position: absolute; right: .8mm; bottom: .4mm; font-size: 3.6pt; color: #a8a29e; }
 </style>
@@ -63,7 +63,7 @@
                     @php $codeLen = max(1, mb_strlen((string) $i->code_snapshot)); $codePt = round(min($big ? 9.5 : 7, $textW * 2.835 / ($codeLen * 0.66)), 2); @endphp
                     <div class="code" style="font-size: {{ $codePt }}pt; white-space: nowrap;">{{ $i->code_snapshot }}</div>
                     <div class="name">{{ \Illuminate\Support\Str::limit($i->name_snapshot, $big ? 60 : 38) }}</div>
-                    @if ($i->location_snapshot)<div class="loc">{{ \Illuminate\Support\Str::limit($i->location_snapshot, 28) }}</div>@endif
+                    @if ($i->location_snapshot)@php $loc = $i->location_snapshot; @endphp<div class="loc" @if (mb_strlen($loc) > 28) style="font-size: {{ $big ? 6.2 : 4.8 }}pt" @endif>{{ \Illuminate\Support\Str::limit($loc, $big ? 64 : 48) }}</div>@endif
                     <div class="foot">Scan untuk info &amp; lapor kerusakan</div>
                 </div>
                 <div class="copy">{{ $batch->number }}·{{ $i->sequence }}</div>

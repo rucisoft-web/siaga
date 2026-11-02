@@ -45,6 +45,7 @@ Kode properti terkunci setelah aset pertama dibuat, karena sudah tercetak di lab
 | Penyusutan & nilai buku | Laporan › Penyusutan & nilai buku | PSAK 16: garis lurus / saldo menurun ganda / tidak disusutkan, masa manfaat & residu per kategori (bisa ditimpa per aset), nilai buku per akhir bulan, usulan jurnal, ekspor Excel daftar aset tetap |
 | Stock opname | Pengendalian Aset › Stock opname | Sesi per cakupan lokasi, hitung per ruang dengan scan QR, ditemukan / pindah lokasi / tidak ditemukan / temuan tak terdaftar, tutup & terapkan ke register, berita acara |
 | Penghapusan aset | Pengendalian Aset › Penghapusan aset | Usul → setuju/tolak (pemisahan tugas) → selesai; jual, musnah, hibah, tukar tambah, hilang; nilai buku dibekukan, laba (rugi) pelepasan, usulan jurnal, berita acara |
+| Jenis usaha & istilah | Pengaturan › Profil | Hotel, rumah sakit, ritel/outlet, umum: istilah di menu, layar, laporan & label mengikuti jenis usaha (kamar / outlet / ruang; lantai / rayon). Grup dengan beberapa PT: lokasi jenis *Badan usaha (PT)* di tingkat teratas |
 | Jadwal PM & kalibrasi | Pemeliharaan › Jadwal PM & kalibrasi | PM, inspeksi, kalibrasi per aset atau per kategori di lokasi; WO dibuat otomatis tiap pagi (H-n), kepatuhan PM, pengingat garansi aset & kontrak vendor (H-30, H-7) |
 | Keamanan | Pengaturan | 17 peran & 41 izin (deny by default), log audit, ganti sandi wajib, batas login, MFA |
 
@@ -112,7 +113,7 @@ Halaman depan bisa diaktifkan tanpa mode tamu dengan `SIAGA_LANDING=true`.
 
 ## Uji otomatis
 
-`composer install` lalu `php artisan test` (database `asset_care_test`) — 31 skenario, termasuk jadwal PM & pengingat garansi, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
+`composer install` lalu `php artisan test` (database `asset_care_test`) — 32 skenario, termasuk istilah per jenis usaha, termasuk jadwal PM & pengingat garansi, penyusutan, stock opname & penghapusan aset, landing page & masuk sebagai tamu, dasbor pimpinan, pendataan, impor master, panduan, instalasi hotel baru,
 Profil hotel (nama, warna, logo, zona waktu), kode properti terkunci, validasi warna, dan tidak ada sisa merek lama.
 
 ## Catatan teknis

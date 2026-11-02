@@ -42,7 +42,7 @@ class ViewServiceRequest extends ViewRecord
                 TextEntry::make('status')->label('Status')->badge()->color(fn ($state) => ServiceRequest::STATUS_COLORS[$state] ?? 'gray')
                     ->formatStateUsing(fn ($state) => ServiceRequest::STATUSES[$state] ?? $state),
                 TextEntry::make('category')->label('Kategori')->formatStateUsing(fn ($state) => ServiceRequest::CATEGORIES[$state] ?? $state),
-                TextEntry::make('impact')->label('Dampak')->formatStateUsing(fn ($state) => ServiceRequest::IMPACTS[$state] ?? $state)->placeholder('—'),
+                TextEntry::make('impact')->label('Dampak')->formatStateUsing(fn ($state) => ServiceRequest::impacts()[$state] ?? $state)->placeholder('—'),
                 TextEntry::make('symptom')->label('Gejala')->columnSpanFull(),
                 TextEntry::make('location.full_path')->label('Lokasi')->columnSpan(2)->placeholder('—'),
                 TextEntry::make('asset.asset_code')->label('Aset')->placeholder('tidak diketahui')
